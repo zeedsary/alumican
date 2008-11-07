@@ -3,7 +3,7 @@
 class Initializer {
 	
 	//mc.init(a, b, c); -> Initializer.resist(mc, "init", [a, b, c]);
-	static function resist(target:MovieClip, func:String, args:Array, callback:Function):Void {
+	static function register(target:MovieClip, func:String, args:Array, callback:Function):Void {
 		
 		var f:Function = target[func];
 		
