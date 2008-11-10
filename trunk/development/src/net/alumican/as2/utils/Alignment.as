@@ -1,14 +1,15 @@
 ﻿/**
  * Alignment
+ * <p>ステージリサイズ時に自動的にMovieClipの位置合わせをしてくれるクラスです. </p>
  * 
  * @author alumican<Yukiya Okuda>
  */
 import flash.geom.Point;
 import mx.utils.Delegate;
  
-class net.alumican.as2.alignment.Alignment {
+class net.alumican.as2.utils.Alignment {
 	
-	static var _list:Array;
+	static var _hash:Object;
 	
 	static var _listener:Object;
 	
@@ -37,7 +38,7 @@ class net.alumican.as2.alignment.Alignment {
 		Stage.align = "TL";
 		Stage.scaleMode = "noScale";
 		
-		_list = new Array();
+		_hash = new Object();
 		
 		_listener = new Object();
 		_listener.onResize = Delegate.create(_root, _onResizeEvent);
@@ -90,20 +91,32 @@ class net.alumican.as2.alignment.Alignment {
 		
 		var o:Object = { target:target, f:f, margin:margin, global:global, reposition:reposition, callback:callback };
 		
-		_list.push(o);
+		_hash[target] = o;
 		
 		if(init) { _calcPosition(o); }
+	}
+	
+	/**
+	 * リサイズ時に位置合わせを行うMovieClipの登録を取り消します. 
+	 * @param	target:MovieClip	位置合わせの登録を取り消すMovieClip
+	 */
+	static function deregister(target:MovieClip):Void {
+		delete _hash[target];
 	}
 	
 	static function _onResizeEvent():Void {
 		_stagew = Stage.width;
 		_stageh = Stage.height;
 		
-		for (var i:Number = _list.length - 1; i >= 0; --i) {
-			if (_list[i].target) {
-				_calcPosition(_list[i]);
+		var o:Object;
+		var mc:MovieClip;
+		
+		for (var key in _hash) {
+			o = _hash[key];
+			if (o.target._level != undefined) {
+				_calcPosition(o);
 			} else {
-				_list.splice(i, 1);
+				delete _hash[key];
 			}
 		}
 	}
