@@ -1,6 +1,6 @@
 ﻿import mx.utils.Delegate;
 
-class Initializer {
+class net.alumican.as2.utils.Initializer {
 	
 	//mc.init(a, b, c); -> Initializer.resist(mc, "init", [a, b, c]);
 	static function register(target:MovieClip, func:String, args:Array, callback:Function):Void {
