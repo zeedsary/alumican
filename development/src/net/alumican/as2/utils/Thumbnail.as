@@ -31,15 +31,15 @@ class net.alumican.as2.utils.Thumbnail {
 	 * @param	run:Boolean		実際にリサイズを実行するならばtrue(デフォルト値:true)
 	 * @return	Point			リサイズ後の幅と高さ
 	 */
-	static function resize(target:Object, bound_w:Number, bound_h:Number, fitting:Boolean, inner:Boolean, ref:Object, run:Boolean):Point {
+	static function resize(target:Object, bound_w:Number, bound_h:Number, force_fit:Boolean, inner:Boolean, ref:Object, run:Boolean):Point {
 		
-		if (fitting == null) { fitting = false;  }
-		if (inner   == null) { inner   = true;   }
-		if (ref     == null) { ref     = target; }
-		if (run     == null) { run     = true;   }
+		if (force_fit == null) { force_fit = false;  }
+		if (inner     == null) { inner     = true;   }
+		if (ref       == null) { ref       = target; }
+		if (run       == null) { run       = true;   }
 		
-		var w:Number = target._width;
-		var h:Number = target._height;
+		var w:Number = ref._width;
+		var h:Number = ref._height;
 		
 		var ratio:Number;
 		var ret_w:Number;
@@ -53,9 +53,9 @@ class net.alumican.as2.utils.Thumbnail {
 			//内側にフィットさせる
 			
 			//縦横共に境界内に収まっていて, なおかつ拡大フィットさせない場合にはそのまま返す
-			if ((ratio_w > 1 && ratio_h > 1) && !fitting) {
-				returnSize(w, h);
-				return;
+			if ((ratio_w > 1 && ratio_h > 1) && !force_fit) {
+				var size:Point = returnSize(w, h);
+				return size;
 			}
 			
 			//リサイズ
@@ -72,9 +72,9 @@ class net.alumican.as2.utils.Thumbnail {
 			//外側にフィットさせる
 			
 			//縦横共に境界内に収まっていて, なおかつ拡大フィットさせない場合にはそのまま返す
-			if ((ratio_w > 1 || ratio_h > 1) && !fitting) {
-				returnSize(w, h);
-				return;
+			if ((ratio_w > 1 || ratio_h > 1) && !force_fit) {
+				var size:Point = returnSize(w, h);
+				return size;
 			}
 			
 			//リサイズ
@@ -87,11 +87,15 @@ class net.alumican.as2.utils.Thumbnail {
 			}
 		}
 		
-		returnSize(ret_w, ret_h);
-		return;
+		var size:Point = returnSize(ret_w, ret_h);
+		return size;
 		
 		//リサイズ後のサイズを返す
 		function returnSize(width:Number, height:Number):Point {
+			
+			width  *= target._width  / ref._width;
+			height *= target._height / ref._height;
+			
 			if (run) {
 				target._width  = width;
 				target._height = height;
