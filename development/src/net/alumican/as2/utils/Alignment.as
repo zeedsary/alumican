@@ -56,8 +56,8 @@ class net.alumican.as2.utils.Alignment {
 	 * @param	global:Boolean					階層を無視して位置合わせを行う場合はtrue(デフォルトはtrue)
 	 * @param	reposition:Boolean				リサイズ時にMovieClipを再配置させるならtrue, 座標値だけ取得するならfalse(デフォルトはtrue)
 	 * @param	init:Boolean					登録時に位置合わせを行うならばtrue(デフォルトはtrue)
-	 * @param	onStart():Function				リサイズ実行前のコールバック関数(デフォルトはnull)
-	 * @param	onComplete(e:Object):Function	リサイズ実行後のコールバック関数(e.x:Number=x座標値, e.y:Number=y座標値)(デフォルトはnull)
+	 * @param	onStart():Function				リサイズ実行前のコールバック関数(e.object=ターゲットオブジェクト)(デフォルトはnull)
+	 * @param	onComplete(e:Object):Function	リサイズ実行後のコールバック関数(e.object=ターゲットオブジェクト, e.x:Number=x座標値, e.y:Number=y座標値)(デフォルトはnull)
 	 * 
 	 */
 	static function register(target:MovieClip, align:Number, margin:Array, global:Boolean, reposition:Boolean, init:Boolean, onStart:Function, onComplete:Function):Void {
@@ -124,6 +124,8 @@ class net.alumican.as2.utils.Alignment {
 	
 	static function _calcPosition(o:Object):Void {
 		
+		o.onStart({object:o});
+		
 		var target:MovieClip = o.target;
 		
 		var p:Point = o.f(o.margin);
@@ -137,8 +139,7 @@ class net.alumican.as2.utils.Alignment {
 			target._y = p.y;
 		}
 		
-		o.onStart();
-		o.onComplete( { x:p.x, y:p.y } );
+		o.onComplete( { object:o, x:p.x, y:p.y } );
 	}
 	
 	static function _alignTL(margin:Array):Point {
