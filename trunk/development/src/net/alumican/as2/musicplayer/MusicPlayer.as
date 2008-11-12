@@ -7,25 +7,42 @@ import mx.utils.Delegate;
 
 class net.alumican.as2.musicplayer.MusicPlayer {
 	
-	//再生中の曲を含めたプレイリスト
+	/**
+	 * Soundオブジェクト生成用のMovieClipです. 
+	 */
+	static var soundclip:MovieClip;
+	
+	/**
+	 * 再生中の曲を含めたプレイリストです. 
+	 */
 	private var playlist:Array;
 	
-	//現在曲が再生途中であればtrue
+	/**
+	 * 曲が鳴っていればtrueです. 
+	 */
 	private var is_playing:Boolean;
 	
-	//停止/再生のボリュームコントロールをフェードで行うならばtrue
+	/**
+	 * 停止/再生のボリュームコントロールをフェードで行うならばtrueです. 
+	 */
 	private var volume_fade:Boolean;
 	
-	//プレイリストを取得する
+	/**
+	 * プレイリストを取得します. 
+	 */
 	public function get _playlist():Array { return playlist; }
 	
-	//予約リストを取得する
+	/**
+	 * 予約リストを取得します. 
+	 */
 	public function get _booklist():Array {
 		var n:Number = playlist.length;
 		return (n > 1) ? ( playlist.slice(1, n - 1) ) : [];
 	}
 	
-	//予約リストを設定する
+	/**
+	 * 予約リストを設定します. 
+	 */
 	public function set _booklist(list:Array):Void {
 		var n:Number = playlist.length;
 		if (n > 0) {
@@ -36,19 +53,32 @@ class net.alumican.as2.musicplayer.MusicPlayer {
 	}
 	
 	/**
-	 * コンストラクタ
+	 * Soundオブジェクト生成用のMovieClipを取得します. 
+	 */
+	public function get _soundclip():MovieClip { return soundclip; }
+	
+	/**
+	 * コンストラクタです. 
 	 * 
 	 */
-	public function MusicPlayer() {
+	public function MusicPlayer(soundclip:MovieClip) {
 		
+		//Soundオブジェクト生成用のMovieClip
+		this.soundclip = soundclip;
+		
+		//再生中の曲を含めたプレイリスト
 		playlist = new Array();
+		
+		//現在, 曲が再生途中であればtrue
 		is_playing = false;
+		
+		//停止/再生のボリュームコントロールをフェードで行うならばtrue
 		volume_fade = true;
 	}
 	
 	/**
 	 * プレイリストに曲を追加します. 
-	 * position=0の場合には再生途中の曲を中断して割り込み, 再生中の曲は予約リストの先頭へ移動します. 
+	 * position=0の場合には再生途中の曲を中断して割り込み, 再生中の曲は再生回数がリセットされた上で予約リストの先頭へ移動します. 
 	 * 
 	 * @param	m:IMusic		曲オブジェクト
 	 * @param	position:Number	曲の予約リストへの挿入インデックス(デフォルト値=予約リストの最後尾)
@@ -126,6 +156,8 @@ class net.alumican.as2.musicplayer.MusicPlayer {
 		if (!is_playing) { return; }
 		if (playlist.length == 0) { return; }
 		
+		IMusic( playlist[0] ).stop();
+		
 		is_playing = false;
 	}
 	
@@ -138,6 +170,8 @@ class net.alumican.as2.musicplayer.MusicPlayer {
 	public function cue():Void {
 		
 		if (playlist.length == 0) { return; }
+		
+		IMusic( playlist[0] ).cue();
 	}
 	
 	/**
@@ -147,6 +181,8 @@ class net.alumican.as2.musicplayer.MusicPlayer {
 	public function pause():Void {
 		
 		if (!is_playing) { return; }
+		
+		IMusic( playlist[0] ).pause();
 		
 		is_playing = false;
 	}
@@ -164,7 +200,7 @@ class net.alumican.as2.musicplayer.MusicPlayer {
 	
 	/**
 	 * 再生中の曲を中断して割り込みます. 
-	 * 再生中の曲は予約リストの先頭に移動します. 
+	 * 再生中の曲は再生回数がリセットされた上で予約リストの先頭に移動します. 
 	 * 
 	 * @param	m:IMusic	曲
 	 */
@@ -185,11 +221,16 @@ class net.alumican.as2.musicplayer.MusicPlayer {
 	}
 	
 	/**
-	 * 再生中の曲をスキップして予約リスト先頭の曲に移動します. 
+	 * プレイリスト先頭の曲をスキップします. 
 	 * 
 	 * @param	n:Number	スキップ数
 	 */
 	public function skip(n:Number):Void {
 		
+		if (n == null) { n = 1; };
+		
+		IMusic( playlist[0] ).stop();
+		
+		playlist.splice(0, Math.min(n, playlist.length));
 	}
 }
