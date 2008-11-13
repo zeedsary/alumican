@@ -11,6 +11,11 @@ import net.alumican.as2.musicplayer.MusicPlayer;
 class net.alumican.as2.musicplayer.ExternalMusic extends BasicMusic {
 	
 	/**
+	 * サウンドのタイプです. 
+	 */
+	private var type:String = "external";
+	
+	/**
 	 * 外部サウンドファイルのURLです. 
 	 */
 	private var url:String;
