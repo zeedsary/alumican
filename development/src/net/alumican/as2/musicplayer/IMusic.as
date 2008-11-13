@@ -7,6 +7,18 @@
 interface net.alumican.as2.musicplayer.IMusic {
 	
 	/**
+	 * 各種イベントトリガです. 
+	 */
+	static function get SOUND_COMPLETE():String;
+	static function get LOOP_COMPLETE() :String;
+	
+		
+	/**
+	 * サウンドのタイプです. 
+	 */
+	public function get _type():String;
+	
+	/**
 	 * 現在の再生回数です. 
 	 * 
 	 */
@@ -23,6 +35,25 @@ interface net.alumican.as2.musicplayer.IMusic {
 	 * 
 	 */
 	public function get _is_playing():Boolean;
+	
+	/**
+	 * 音量です. 
+	 * 
+	 */
+	public function get _volume():Number;
+	public function set _volume(value:Number):Void;
+	
+	/**
+	 * 再生個所(ミリ秒)です. 
+	 * 
+	 */
+	public function get _position():Sound;
+	
+	/**
+	 * 再生時間(ミリ秒)です. 
+	 * 
+	 */
+	public function get _duration():Sound;
 	
 	/**
 	 * Soundオブジェクトです. 
@@ -65,6 +96,12 @@ interface net.alumican.as2.musicplayer.IMusic {
 	 * 
 	 */
 	public function seek(millisecond:Number):Void;
+	
+	/**
+	 * 再生ヘッダをパーセンテージで移動します. 
+	 * 
+	 */
+	public function seekPercent(percent:Number):Void;
 	
 	/**
 	 * 再生回数をリセットします. 

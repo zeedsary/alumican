@@ -11,6 +11,11 @@ import net.alumican.as2.musicplayer.MusicPlayer;
 class net.alumican.as2.musicplayer.AssetMusic extends BasicMusic {
 	
 	/**
+	 * サウンドのタイプです. 
+	 */
+	private var type:String = "asset";
+	
+	/**
 	 * リンケージ識別子です. 
 	 */
 	private var linkage_id:String;

@@ -13,8 +13,13 @@ class net.alumican.as2.musicplayer.BasicMusic implements IMusic {
 	 * 各種イベントトリガです. 
 	 */
 	static function get SOUND_COMPLETE():String { return "onSoundComplete"; }
-	static function get LOOP_COMPLETE() :String { return "onLoopomplete";   }
+	static function get LOOP_COMPLETE() :String { return "onLoopComplete";  }
 	
+	/**
+	 * サウンドのタイプです. 
+	 */
+	private var type:String = "basic";
+		
 	/**
 	 * 現在の再生回数です. 
 	 */
@@ -31,7 +36,7 @@ class net.alumican.as2.musicplayer.BasicMusic implements IMusic {
 	private var is_playing:Boolean;
 	
 	/**
-	 * 再生箇所(ミリ秒)
+	 * 再生箇所(ミリ秒)です. 
 	 */
 	private var position:Number;
 	
@@ -50,12 +55,26 @@ class net.alumican.as2.musicplayer.BasicMusic implements IMusic {
 	 */
 	//private function _onLoopComplete:Function;
 	
+	/**
+	 * EventDispatcher用関数群です. 
+	 */
+	private var dispatchEvent:Function;
+	private var dispatchQueue:Function;
+	public var addEventListener:Function;
+	public var removeEventListener:Function;
+	
+	public function get _type()      :String  { return type;           }
 	public function get _count()     :Number  { return count;          }
 	public function get _loops()     :Number  { return loops;          }
 	public function get _is_playing():Boolean { return is_playing;     }
 	public function get _sound()     :Sound   { return sound;          }
 	public function get _position()  :Sound   { return sound.position; }
 	public function get _duration()  :Sound   { return sound.duration; }
+	
+	public function get _volume()            :Number { return sound.getVolume(); }
+	public function set _volume(value:Number):Void   { sound.setVolume();        }
+
+	
 	//public function get _onSoundComplete():Function { return onSoundComplete; }
 	//public function get _onLoopComplete() :Function { return onLoopComplete;  }
 	
