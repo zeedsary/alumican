@@ -206,8 +206,6 @@ class net.alumican.as2.chumbyui.ChumbyUI {
 		//イベントリスナの登録
 		var mouse_listener:Object = new Object();
 		mouse_listener.onMouseDown = _startGesture;
-		mouse_listener.onMouseMove = _operateGesture;
-		mouse_listener.onMouseUp   = _stopGesture;
 		Mouse.addListener(mouse_listener);
 		
 		//ジェスチャートラッキング用変数
@@ -236,11 +234,14 @@ class net.alumican.as2.chumbyui.ChumbyUI {
 			//ジェスチャーの中心座標
 			px = _root._xmouse;
 			py = _root._ymouse;
+			
+			mouse_listener.onMouseMove = _operateGesture;
+			mouse_listener.onMouseUp   = _stopGesture;
 		}
 		
 		//マウスジェスチャー中
 		function _operateGesture():Void {
-			
+			trace(1)
 			if (!_is_gesture) return;
 			
 			//トラッキング
@@ -292,6 +293,9 @@ class net.alumican.as2.chumbyui.ChumbyUI {
 				//失敗
 				trace("detect gesture failure , command : " + track);
 			}
+			
+			mouse_listener.onMouseMove = null;
+			mouse_listener.onMouseUp   = null;
 		}
 	}
 	
