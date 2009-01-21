@@ -1,5 +1,29 @@
 ﻿import mx.utils.Delegate;
-
+/**
+ * Initializerクラス
+ * 
+ * AをattachMovie -> AのonLoadでAの中にBをattachMovie -> attach直後のBのメソッドを実行できない
+ * 
+ * そんな状態の時
+ * 
+ * if(b.initialize == null) {
+ * 	b.onLoad = Delegate.create(this, function():Void {
+ * 		b.initialize(hoge);
+ * 		trace("初期化したよ");
+ * 	});
+ * } else {
+ * 	b.initialize(hoge);
+ * 	trace("初期化したよ");
+ * }
+ * 
+ * こんな事しなくても
+ * 
+ * Initializer.register(b, "initialize", [hoge], Delegate.create(this, function():Void { trace("初期化したよ"); }););
+ * 
+ * 1行で済みました。
+ * 
+ * @author alumican<Yukiya Okuda>
+ */
 class net.alumican.as2.utils.Initializer {
 	
 	//mc.init(a, b, c); -> Initializer.resist(mc, "init", [a, b, c]);
