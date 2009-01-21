@@ -157,4 +157,8 @@ class net.alumican.as2.utils.Alignment {
 	static function _alignBR(margin:Array):Point {
 		return new Point(_stagew - margin[1], _stageh - margin[2]);
 	}
+	
+	static function _alignMC(margin:Array):Point {
+		return new Point(margin[3], margin[0]);
+	}
 }
