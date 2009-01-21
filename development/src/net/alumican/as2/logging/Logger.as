@@ -13,6 +13,19 @@ class net.alumican.as2.logging.Logger {
 	 * 
 	 * @todo stactraceの実装  てかAS2でできんのこれ?
 	 * 
+	 ***使い方********************************************
+	 * 
+	 * //設定
+	 * Logger.errorLevel = Logger.INFO; //出力するエラーレベル
+	 * Logger.setLogging(new TraceLogging()); //ログの取り方
+	 * 
+	 * //デバッグ
+	 * Logger.debug("a");
+	 * Logger.info("a");
+	 * Logger.warn("a");
+	 * Logger.error("a");
+	 * Logger.fatal("a");
+	 * 
 	 ***original********************************************
 	 * 
 	 * ログ出力を一元管理するためのクラスです. 
