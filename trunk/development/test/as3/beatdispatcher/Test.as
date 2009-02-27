@@ -71,7 +71,7 @@
 			_beatdispatcher = new BeatDispatcher();
 			
 			//bpm, 拍子, 1拍にビートを刻む回数
-			_beatdispatcher.start(480, 4, 2);
+			_beatdispatcher.start(240, 4, 2);
 			
 			//_beatdispatcher.addEventListener(BeatDispatcher.FREQ, _freqHanbler);
 			_beatdispatcher.addEventListener(BeatDispatcher.BEAT, _beatHanbler);
