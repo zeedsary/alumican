@@ -71,11 +71,11 @@
 			_beatdispatcher = new BeatDispatcher();
 			
 			//bpm, 拍子, 1拍にビートを刻む回数
-			_beatdispatcher.start(240, 4, 2);
+			_beatdispatcher.start(120, 4, 2);
 			
-			//_beatdispatcher.addEventListener(BeatDispatcher.FREQ, _freqHanbler);
+			//_beatdispatcher.addEventListener(BeatDispatcher.UNIT, _unitHanbler);
 			_beatdispatcher.addEventListener(BeatDispatcher.BEAT, _beatHanbler);
-			_beatdispatcher.addEventListener(BeatDispatcher.COMPLETE, _completeHanbler);
+			_beatdispatcher.addEventListener(BeatDispatcher.BAR , _barHanbler);
 		}
 		
 		/**
@@ -163,8 +163,8 @@
 		 * ビートに乗っかったときに呼び出される
 		 * @param	e
 		 */
-		private function _freqHanbler(e:Event):void {
-			trace("freq : " + _beatdispatcher.current_freq);
+		private function _unitHanbler(e:Event):void {
+			trace("freq : " + _beatdispatcher.current_unit);
 		}
 		
 		/**
@@ -179,8 +179,8 @@
 		 * 4拍子なら4拍終わったときに呼び出される
 		 * @param	e
 		 */
-		private function _completeHanbler(e:Event):void {
-			trace("complete");
+		private function _barHanbler(e:Event):void {
+			trace("bar");
 		}
 		
 		/**

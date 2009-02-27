@@ -11,35 +11,35 @@
 	 */
 	public class BeatDispatcher extends Sprite {
 		
-		static public const FREQ:String = "onUnit";
+		static public const UNIT:String = "onUnit";
 		static public const BEAT:String = "onBeat";
-		static public const COMPLETE:String = "onBar";
+		static public const BAR:String = "onBar";
 		
-		private var _bpm:Number;
+		private var _resolution:Number;
 		private var _beat:Number;
-		private var _freq:Number;
+		private var _bpm:Number;
 		
-		private var _st:Number;
+		private var _start_time:Number;
 		
-		private var _freq_count:uint;
-		private var _beat_count:uint;
+		private var _current_unit:uint;
+		private var _current_beat:uint;
 		
 		private var _position:uint;
 		
 		private var _time_old:Number;
-		private var _freq_old:uint;
+		private var _unit_old:uint;
 		private var _beat_old:uint;
 		
 		private var _ref_pointer:Array;
 		
 		public function get bpm():uint { return _bpm; }
 		public function get beat():uint { return _beat; }
-		public function get freq():Number { return _freq; }
+		public function get resolution():Number { return _resolution; }
 		
-		public function get current_freq():uint { return (_freq_count + 1) % _freq; }
-		public function get current_beat():uint { return (_beat_count + 1) % _beat; }
-		public function get position():uint { return _position; }
-		public function get position_length():uint { return _beat * _freq; }
+		public function get current_unit():uint { return (_current_unit + 1) % _resolution; }
+		public function get current_beat():uint { return (_current_beat + 1) % _beat; }
+		public function get position():uint { return _position - 1; }
+		public function get position_length():uint { return _beat * _resolution; }
 		
 		/**
 		 * コンストラクタ
@@ -52,18 +52,19 @@
 		/**
 		 * ビート再生開始
 		 * @param	bpm		bpm
-		 * @param	beat	拍子, 
-		 * @param	freq	1拍にビートを刻む回数
+		 * @param	beat	拍数, 
+		 * @param	_resolution	1拍にビートを刻む回数
 		 */
-		public function start(bpm:uint = 480, beat:uint = 4, freq:uint = 4):void {
+		public function start(bpm:uint = 240, beat:uint = 4, resolution:uint = 2):void {
 			
-			_bpm = bpm;
+			_resolution = resolution;
 			_beat = beat;
-			_freq = freq;
-			_st = getTimer();
+			_bpm = bpm;
 			
-			_freq_count = 0;
-			_beat_count = 0;
+			_start_time = getTimer();
+			
+			_current_unit = 0;
+			_current_beat = 0;
 			
 			_position = 0;
 			
@@ -75,15 +76,15 @@
 		 * @param	beat
 		 * @param	callback
 		 */
-		public function addBeatEvent(_position:uint, callback:Function):void {
+		public function addBeatEvent(position:uint, callback:Function):void {
 			
-			if (_ref_pointer[_position] == null) {
-				_ref_pointer[_position] = 1;
+			if (_ref_pointer[position] == null) {
+				_ref_pointer[position] = 1;
 			} else {
-				++_ref_pointer[_position];
+				++_ref_pointer[position];
 			}
 			
-			addEventListener(getEvent(_position), callback);
+			addEventListener(getEvent(position), callback);
 		}
 	
 		/**
@@ -91,13 +92,13 @@
 		 * @param	beat
 		 * @param	callback
 		 */
-		public function removeBeatEvent(_position:uint, callback:Function):void {
+		public function removeBeatEvent(position:uint, callback:Function):void {
 			
-			if (_ref_pointer[_position] == null) return;
+			if (_ref_pointer[position] == null) return;
 			
-			if (--_ref_pointer[_position] == 0) _ref_pointer[_position] = null;
+			if (--_ref_pointer[position] == 0) _ref_pointer[position] = null;
 			
-			removeEventListener(getEvent(_position), callback);
+			removeEventListener(getEvent(position), callback);
 		}
 		
 		/**
@@ -106,53 +107,53 @@
 		 */
 		private function _update(e:Event):void {
 			
-			var ct:Number = getTimer();
-			var elapsed:Number = _bpm * (ct - _st) / 60000;
+			var current_time:Number = getTimer();
+			var elapsed_time:Number = _resolution * _bpm * (current_time - _start_time) / 60000;
 			
 			//ビート毎に実行
-			if (int(_time_old) != int(elapsed)) {
+			if (int(_time_old) != int(elapsed_time)) {
 				
-				_time_old = elapsed;
+				_time_old = elapsed_time;
 				
-				dispatchEvent(new Event(FREQ));
+				dispatchEvent(new Event(UNIT));
 				
 				if (_ref_pointer[_position] != null) dispatchEvent(new Event(getEvent(_position)));
 				
 				++_position;
-				++_freq_count;
+				++_current_unit;
 				
-				//trace("a " + _freq_count);
+				//trace("update unit " + _current_unit);
 			}
 			
 			//拍毎に実行
-			if (int(_freq_count) % int(_freq) == 0 &&
-				int(_freq_count) != int(_freq_old)) {
+			if (int(_current_unit) % int(_resolution) == 0 &&
+				int(_current_unit) != int(_unit_old)) {
 				
-				_freq_count = 0;
-				_freq_old = 0;
+				_current_unit = 0;
+				_unit_old = 0;
 				
 				dispatchEvent(new Event(BEAT));
 				
-				++_beat_count;
+				++_current_beat;
 				
-				//trace("b " + _beat_count);
+				//trace("update beat " + _current_beat);
 			}
 			
 			//拍子完了時に実行
-			if (int(_beat_count) % int(_beat) == 0 &&
-				int(_beat_count) != int(_beat_old)) {
+			if (int(_current_beat) % int(_beat) == 0 &&
+				int(_current_beat) != int(_beat_old)) {
 				
-				dispatchEvent(new Event(COMPLETE));
+				dispatchEvent(new Event(BAR));
 				
-				_beat_count = 0;
+				_current_beat = 0;
 				_beat_old = 0;
 				_position = 0;
 				
-				//trace("c " + _beat_count);
+				//trace("update bar");
 			}
 			
 			//一分ごとに実行
-			if (elapsed == _bpm) _st = getTimer();
+			if (elapsed_time == _bpm) _start_time = getTimer();
 		}
 		
 		//任意のビート位置で発行するイベント名を生成する
