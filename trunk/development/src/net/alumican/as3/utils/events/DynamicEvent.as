@@ -1,13 +1,19 @@
-﻿package net.alumican.as3.utils {
+﻿package net.alumican.as3.utils.events {
 	
 	import flash.events.Event;
 	
-	public dynamic class DynamicEvent extends Event {
-
-		public function DynamicEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false) {
+	public class DynamicEvent extends Event {
+		
+		//User Data
+		private var _data:*;
+		public function get data():* { return _data; }
+		public function set data(value:*):void { _data = value; }
+		
+		public function DynamicEvent(type:String, data:* = null, bubbles:Boolean = false, cancelable:Boolean = false):void {
+			_data = data;
 			super(type, bubbles, cancelable);
 		}
-
+		
 		override public function clone():Event {
 			return new DynamicEvent(type, bubbles, cancelable);
 		}
