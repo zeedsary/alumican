@@ -1,8 +1,10 @@
-﻿package net.alumican.as3.justpushbutton {
+﻿package net.alumican.as3.justpushbutton.proto {
 	
-	import flash.display.*;
-	import flash.events.*;
-	import flash.utils.Dictionary;
+	import flash.display.Sprite;
+	import flash.display.Stage;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+//	import flash.utils.Dictionary;
 	
 	/**
 	 * BasicButton.as
@@ -10,7 +12,7 @@
 	 * @author alumican.net<Yukiya Okuda>
 	 */
 	
-	public class BasicButton extends MovieClip {
+	public class BasicButton extends Sprite {
 		
 		//-------------------------------------
 		// CLASS CONSTANTS
@@ -18,6 +20,18 @@
 		
 		//RELEASE_OUTSIDE event
 		static public const RELEASE_OUTSIDE:String = "onReleaseOutside";
+		
+		//DRAG_OVER event
+		static public const DRAG_OVER:String = "onDragOver";
+		
+		//DRAG_OUT event
+		static public const DRAG_OUT:String = "onDragOut";
+		
+		//AS2 onRollOver event (exclusive drag over event)
+		static public const AS2_ROLL_OVER:String = "onAS2RollOver";
+		
+		//AS2 onRollOut event (exclusive drag out event)
+		static public const AS2_ROLL_OUT:String = "onAS2RollOut";
 		
 		//-------------------------------------
 		// VARIABLES
@@ -32,11 +46,8 @@
 		//status of press or not
 		private var _isPress:Boolean;
 		
-		//used for stacking event handler, [RELEASE_OUTSIDE handler] = {down:MOUSE_DOWN handler, up:MOUSE_UP handler};
-		private var _releseOutsideStack:Dictionary;
-		
 		//stacking all added event handlers
-		private var _eventHandlerStack:Array;
+	//	private var _eventHandlerStack:Dictionary;
 		
 		//-------------------------------------
 		// GETTER/SETTER
@@ -44,6 +55,9 @@
 		
 		//getter of _isRollOver property
 		public function get isRollOver():Boolean { return _isRollOver; }
+		
+		//getter of _isPress property
+		public function get isPress():Boolean { return _isPress; }
 		
 		//-------------------------------------
 		// CONSTRUCTOR
@@ -58,7 +72,8 @@
 			_stage = stage;
 			_isRollOver = false;
 			_isPress = false;
-			_releseOutsideStack = new Dictionary(true);
+			
+		//	_eventHandlerStack = new Dictionary(true);
 			
 			addEventListener(Event.ADDED_TO_STAGE, _addedToStageHandler);
 			addEventListener(Event.REMOVED_FROM_STAGE, _removedFromStageHandler);
@@ -77,26 +92,15 @@
 		 * @param	useWeakReference
 		 */
 		public override function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
-			switch(type) {
-				
-				//releaseOutside event
-				case RELEASE_OUTSIDE:
-					var mouseUpHandler:Function = function(e:MouseEvent):void {
-						_stage.removeEventListener(MouseEvent.MOUSE_UP, listener, useCapture);
-					}
-					var mouseDownHandler:Function = function(e:MouseEvent):void {
-						_stage.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler, useCapture, priority, useWeakReference);
-						_stage.addEventListener(MouseEvent.MOUSE_UP, listener, useCapture, priority, useWeakReference);
-					}
-					addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler, useCapture, priority, useWeakReference);
-					_releseOutsideStack[listener] = {down:mouseDownHandler, up:mouseUpHandler};
-					break;
-					
-				//default event
-				default:
-					addEventListener(type, listener, useCapture, priority, useWeakReference);
-					break;
+			super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+			
+			/*
+			//stack event handler
+			if (_eventHandlerStack[type] == null) {
+				_eventHandlerStack[type] = new Dictionary(true);
 			}
+			_eventHandlerStack[type][listener] = listener;
+			*/
 		}
 		
 		/**
@@ -106,53 +110,102 @@
 		 * @param	useCapture
 		 */
 		public override function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
-			switch(type) {
-				
-				//releaseOutside event
-				case RELEASE_OUTSIDE:
-					_stage.removeEventListener(MouseEvent.MOUSE_UP, listener, useCapture);
-					_stage.removeEventListener(MouseEvent.MOUSE_UP, _releseOutsideStack[listener].up, useCapture);
-					removeEventListener(MouseEvent.MOUSE_DOWN, _releseOutsideStack[listener].down, useCapture);
-					delete _releseOutsideStack[listener];
-					break;
-					
-				//default event
-				default:
-					removeEventListener(type, listener, useCapture);
-					break;
+			super.removeEventListener(type, listener, useCapture);
+			
+			/*
+			//unstack event handler
+			delete _eventHandlerStack[type][listener];
+			var c:uint = 0;
+			for (var name:String in _eventHandlerStack[type]) {
+				++c;
 			}
+			if (c == 0) {
+				delete _eventHandlerStack[type];
+			}
+			//for (var name:String in _eventHandlerStack) trace(name + " : "  + _eventHandlerStack[name]);
+			*/
 		}
 		
+		/*
+		public function kill():void {
+			
+			for (var type:String in _eventHandlerStack) {
+				for (var listener:String in _eventHandlerStack[type]) {
+					trace(type + " : " + listener);
+					removeEventListener(type, _eventHandlerStack[type][listener]);
+				}
+			}
+			_eventHandlerStack = new Dictionary(true);
+			
+			removeEventListener(Event.ADDED_TO_STAGE, _addedToStageHandler);
+			removeEventListener(Event.REMOVED_FROM_STAGE, _removedFromStageHandler);
+			
+			removeEventListener(MouseEvent.ROLL_OVER, _presetRollOverHandler);
+			removeEventListener(MouseEvent.ROLL_OUT, _presetRollOutHandler);
+			removeEventListener(MouseEvent.MOUSE_DOWN, _presetMouseDownHandler);
+			
+			stage.removeEventListener(MouseEvent.MOUSE_UP, _presetStageMouseUpHandler);
+		}
+		*/
+		
 		/**
-		 * _presetRollOverHandler
+		 * roll over event
 		 * @param	e
 		 */
 		private function _presetRollOverHandler(e:MouseEvent):void {
 			_isRollOver = true;
+			
+			if (e.buttonDown) {
+				//for drag over
+				dispatchEvent(new MouseEvent(DRAG_OVER));
+				
+			} else {
+				//for roll over event like AS2
+				dispatchEvent(new MouseEvent(AS2_ROLL_OVER));
+			}
 		}
 		
 		/**
-		 * _presetRollOutHandler
+		 * roll out event
 		 * @param	e
 		 */
 		private function _presetRollOutHandler(e:MouseEvent):void {
 			_isRollOver = false;
+			
+			if (e.buttonDown) {
+				//for drag out
+				dispatchEvent(new MouseEvent(DRAG_OUT));
+				
+			} else {
+				//for roll over event like AS2
+				dispatchEvent(new MouseEvent(AS2_ROLL_OUT));
+			}
 		}
 		
 		/**
-		 * _presetMouseDownHandler
+		 * mouse down event
 		 * @param	e
 		 */
 		private function _presetMouseDownHandler(e:MouseEvent):void {
 			_isPress = true;
+			
+			//for release outside
+			stage.addEventListener(MouseEvent.MOUSE_UP, _presetStageMouseUpHandler);
 		}
 		
 		/**
-		 * _presetMouseUpHandler
+		 * mouse up on stage event
 		 * @param	e
 		 */
-		private function _presetMouseUpHandler(e:MouseEvent):void {
+		private function _presetStageMouseUpHandler(e:MouseEvent):void {
+			stage.removeEventListener(MouseEvent.MOUSE_UP, _presetStageMouseUpHandler);
+			
 			_isPress = false;
+			
+			//for release outside
+			if (!_isRollOver) {
+				dispatchEvent(new MouseEvent(RELEASE_OUTSIDE));
+			}
 		}
 		
 		/**
@@ -171,7 +224,6 @@
 			
 			//for _isPress property
 			addEventListener(MouseEvent.MOUSE_DOWN, _presetMouseDownHandler);
-			addEventListener(MouseEvent.MOUSE_UP, _presetMouseUpHandler);
 		}
 		
 		/**
@@ -188,7 +240,7 @@
 			removeEventListener(MouseEvent.ROLL_OVER, _presetRollOverHandler);
 			removeEventListener(MouseEvent.ROLL_OUT, _presetRollOutHandler);
 			removeEventListener(MouseEvent.MOUSE_DOWN, _presetMouseDownHandler);
-			removeEventListener(MouseEvent.MOUSE_UP, _presetMouseUpHandler);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, _presetStageMouseUpHandler);
 		}
 	}
 }

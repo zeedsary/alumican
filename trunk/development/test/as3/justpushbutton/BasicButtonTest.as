@@ -2,7 +2,8 @@
 	
 	import flash.display.*;
 	import flash.events.MouseEvent;
-	import net.alumican.as3.justpushbutton.BasicButton;
+	import net.alumican.as3.justpushbutton.events.CustomMouseEvent;
+	import net.alumican.as3.justpushbutton.proto.BasicButton;
 	
 	/**
 	 * BasicButton.as
@@ -51,7 +52,15 @@
 			//custom event
 			btn.addEventListener(BasicButton.RELEASE_OUTSIDE, _releaseOutsideHandlerA);
 			btn.addEventListener(BasicButton.RELEASE_OUTSIDE, _releaseOutsideHandlerB);
-			btn.removeEventListener(BasicButton.RELEASE_OUTSIDE, _releaseOutsideHandlerB);
+			btn.removeEventListener(BasicButton.RELEASE_OUTSIDE, _releaseOutsideHandlerA);
+			
+			btn.addEventListener(BasicButton.DRAG_OVER, _dragOverHandler);
+			btn.addEventListener(BasicButton.DRAG_OUT , _dragOutHandler);
+			
+			btn.addEventListener(BasicButton.AS2_ROLL_OVER, _as2RollOverHandler);
+			btn.addEventListener(BasicButton.AS2_ROLL_OUT , _as2RollOutHandler);
+			
+		//	btn.kill();
 		}
 		
 		//-------------------------------------
@@ -107,6 +116,22 @@
 		
 		private function _releaseOutsideHandlerB(e:MouseEvent):void {
 			trace("RELEASE_OUTSIDE B");
+		}
+		
+		private function _dragOverHandler(e:MouseEvent):void {
+			trace("DRAG_OVER");
+		}
+		
+		private function _dragOutHandler(e:MouseEvent):void {
+			trace("DRAG_OUT");
+		}
+		
+		private function _as2RollOverHandler(e:MouseEvent):void {
+			trace("AS2_ROLL_OVER");
+		}
+		
+		private function _as2RollOutHandler(e:MouseEvent):void {
+			trace("AS2_ROLL_OUT");
 		}
 	}
 }
