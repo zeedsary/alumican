@@ -75,6 +75,9 @@
 			
 		//	_eventHandlerStack = new Dictionary(true);
 			
+			//use hand cursor
+			buttonMode = true;
+			
 			addEventListener(Event.ADDED_TO_STAGE, _addedToStageHandler);
 			addEventListener(Event.REMOVED_FROM_STAGE, _removedFromStageHandler);
 		}
