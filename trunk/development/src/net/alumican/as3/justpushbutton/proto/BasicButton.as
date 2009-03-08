@@ -59,6 +59,12 @@
 		//getter of _isPress property
 		public function get isPress():Boolean { return _isPress; }
 		
+		//enable/disable this and childrens
+		public function set enabledContainChildren(flag:Boolean):void {
+			mouseEnabled = flag;
+			mouseChildren = flag;
+		}
+		
 		//-------------------------------------
 		// CONSTRUCTOR
 		//-------------------------------------
@@ -75,7 +81,6 @@
 			
 		//	_eventHandlerStack = new Dictionary(true);
 			
-			//use hand cursor
 			buttonMode = true;
 			
 			addEventListener(Event.ADDED_TO_STAGE, _addedToStageHandler);
