@@ -1,8 +1,7 @@
 ﻿package {
 	
-	import flash.display.*;
+	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	import net.alumican.as3.justpushbutton.events.CustomMouseEvent;
 	import net.alumican.as3.justpushbutton.proto.BasicButton;
 	
 	/**
@@ -10,7 +9,7 @@
 	 *
 	 * @author alumican.net<Yukiya Okuda>
 	 */
-	public class BasicButtonTest extends MovieClip {
+	public class BasicButtonTest extends Sprite {
 		
 		//-------------------------------------
 		// CLASS CONSTANTS
@@ -57,8 +56,8 @@
 			btn.addEventListener(BasicButton.DRAG_OVER, _dragOverHandler);
 			btn.addEventListener(BasicButton.DRAG_OUT , _dragOutHandler);
 			
-			btn.addEventListener(BasicButton.AS2_ROLL_OVER, _as2RollOverHandler);
-			btn.addEventListener(BasicButton.AS2_ROLL_OUT , _as2RollOutHandler);
+			btn.addEventListener(BasicButton.EX_ROLL_OVER, _exclusiveRollOverHandler);
+			btn.addEventListener(BasicButton.EX_ROLL_OUT , _exclusiveRollOutHandler);
 			
 		//	btn.kill();
 		}
@@ -126,12 +125,12 @@
 			trace("DRAG_OUT");
 		}
 		
-		private function _as2RollOverHandler(e:MouseEvent):void {
-			trace("AS2_ROLL_OVER");
+		private function _exclusiveRollOverHandler(e:MouseEvent):void {
+			trace("EX_ROLL_OVER");
 		}
 		
-		private function _as2RollOutHandler(e:MouseEvent):void {
-			trace("AS2_ROLL_OUT");
+		private function _exclusiveRollOutHandler(e:MouseEvent):void {
+			trace("EX_ROLL_OUT");
 		}
 	}
 }
