@@ -27,11 +27,11 @@
 		//DRAG_OUT event
 		static public const DRAG_OUT:String = "onDragOut";
 		
-		//AS2 onRollOver event (exclusive drag over event)
-		static public const AS2_ROLL_OVER:String = "onAS2RollOver";
+		//like AS2 onRollOver event (exclusive with drag over event)
+		static public const EX_ROLL_OVER:String = "onExclusiveRollOver";
 		
-		//AS2 onRollOut event (exclusive drag out event)
-		static public const AS2_ROLL_OUT:String = "onAS2RollOut";
+		//like AS2 onRollOut event (exclusive with drag out event)
+		static public const EX_ROLL_OUT:String = "onExclusiveRollOut";
 		
 		//-------------------------------------
 		// VARIABLES
@@ -161,7 +161,7 @@
 				
 			} else {
 				//for roll over event like AS2
-				dispatchEvent(new MouseEvent(AS2_ROLL_OVER));
+				dispatchEvent(new MouseEvent(EX_ROLL_OVER));
 			}
 		}
 		
@@ -178,7 +178,7 @@
 				
 			} else {
 				//for roll over event like AS2
-				dispatchEvent(new MouseEvent(AS2_ROLL_OUT));
+				dispatchEvent(new MouseEvent(EX_ROLL_OUT));
 			}
 		}
 		
