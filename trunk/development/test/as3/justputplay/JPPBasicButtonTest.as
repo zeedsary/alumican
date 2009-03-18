@@ -112,8 +112,6 @@
 				
 				btn.onReleaseOutside = _releaseOutsideHandlerB;
 				btn.onMouseMove      = null;
-				btn.onMouseMove      = null;
-				btn.onMouseMove      = null;
 				
 				//*/
 				
@@ -132,17 +130,21 @@
 			//yoyo_btn.yoyoFrameTo   = 20;
 			
 			//parameters for JPPLabelButton
-			label_btn.labelRollOver       = "rollOver";
-			label_btn.labelRollOut        = "rollOut";
-			label_btn.labelUseGotoAndPlay = false;
+			//label_btn.labelRollOver       = "rollOver";
+			//label_btn.labelRollOut        = "rollOut";
+			//label_btn.labelUseGotoAndPlay = false;
 			
 			//yoyo_btn.hitObject = yoyo_btn.area;
 			
-			//basic_btn.kill();
-			//yoyo_btn.kill();
+			//yoyo_btn.useAutoFinalize = false;
 			
 			//removeChild(basic_btn);
 			//removeChild(yoyo_btn);
+			
+			//addChild(yoyo_btn);
+			
+			//basic_btn.kill();
+			//yoyo_btn.kill();
 		}
 		
 		//-------------------------------------
@@ -157,7 +159,7 @@
 		}
 		
 		private function _removedHandler(e:Event):void {
-			trace(e.currentTarget + "REMOVED");
+			trace(e.currentTarget + " REMOVED");
 		}
 		
 		private function _clickHandler(e:MouseEvent):void {
