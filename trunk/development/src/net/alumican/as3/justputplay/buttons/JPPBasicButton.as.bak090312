@@ -1,0 +1,393 @@
+﻿package net.alumican.as3.justputplay.buttons {
+	
+	import flash.display.Sprite;
+	import flash.display.Stage;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+//	import flash.utils.Dictionary;
+	import net.alumican.as3.justputplay.events.JPPMouseEvent;
+	
+	/**
+	 * JPPBasicButton.as
+	 *
+	 * @author alumican.net<Yukiya Okuda>
+	 */
+	public class JPPBasicButton extends Sprite {
+		
+		//-------------------------------------
+		// CLASS CONSTANTS
+		//-------------------------------------
+		
+		//--------------------------------------------------------------------------
+		// VARIABLES
+		//--------------------------------------------------------------------------
+		
+		//refference of stage
+		private var _stage:Stage;
+		
+		//stacking all added event handlers
+	//	private var _eventHandlerStack:Dictionary;
+		
+		//-------------------------------------
+		// GETTER/SETTER
+		//-------------------------------------
+		
+		
+		//--------------------------------------------------------------------------
+		// ENABLED / DISABLED
+		//--------------------------------------------------------------------------
+		
+		//enable/disable this and childrens
+		public function set buttonEnabled(flag:Boolean):void {
+			mouseEnabled  = flag;
+			mouseChildren = flag;
+		}
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// MOUSE STATUS
+		//--------------------------------------------------------------------------
+		
+		//status of rollOver or not
+		private var _isRollOver:Boolean;
+		
+		//status of press or not
+		private var _isPress:Boolean;
+		
+		public function get isRollOver():Boolean { return _isRollOver; }
+		public function get isPress():Boolean    { return _isPress;    }
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// SHORTCUT FUNCTIONS 
+		//--------------------------------------------------------------------------
+		
+		//functions
+		private var _onClick:Function;
+		private var _onDoubleClick:Function;
+		private var _onRollOver:Function;
+		private var _onRollOut:Function;
+		private var _onMouseDown:Function;
+		private var _onMouseUp:Function;
+		private var _onMouseMove:Function;
+		private var _onMouseOver:Function;
+		private var _onMouseOut:Function;
+		private var _onMouseWheel:Function;
+		
+		public function get onClick():Function             { return _onClick; }
+		public function set onClick(f:Function):void       { _presetAddShortcut(MouseEvent.CLICK       , _onClick      , f); }
+		
+		public function get onDoubleClick():Function       { return _onDoubleClick; }
+		public function set onDoubleClick(f:Function):void { doubleClickEnabled = (f == null) ? false : true;
+		                                                     _presetAddShortcut(MouseEvent.DOUBLE_CLICK, _onDoubleClick, f); }
+		
+		public function get onRollOver():Function          { return _rollOver; }
+		public function set onRollOver(f:Function):void    { _presetAddShortcut(MouseEvent.ROLL_OVER   , _onRollOver   , f); }
+		
+		public function get onRollOut():Function           { return _rollOut; }
+		public function set onRollOut(f:Function):void     { _presetAddShortcut(MouseEvent.ROLL_OUT    , _onRollOut    , f); }
+		
+		public function get onMouseDown():Function         { return _onMouseDown; }
+		public function set onMouseDown(f:Function):void   { _presetAddShortcut(MouseEvent.MOUSE_DOWN  , _onMouseDown  , f); }
+		
+		public function get onMouseUp():Function           { return _onMouseUp; }
+		public function set onMouseUp(f:Function):void     { _presetAddShortcut(MouseEvent.MOUSE_UP    , _onMouseUp    , f); }
+		
+		public function get onMouseMove():Function         { return _onMouseMove; }
+		public function set onMouseMove(f:Function):void   { _presetAddShortcut(MouseEvent.MOUSE_MOVE  , _onMouseMove  , f); }
+		
+		public function get onMouseOver():Function         { return _onMouseOver; }
+		public function set onMouseOver(f:Function):void   { _presetAddShortcut(MouseEvent.MOUSE_OVER  , _onMouseOver  , f); }
+		
+		public function get onMouseOut():Function          { return _onMouseOut; }
+		public function set onMouseOut(f:Function):void    { _presetAddShortcut(MouseEvent.MOUSE_OUT   , _onMouseOut   , f); }
+		
+		public function get onMouseWheel():Function        { return _onMouseWheel; }
+		public function set onMouseWheel(f:Function):void  { _presetAddShortcut(MouseEvent.MOUSE_OVER  , _onMouseWheel , f); }
+		
+		/**
+		 * switch shortcut function
+		 * @param	type
+		 * @param	newFunc
+		 * @param	oldFunc
+		 */
+		private function _presetAddShortcut(type:String, oldFunc:Function, newFunc:Function):void {
+			if (oldFunc != null) {
+				removeEventListener(type, oldFunc);
+			}
+			if (newFunc != null) {
+				addEventListener(type, newFunc);
+			}
+			oldFunc = newFunc;
+		}
+		
+		/**
+		 * remobe shortcut function
+		 * @param	type
+		 * @param	f
+		 */
+		private function _presetRemoveShortcut(type:String, f:Function):void {
+			if (f != null) {
+				removeEventListener(type, f);
+			}
+		}
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// ADD / REMOVED CALLBACK
+		//--------------------------------------------------------------------------
+		
+		//called when Event.ADDED_TO_STAGE
+		private var _onInit:Function;
+		
+		//called when Event.REMOVED_FROM_STAGE
+		private var _onRemoved:Function;
+		
+		//_onInit
+		public function get onInit():Function { return _onInit; }
+		public function set onInit(f:Function):void { _onInit = f; }
+		
+		//_onRemoved
+		public function get onRemoved():Function { return _onRemoved; }
+		public function set onRemoved(f:Function):void { _onRemoved = f; }
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// CONSTRUCTOR
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * Constructor
+		 */
+		public function JPPBasicButton(stage:Stage = null):void {
+			super();
+			
+			_stage = stage;
+			_isRollOver = false;
+			_isPress = false;
+			
+		//	_eventHandlerStack = new Dictionary(true);
+			
+			buttonMode = true;
+			
+			addEventListener(Event.ADDED_TO_STAGE, _presetAddedToStageHandler);
+			addEventListener(Event.REMOVED_FROM_STAGE, _presetRemovedFromStageHandler);
+		}
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// INNER METHODS
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * overrided addEventListener
+		 * @param	type
+		 * @param	listener
+		 * @param	useCapture
+		 * @param	priority
+		 * @param	useWeakReference
+		 */
+		public override function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
+			super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+			
+			/*
+			//stack event handler
+			if (_eventHandlerStack[type] == null) {
+				_eventHandlerStack[type] = new Dictionary(true);
+			}
+			_eventHandlerStack[type][listener] = listener;
+			*/
+		}
+		
+		/**
+		 * overrided removeEventListener
+		 * @param	type
+		 * @param	listener
+		 * @param	useCapture
+		 */
+		public override function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
+			super.removeEventListener(type, listener, useCapture);
+			
+			/*
+			//unstack event handler
+			delete _eventHandlerStack[type][listener];
+			var c:uint = 0;
+			for (var name:String in _eventHandlerStack[type]) {
+				++c;
+			}
+			if (c == 0) {
+				delete _eventHandlerStack[type];
+			}
+			//for (var name:String in _eventHandlerStack) trace(name + " : "  + _eventHandlerStack[name]);
+			*/
+		}
+		
+		/*
+		public function kill():void {
+			
+			for (var type:String in _eventHandlerStack) {
+				for (var listener:String in _eventHandlerStack[type]) {
+					trace(type + " : " + listener);
+					removeEventListener(type, _eventHandlerStack[type][listener]);
+				}
+			}
+			_eventHandlerStack = new Dictionary(true);
+			
+			removeEventListener(Event.ADDED_TO_STAGE, _addedToStageHandler);
+			removeEventListener(Event.REMOVED_FROM_STAGE, _removedFromStageHandler);
+			
+			removeEventListener(MouseEvent.ROLL_OVER, _presetRollOverHandler);
+			removeEventListener(MouseEvent.ROLL_OUT, _presetRollOutHandler);
+			removeEventListener(MouseEvent.MOUSE_DOWN, _presetMouseDownHandler);
+			
+			stage.removeEventListener(MouseEvent.MOUSE_UP, _presetStageMouseUpHandler);
+		}
+		*/
+		
+		/**
+		 * roll over event
+		 * @param	e
+		 */
+		private function _presetRollOverHandler(e:MouseEvent):void {
+			//update isRollOver flag
+			_isRollOver = true;
+			
+			//execute shortcut function
+			/*
+			if (_rollOver != null) {
+				rollOver(e);
+			}
+			*/
+			
+			if (e.buttonDown) {
+				//for drag over
+				dispatchEvent(new JPPMouseEvent(JPPMouseEvent.DRAG_OVER));
+				
+			} else {
+				//for roll over event like AS2
+				dispatchEvent(new JPPMouseEvent(JPPMouseEvent.EX_ROLL_OVER));
+			}
+		}
+		
+		/**
+		 * roll out event
+		 * @param	e
+		 */
+		private function _presetRollOutHandler(e:MouseEvent):void {
+			//update isRollOver flag
+			_isRollOver = false;
+			
+			//execute shortcut function
+			/*
+			if (_rollOut != null) {
+				rollOut(e);
+			}
+			*/
+			
+			if (e.buttonDown) {
+				//for drag out
+				dispatchEvent(new JPPMouseEvent(JPPMouseEvent.DRAG_OUT));
+				
+			} else {
+				//for roll over event like AS2
+				dispatchEvent(new JPPMouseEvent(JPPMouseEvent.EX_ROLL_OUT));
+			}
+		}
+		
+		/**
+		 * mouse down event
+		 * @param	e
+		 */
+		private function _presetMouseDownHandler(e:MouseEvent):void {
+			//update isPress flag
+			_isPress = true;
+			
+			//for release outside
+			stage.addEventListener(MouseEvent.MOUSE_UP, _presetStageMouseUpHandler);
+		}
+		
+		/**
+		 * mouse up on stage event
+		 * @param	e
+		 */
+		private function _presetStageMouseUpHandler(e:MouseEvent):void {
+			stage.removeEventListener(MouseEvent.MOUSE_UP, _presetStageMouseUpHandler);
+			
+			//update isPress flag
+			_isPress = false;
+			
+			//for release outside
+			if (!_isRollOver) {
+				dispatchEvent(new JPPMouseEvent(JPPMouseEvent.RELEASE_OUTSIDE));
+				
+			}/* else {
+				//execute shortcut function
+				if (_click != null) {
+					_click(e);
+				}
+			}
+			*/
+		}
+		
+		/**
+		 * added to stage event
+		 * @param	e
+		 */
+		private function _presetAddedToStageHandler(e:Event):void {
+			removeEventListener(Event.ADDED_TO_STAGE, _presetAddedToStageHandler);
+			
+			//get stage
+			_stage = stage;
+			
+			//for _isRollOver property
+			addEventListener(MouseEvent.ROLL_OVER, _presetRollOverHandler);
+			addEventListener(MouseEvent.ROLL_OUT, _presetRollOutHandler);
+			
+			//for _isPress property
+			addEventListener(MouseEvent.MOUSE_DOWN, _presetMouseDownHandler);
+			
+			//初期化処理
+			if (_onInit != null) {
+				_onInit(e);
+			}
+		}
+		
+		/**
+		 * removed from stage event
+		 * @param	e
+		 */
+		private function _presetRemovedFromStageHandler(e:Event):void {
+			removeEventListener(Event.REMOVED_FROM_STAGE, _presetRemovedFromStageHandler);
+			
+			_isRollOver = false;
+			_isPress = false;
+			
+			//kill preset event handler
+			removeEventListener(Event.ADDED_TO_STAGE, _presetAddedToStageHandler);
+			removeEventListener(MouseEvent.ROLL_OVER, _presetRollOverHandler);
+			removeEventListener(MouseEvent.ROLL_OUT, _presetRollOutHandler);
+			removeEventListener(MouseEvent.MOUSE_DOWN, _presetMouseDownHandler);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, _presetStageMouseUpHandler);
+			
+			//後処理
+			if (_onRemoved != null) {
+				_onRemoved(e);
+			}
+		}
+	}
+}
