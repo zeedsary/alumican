@@ -53,14 +53,14 @@
 		
 		
 		//--------------------------------------------------------------------------
-		// AUTOMATICALLY FINALIZE
+		// KILL ALL EVENTS AUTOMATICALLY
 		//--------------------------------------------------------------------------
 		
 		//if true, automatically kill all event listener at the same time of removed from stage
-		private var _useAutoFinalize:Boolean;
+		private var _useAutoKillEvents:Boolean;
 		
-		public function get useAutoFinalize():Boolean { return _useAutoFinalize; }
-		public function set useAutoFinalize(value:Boolean):void { _useAutoFinalize = value; }
+		public function get useAutoKillEvents():Boolean { return _useAutoKillEvents; }
+		public function set useAutoKillEvents(value:Boolean):void { _useAutoKillEvents = value; }
 		
 		
 		
@@ -259,7 +259,7 @@
 			_isRollOver = false;
 			_isPress = false;
 			
-			_useAutoFinalize = false;
+			_useAutoKillEvents = false;
 			
 			//_hitArea = this;
 			
@@ -589,7 +589,7 @@
 			}
 			
 			//kill all event listener
-			if (_useAutoFinalize) {
+			if (_useAutoKillEvents) {
 				kill();
 			}
 			
