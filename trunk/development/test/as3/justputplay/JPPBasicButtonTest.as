@@ -1,5 +1,6 @@
 ﻿package {
 	
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -24,6 +25,11 @@
 		//-------------------------------------
 		// VARIABLES
 		//-------------------------------------
+		
+		//-------------------------------------
+		// STAGE INSTANCES
+		//-------------------------------------
+		
 		public var basic_btn:JPPBasicButton;
 		public var yoyo_btn:JPPYoyoButton;
 		public var label_btn:JPPLabelButton;
@@ -106,6 +112,8 @@
 				
 				btn.onReleaseOutside = _releaseOutsideHandlerB;
 				btn.onMouseMove      = null;
+				btn.onMouseMove      = null;
+				btn.onMouseMove      = null;
 				
 				//*/
 				
@@ -128,13 +136,13 @@
 			label_btn.labelRollOut        = "rollOut";
 			label_btn.labelUseGotoAndPlay = false;
 			
-			/*
-			basic_btn.kill();
-			yoyo_btn.kill();
+			//yoyo_btn.hitObject = yoyo_btn.area;
 			
-			removeChild(basic_btn);
-			removeChild(yoyo_btn);
-			*/
+			//basic_btn.kill();
+			//yoyo_btn.kill();
+			
+			//removeChild(basic_btn);
+			//removeChild(yoyo_btn);
 		}
 		
 		//-------------------------------------
@@ -149,71 +157,71 @@
 		}
 		
 		private function _removedHandler(e:Event):void {
-			trace("REMOVED");
+			trace(e.currentTarget + "REMOVED");
 		}
 		
 		private function _clickHandler(e:MouseEvent):void {
-			trace("CLICK");
+			trace(e.currentTarget + " CLICK");
 		}
 		
 		private function _doubleClickHandler(e:MouseEvent):void {
-			trace("DOUBLE_CLICK");
+			trace(e.currentTarget + " DOUBLE_CLICK");
 		}
 		
 		private function _rollOverHandler(e:MouseEvent):void {
-			trace("ROLL_OVER");
+			trace(e.currentTarget + " ROLL_OVER");
 		}
 		
 		private function _rollOutHandler(e:MouseEvent):void {
-			trace("ROLL_OUT");
+			trace(e.currentTarget + " ROLL_OUT");
 		}
 		
 		private function _mouseDownHandler(e:MouseEvent):void {
-			trace("MOUSE_DOWN");
+			trace(e.currentTarget + " MOUSE_DOWN");
 		}
 		
 		private function _mouseUpHandler(e:MouseEvent):void {
-			trace("MOUSE_UP");
+			trace(e.currentTarget + " MOUSE_UP");
 		}
 		
 		private function _mouseOverHandler(e:MouseEvent):void {
-			trace("MOUSE_OVER");
+			trace(e.currentTarget + " MOUSE_OVER");
 		}
 		
 		private function _mouseOutHandler(e:MouseEvent):void {
-			trace("MOUSE_OUT");
+			trace(e.currentTarget + " MOUSE_OUT");
 		}
 		
 		private function _mouseMoveHandler(e:MouseEvent):void {
-			trace("MOUSE_MOVE");
+			trace(e.currentTarget + " MOUSE_MOVE");
 		}
 		
 		private function _mouseWheelHandler(e:MouseEvent):void {
-			trace("MOUSE_WHEEL, delta:" + e.delta);
+			trace(e.currentTarget + " MOUSE_WHEEL, delta:" + e.delta);
 		}
 		
 		private function _dragOverHandler(e:JPPMouseEvent):void {
-			trace("DRAG_OVER");
+			trace(e.currentTarget + " DRAG_OVER");
 		}
 		
 		private function _dragOutHandler(e:JPPMouseEvent):void {
-			trace("DRAG_OUT");
+			trace(e.currentTarget + " DRAG_OUT");
 		}
 		
 		private function _exclusiveRollOverHandler(e:JPPMouseEvent):void {
-			trace("EX_ROLL_OVER");
+			trace(e.currentTarget + " EX_ROLL_OVER");
 		}
 		
 		private function _exclusiveRollOutHandler(e:JPPMouseEvent):void {
-			trace("EX_ROLL_OUT");
+			trace(e.currentTarget + " EX_ROLL_OUT");
 		}
 		
 		private function _releaseOutsideHandlerA(e:JPPMouseEvent):void {
-			trace("RELEASE_OUTSIDE A");
+			trace(e.currentTarget + " RELEASE_OUTSIDE A");
 		}
 		
 		private function _releaseOutsideHandlerB(e:JPPMouseEvent):void {
-			trace("RELEASE_OUTSIDE B");
+			trace(e.currentTarget + " RELEASE_OUTSIDE B");
 		}
 	}
 }

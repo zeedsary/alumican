@@ -1,5 +1,6 @@
 ﻿package net.alumican.as3.justputplay.buttons {
 	
+	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.MovieClip;
 	import flash.display.Stage;
@@ -35,8 +36,6 @@
 		
 		
 		
-		
-		
 		//--------------------------------------------------------------------------
 		// STAGE INSTANCES
 		//--------------------------------------------------------------------------
@@ -48,6 +47,20 @@
 		//--------------------------------------------------------------------------
 		// GENERAL GETTER / SETTER
 		//--------------------------------------------------------------------------
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// CUSTOM HITAREA
+		//--------------------------------------------------------------------------
+		
+		//refference of hitArea
+		private var _hitArea:DisplayObject;
+		
+		public function get hitObject():DisplayObject { return _hitArea; }
+		public function set hitObject(value:DisplayObject):void { _hitArea = value; }
 		
 		
 		
@@ -208,7 +221,7 @@
 		
 		
 		//--------------------------------------------------------------------------
-		// GET DISPLAY OBJECT CONTAINER FOR ACCESS FROM INTERFACE
+		// THIS DISPLAY OBJECT CONTAINER FOR ACCESS FROM INTERFACE
 		//--------------------------------------------------------------------------
 		
 		//get this as DisplayObjectContainer
@@ -230,6 +243,8 @@
 			
 			_isRollOver = false;
 			_isPress = false;
+			
+			_hitArea = this;
 			
 			_eventHandlerStack = new Dictionary(true);
 			
@@ -262,18 +277,19 @@
 			}
 			
 			try {
+				//_addEventListenerToTarget(_hitArea, type, listener, useCapture, priority, useWeakReference);
 				super.addEventListener(type, listener, useCapture, priority, useWeakReference);
 			} catch (e) {
 				_traceException(new Error(e));
 				return;
 			}
+			//trace(this, type);
 			
 			//stack event handler
 			if (_eventHandlerStack[type] == null) {
 				_eventHandlerStack[type] = new Dictionary(true);
 			}
-			_eventHandlerStack[type][listener] = listener;
-			
+			_eventHandlerStack[type][listener] = { type:type, listener:listener, useCapture:useCapture, priority:priority, useWeakReference:useWeakReference };
 		}
 		
 		/**
@@ -289,6 +305,7 @@
 			}
 			
 			try {
+				//_removeEventListenerFromTarget(_hitArea, type, listener, useCapture);
 				super.removeEventListener(type, listener, useCapture);
 			} catch (e) {
 				_traceException(new Error(e));
@@ -317,11 +334,13 @@
 			
 			buttonEnabled = false;
 			
+			//kill preset event handler
 			for (var type:String in _eventHandlerStack) {
-				for each (var listener:Function in _eventHandlerStack[type]) {
-					//trace(type + " : " + listener);
+				for each (var data:Object in _eventHandlerStack[type]) {
+					trace(this, type);
 					try {
-						super.removeEventListener(type, listener);
+						//_removeEventListenerFromTarget(_hitArea, type, data.listener, data.useCapture);
+						super.removeEventListener(type, data.listener, data.useCapture);
 					} catch (e) {
 						_traceException(new Error(e));
 					}
@@ -336,12 +355,15 @@
 			
 			_eventHandlerStack = new Dictionary(true);
 			
+			/*
 			//kill preset event handler
 			removeEventListener(Event.ADDED_TO_STAGE, _presetAddedToStageHandler);
 			removeEventListener(Event.REMOVED_FROM_STAGE, _presetRemovedFromStageHandler);
+			
 			removeEventListener(MouseEvent.ROLL_OVER, _presetRollOverHandler);
 			removeEventListener(MouseEvent.ROLL_OUT, _presetRollOutHandler);
 			removeEventListener(MouseEvent.MOUSE_DOWN, _presetMouseDownHandler);
+			*/
 			
 			try {
 				stage.removeEventListener(MouseEvent.MOUSE_UP, _presetStageMouseUpHandler);
@@ -349,6 +371,40 @@
 				_traceException(new Error(e));
 			}
 		}
+		
+		/**
+		 * addEventListener to target DisplayObject
+		 * @param	type
+		 * @param	listener
+		 * @param	useCapture
+		 * @param	priority
+		 * @param	useWeakReference
+		 */
+		/*
+		private function _addEventListenerToTarget(target:DisplayObject, type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
+			if (target === this) {
+				super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+			} else {
+				target.addEventListener(type, listener, useCapture, priority, useWeakReference);
+			}
+		}
+		*/
+		
+		/**
+		 * removeEventListener from target DisplayObject
+		 * @param	type
+		 * @param	listener
+		 * @param	useCapture
+		 */
+		/*
+		private function _removeEventListenerFromTarget(target:DisplayObject, type:String, listener:Function, useCapture:Boolean = false):void {
+			if (target === this) {
+				super.removeEventListener(type, listener, useCapture);
+			} else {
+				target.removeEventListener(type, listener, useCapture);
+			}
+		}
+		*/
 		
 		/**
 		 * trace warning
@@ -366,7 +422,34 @@
 			trace("@EXCEPTION : " + e.message + "\n@" + e.getStackTrace());
 		}
 		
-		
+		/**
+		 * translocate event listeners from src to dst
+		 * @param	src
+		 * @param	dst
+		 */
+		/*
+		private function _translocateEventListener(src:DisplayObject, dst:DisplayObject):void {
+			for (var type:String in _eventHandlerStack) {
+				for each (var data:Object in _eventHandlerStack[type]) {
+					trace(_hitArea, type);
+					
+					//removeEventListener from src
+					try {
+						_removeEventListenerFromTarget(src, type, data.listener, data.useCapture);
+					} catch (e) {
+						_traceException(new Error(e));
+					}
+					
+					//addEventListener from dst
+					try {
+						_addEventListenerToTarget(dst, type, data.listener, data.useCapture, data.priority, data.useWeakReference);
+					} catch (e) {
+						_traceException(new Error(e));
+					}
+				}
+			}
+		}
+		*/
 		
 		
 		
@@ -477,6 +560,7 @@
 			
 			//kill preset event handler
 			removeEventListener(Event.ADDED_TO_STAGE, _presetAddedToStageHandler);
+			
 			removeEventListener(MouseEvent.ROLL_OVER, _presetRollOverHandler);
 			removeEventListener(MouseEvent.ROLL_OUT, _presetRollOutHandler);
 			removeEventListener(MouseEvent.MOUSE_DOWN, _presetMouseDownHandler);
