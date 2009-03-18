@@ -53,15 +53,30 @@
 		
 		
 		//--------------------------------------------------------------------------
+		// AUTOMATICALLY FINALIZE
+		//--------------------------------------------------------------------------
+		
+		//if true, automatically kill all event listener at the same time of removed from stage
+		private var _useAutoFinalize:Boolean;
+		
+		public function get useAutoFinalize():Boolean { return _useAutoFinalize; }
+		public function set useAutoFinalize(value:Boolean):void { _useAutoFinalize = value; }
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
 		// CUSTOM HITAREA
 		//--------------------------------------------------------------------------
 		
+		/*
 		//refference of hitArea
 		private var _hitArea:DisplayObject;
 		
 		public function get hitObject():DisplayObject { return _hitArea; }
 		public function set hitObject(value:DisplayObject):void { _hitArea = value; }
-		
+		*/
 		
 		
 		
@@ -244,7 +259,9 @@
 			_isRollOver = false;
 			_isPress = false;
 			
-			_hitArea = this;
+			_useAutoFinalize = false;
+			
+			//_hitArea = this;
 			
 			_eventHandlerStack = new Dictionary(true);
 			
@@ -337,7 +354,7 @@
 			//kill preset event handler
 			for (var type:String in _eventHandlerStack) {
 				for each (var data:Object in _eventHandlerStack[type]) {
-					trace(this, type);
+					//trace(this, type);
 					try {
 						//_removeEventListenerFromTarget(_hitArea, type, data.listener, data.useCapture);
 						super.removeEventListener(type, data.listener, data.useCapture);
@@ -530,7 +547,7 @@
 		 * @param	e
 		 */
 		private function _presetAddedToStageHandler(e:Event):void {
-			removeEventListener(Event.ADDED_TO_STAGE, _presetAddedToStageHandler);
+			//removeEventListener(Event.ADDED_TO_STAGE, _presetAddedToStageHandler);
 			
 			//get stage refference
 			_stage = stage;
@@ -546,6 +563,7 @@
 			if (_onInit != null) {
 				_onInit(e);
 			}
+			
 		}
 		
 		/**
@@ -553,14 +571,13 @@
 		 * @param	e
 		 */
 		private function _presetRemovedFromStageHandler(e:Event):void {
-			removeEventListener(Event.REMOVED_FROM_STAGE, _presetRemovedFromStageHandler);
+			//removeEventListener(Event.REMOVED_FROM_STAGE, _presetRemovedFromStageHandler);
+			//removeEventListener(Event.ADDED_TO_STAGE, _presetAddedToStageHandler);
 			
 			_isRollOver = false;
 			_isPress    = false;
 			
-			//kill preset event handler
-			removeEventListener(Event.ADDED_TO_STAGE, _presetAddedToStageHandler);
-			
+			//kill preset event listener
 			removeEventListener(MouseEvent.ROLL_OVER, _presetRollOverHandler);
 			removeEventListener(MouseEvent.ROLL_OUT, _presetRollOutHandler);
 			removeEventListener(MouseEvent.MOUSE_DOWN, _presetMouseDownHandler);
@@ -569,6 +586,11 @@
 				stage.removeEventListener(MouseEvent.MOUSE_UP, _presetStageMouseUpHandler);
 			} catch (e) {
 				_traceException(new Error(e));
+			}
+			
+			//kill all event listener
+			if (_useAutoFinalize) {
+				kill();
 			}
 			
 			//execute shortcut function
