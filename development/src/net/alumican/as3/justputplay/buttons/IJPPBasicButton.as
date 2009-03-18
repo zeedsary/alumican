@@ -1,13 +1,14 @@
 ﻿package net.alumican.as3.justputplay.buttons {
-	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Sprite;
+	import jp.nium.core.display.IDisplayObject;
 	
 	/**
 	 * IJPPBasicButton.as
 	 *
 	 * @author alumican.net<Yukiya Okuda>
 	 */
-	public interface IJPPBasicButton {
+	public interface IJPPBasicButton extends IDisplayObject {
 		
 		//--------------------------------------------------------------------------
 		// CLASS CONSTANTS
@@ -36,6 +37,30 @@
 		//--------------------------------------------------------------------------
 		// GENERAL GETTER / SETTER
 		//--------------------------------------------------------------------------
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// KILL ALL EVENTS AUTOMATICALLY
+		//--------------------------------------------------------------------------
+		
+		//if true, automatically kill all event listener at the same time of removed from stage
+		function get useAutoKillEvents():Boolean;
+		function set useAutoKillEvents(value:Boolean):void;
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// CUSTOM HITAREA
+		//--------------------------------------------------------------------------
+		
+		//refference of hitArea
+		//function get hitArea():Sprite;
+		//function set hitArea(value:Sprite):void;
 		
 		
 		
@@ -167,7 +192,7 @@
 		 * @param	priority
 		 * @param	useWeakReference
 		 */
-		function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void;
+		//function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void;
 		
 		/**
 		 * overrided removeEventListener
@@ -175,7 +200,7 @@
 		 * @param	listener
 		 * @param	useCapture
 		 */
-		function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void;
+		//function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void;
 		
 		/**
 		 * remove all event listener

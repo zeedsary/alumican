@@ -117,6 +117,8 @@
 				
 			}
 			
+			//yoyo_btn.hitArea = yoyo_btn.area;
+			
 			//parameters for JPPOverlayButton
 			//overlay_btn.overlayTime       = 2.0;
 			//overlay_btn.overlayDelay      = 0.0;
