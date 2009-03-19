@@ -58,7 +58,7 @@
 		private function _enterFrameHandler(e:Event):void {
 			
 			//ビート位置に合わせて移動させる
-			x = _beatdispatcher.position * stage.stageWidth / _beatdispatcher.position_length;
+			x = _beatdispatcher.currentPosition * stage.stageWidth / _beatdispatcher.totalPosition;
 		}
 		
 		/**

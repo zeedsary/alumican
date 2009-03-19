@@ -9,6 +9,7 @@
 	import flash.media.Sound;
 	import flash.utils.getDefinitionByName;
 	import net.alumican.as3.utils.beatdispatcher.BeatDispatcher;
+	import net.alumican.as3.utils.beatdispatcher.BeatDispatcherEvent;
 	
 	/**
 	 * BeatDispatcher Test
@@ -70,12 +71,12 @@
 			//BeatDispatcherの生成
 			_beatdispatcher = new BeatDispatcher();
 			
+			//_beatdispatcher.addEventListener(BeatDispatcherEvent.UNIT, _unitHanbler);
+			_beatdispatcher.addEventListener(BeatDispatcherEvent.BEAT, _beatHanbler);
+			_beatdispatcher.addEventListener(BeatDispatcherEvent.BAR , _barHanbler);
+			
 			//bpm, 拍子, 1拍にビートを刻む回数
 			_beatdispatcher.start(120, 4, 2);
-			
-			//_beatdispatcher.addEventListener(BeatDispatcher.UNIT, _unitHanbler);
-			_beatdispatcher.addEventListener(BeatDispatcher.BEAT, _beatHanbler);
-			_beatdispatcher.addEventListener(BeatDispatcher.BAR , _barHanbler);
 		}
 		
 		/**
@@ -142,14 +143,14 @@
 		private function _addBeatAsCurrentPosition(index:uint):void {
 			
 			//現在のビート位置
-			var position:uint = _beatdispatcher.position;
+			var position:uint = _beatdispatcher.currentPosition;
 			
 			// ビジュアライザ用パーティクル生成
 			var p:Particle = new Particle(_beatdispatcher, position, Number(index) / _sound_num, _particle_color[index], _particle_radius[index]);
 			_particle_container.addChild(p);
 			
 			//新規ビートイベントの追加
-			_beatdispatcher.addBeatEvent(position, function():void {
+			_beatdispatcher.addBeatEventListener(position, function():void {
 				
 				// サウンドを鳴らす
 				_sound_ary[index].play();
@@ -163,23 +164,23 @@
 		 * ビートに乗っかったときに呼び出される
 		 * @param	e
 		 */
-		private function _unitHanbler(e:Event):void {
-			trace("freq : " + _beatdispatcher.current_unit);
+		private function _unitHanbler(e:BeatDispatcherEvent):void {
+			trace("unit : " + e.currentUnit);
 		}
 		
 		/**
 		 * 拍に乗っかったときに呼び出される
 		 * @param	e
 		 */
-		private function _beatHanbler(e:Event):void {
-			trace("beat : " + _beatdispatcher.current_beat);
+		private function _beatHanbler(e:BeatDispatcherEvent):void {
+			trace("beat : " + e.currentBeat);
 		}
 		
 		/**
 		 * 4拍子なら4拍終わったときに呼び出される
 		 * @param	e
 		 */
-		private function _barHanbler(e:Event):void {
+		private function _barHanbler(e:BeatDispatcherEvent):void {
 			trace("bar");
 		}
 		
