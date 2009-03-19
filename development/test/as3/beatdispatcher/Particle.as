@@ -109,7 +109,7 @@
 		 */
 		private function _resizeHandler(e:Event = null):void {
 			
-			x = _position * stage.stageWidth / _beatdispatcher.position_length;
+			x = _position * stage.stageWidth / _beatdispatcher.totalPosition;
 			y = 200 + _y_ratio * (stage.stageHeight - 200);
 		}
 	}
