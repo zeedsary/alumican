@@ -14,14 +14,20 @@
 		// CLASS CONSTANTS
 		//--------------------------------------------------------------------------
 		
-		//on tick event
-		static public const TICK:String = "onTick";
+		//on measure event
+		static public const MEASURE:String  = "onMeasure";
 		
 		//on beat event
 		static public const BEAT:String = "onBeat";
 		
-		//on bar event
-		static public const BAR:String  = "onBar";
+		//on tick event
+		static public const TICK:String = "onTick";
+		
+		//on start event
+		static public const START:String  = "onStart";
+		
+		//on complete event
+		static public const COMPLETE:String  = "onComplete";
 		
 		
 		
@@ -35,8 +41,10 @@
 		private var _dispatcher:BeatDispatcher;
 		
 		//status
-		private var _currentTick:uint;
+		private var _currentMeasure:uint;
 		private var _currentBeat:uint;
+		private var _currentTick:uint;
+		
 		private var _currentPosition:uint;
 		
 		
@@ -51,8 +59,10 @@
 		public function get dispatcher():BeatDispatcher { return _dispatcher; }
 		
 		//status
-		public function get currentTick():uint { return _currentTick; }
+		public function get currentMeasure():uint { return _currentMeasure; }
 		public function get currentBeat():uint { return _currentBeat; }
+		public function get currentTick():uint { return _currentTick; }
+		
 		public function get currentPosition():uint { return _currentPosition; }
 		
 		
@@ -66,10 +76,13 @@
 		/**
 		 * Constructor
 		 */
-		public function BeatDispatcherEvent(type:String, dispatcher:BeatDispatcher, currentTick:uint, currentBeat:uint, currentPosition:uint, bubbles:Boolean = false, cancelable:Boolean = false):void {
+		public function BeatDispatcherEvent(type:String, dispatcher:BeatDispatcher, currentMeasure:uint, currentBeat:uint, currentTick:uint, currentPosition:uint, bubbles:Boolean = false, cancelable:Boolean = false):void {
 			_dispatcher      = dispatcher;
-			_currentTick     = currentTick;
+			
+			_currentMeasure  = currentMeasure;
 			_currentBeat     = currentBeat;
+			_currentTick     = currentTick;
+			
 			_currentPosition = currentPosition;
 			
 			super(type, bubbles, cancelable);
@@ -88,7 +101,7 @@
 		 * @return
 		 */
 		override public function clone():Event {
-			return new BeatDispatcherEvent(type, dispatcher, currentTick, currentBeat, currentPosition, bubbles, cancelable);
+			return new BeatDispatcherEvent(type, dispatcher, currentMeasure, currentBeat, currentTick, currentPosition, bubbles, cancelable);
 		}
 		
 		

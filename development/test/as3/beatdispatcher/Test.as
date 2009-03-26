@@ -71,14 +71,17 @@
 		private function _initBeatDispatcher():void {
 			
 			//BeatDispatcherの生成
-			_beatdispatcher = new BeatDispatcher();
+			_beatdispatcher = new BeatDispatcher(120, 2, 4, 4);
 			
 			//_beatdispatcher.addEventListener(BeatDispatcherEvent.TICK, _unitHanbler);
-			_beatdispatcher.addEventListener(BeatDispatcherEvent.BEAT, _beatHanbler);
-			_beatdispatcher.addEventListener(BeatDispatcherEvent.BAR , _barHanbler);
+			_beatdispatcher.addEventListener(BeatDispatcherEvent.BEAT   , _beatHanbler);
+			_beatdispatcher.addEventListener(BeatDispatcherEvent.MEASURE, _measureHanbler);
 			
-			//bpm, 拍子, 1拍にビートを刻む回数
-			_beatdispatcher.start(120, 4, 4);
+			_beatdispatcher.addEventListener(BeatDispatcherEvent.START   , _startHanbler);
+			_beatdispatcher.addEventListener(BeatDispatcherEvent.COMPLETE, _completeHanbler);
+			
+			//ビートの開始
+			_beatdispatcher.start();
 		}
 		
 		/**
@@ -182,8 +185,24 @@
 		 * 4拍子なら4拍終わったときに呼び出される
 		 * @param	e
 		 */
-		private function _barHanbler(e:BeatDispatcherEvent):void {
-			trace("bar");
+		private function _measureHanbler(e:BeatDispatcherEvent):void {
+			trace("measure : " + e.currentMeasure);
+		}
+		
+		/**
+		 * 曲の開始時
+		 * @param	e
+		 */
+		private function _startHanbler(e:BeatDispatcherEvent):void {
+			trace("start");
+		}
+		
+		/**
+		 * 曲の終了時
+		 * @param	e
+		 */
+		private function _completeHanbler(e:BeatDispatcherEvent):void {
+			trace("complete");
 		}
 		
 		/**
@@ -248,10 +267,13 @@
 		 * 毎フレーム実行
 		 * @param	e
 		 */
-		private function _enterFrameHandler(e:Event):void {
+		private function _enterFrameHandler(e:Event = null):void {
+			if(_beatdispatcher.isOnStart) trace("isOnStart");
+			if(_beatdispatcher.isOnComplete) trace("isOnComplete");
+			
 			//if (_beatdispatcher.isOnUnit) trace("isOnUnit " + _beatdispatcher.currentUnit);
 			if (_beatdispatcher.isOnBeat) trace("isOnBeat " + _beatdispatcher.currentBeat);
-			if (_beatdispatcher.isOnBar ) trace("isOnBar ");
+			if (_beatdispatcher.isOnMeasure) trace("isOnMeasure " + _beatdispatcher.currentMeasure);
 		}
 	}
 }
