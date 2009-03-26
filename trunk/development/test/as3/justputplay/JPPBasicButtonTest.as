@@ -147,6 +147,9 @@
 			
 			//basic_btn.kill();
 			//yoyo_btn.kill();
+			
+			//yoyo_btn.buttonEnabled = false;
+			//yoyo_btn.buttonEnabled = true;
 		}
 		
 		//-------------------------------------

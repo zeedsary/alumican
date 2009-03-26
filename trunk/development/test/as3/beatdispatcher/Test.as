@@ -61,6 +61,8 @@
 			
 			//キーボードイベントの登録
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyDownHandler);
+			
+			addEventListener(Event.ENTER_FRAME, _enterFrameHandler);
 		}
 		
 		/**
@@ -71,12 +73,12 @@
 			//BeatDispatcherの生成
 			_beatdispatcher = new BeatDispatcher();
 			
-			//_beatdispatcher.addEventListener(BeatDispatcherEvent.UNIT, _unitHanbler);
+			//_beatdispatcher.addEventListener(BeatDispatcherEvent.TICK, _unitHanbler);
 			_beatdispatcher.addEventListener(BeatDispatcherEvent.BEAT, _beatHanbler);
 			_beatdispatcher.addEventListener(BeatDispatcherEvent.BAR , _barHanbler);
 			
 			//bpm, 拍子, 1拍にビートを刻む回数
-			_beatdispatcher.start(120, 4, 2);
+			_beatdispatcher.start(120, 4, 4);
 		}
 		
 		/**
@@ -164,8 +166,8 @@
 		 * ビートに乗っかったときに呼び出される
 		 * @param	e
 		 */
-		private function _unitHanbler(e:BeatDispatcherEvent):void {
-			trace("unit : " + e.currentUnit);
+		private function _tickHanbler(e:BeatDispatcherEvent):void {
+			trace("unit : " + e.currentTick);
 		}
 		
 		/**
@@ -240,6 +242,16 @@
 				//現在のタイミングでイベントを登録する
 				_addBeatAsCurrentPosition(id);
 			}
+		}
+		
+		/**
+		 * 毎フレーム実行
+		 * @param	e
+		 */
+		private function _enterFrameHandler(e:Event):void {
+			//if (_beatdispatcher.isOnUnit) trace("isOnUnit " + _beatdispatcher.currentUnit);
+			if (_beatdispatcher.isOnBeat) trace("isOnBeat " + _beatdispatcher.currentBeat);
+			if (_beatdispatcher.isOnBar ) trace("isOnBar ");
 		}
 	}
 }

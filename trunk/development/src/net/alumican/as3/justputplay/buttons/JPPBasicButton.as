@@ -67,6 +67,25 @@
 		
 		
 		//--------------------------------------------------------------------------
+		// SWITCH BUTTON MODE PROPERTY AUTOMATICALLY
+		//--------------------------------------------------------------------------
+		
+		//if true, automatically switch buttonMode property of hitArea in accordance with buttonEnabled
+		private var _useAutoButtonMode:Boolean;
+		
+		public function get useAutoButtonMode():Boolean { return _useAutoButtonMode; }
+		public function set useAutoButtonMode(value:Boolean):void {
+			_useAutoButtonMode = value;
+			if (_useAutoButtonMode) {
+				hitArea.buttonMode = mouseEnabled;
+			}
+		}
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
 		// CUSTOM HITAREA
 		//--------------------------------------------------------------------------
 		
@@ -89,6 +108,9 @@
 		public function set buttonEnabled(flag:Boolean):void {
 			mouseEnabled  = flag;
 			mouseChildren = flag;
+			if (_useAutoButtonMode) {
+				hitArea.buttonMode = flag;
+			}
 		}
 		
 		
@@ -261,11 +283,13 @@
 			
 			_useAutoKillEvents = false;
 			
-			//_hitArea = this;
+			_useAutoButtonMode = true;
 			
 			_eventHandlerStack = new Dictionary(true);
 			
 			buttonMode = true;
+			
+			hitArea = this;
 			
 			addEventListener(Event.ADDED_TO_STAGE, _presetAddedToStageHandler);
 			addEventListener(Event.REMOVED_FROM_STAGE, _presetRemovedFromStageHandler);
