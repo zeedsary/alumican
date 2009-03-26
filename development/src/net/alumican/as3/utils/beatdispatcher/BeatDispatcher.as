@@ -24,19 +24,23 @@
 		// VARIABLES
 		//--------------------------------------------------------------------------
 		
-		private var _resolution:Number;
+		private var _tpqn:Number;
 		private var _beat:Number;
 		private var _bpm:Number;
 		
 		private var _startTime:Number;
 		
-		private var _currentUnit:uint;
+		private var _currentTick:uint;
 		private var _currentBeat:uint;
 		private var _currentPosition:uint;
 		
 		private var _oldTime:Number;
 		private var _oldUnit:uint;
 		private var _oldBeat:uint;
+		
+		private var _isOnTick:Boolean;
+		private var _isOnBeat:Boolean;
+		private var _isOnBar:Boolean;
 		
 		private var _refCounter:Dictionary;
 		
@@ -58,12 +62,16 @@
 		
 		public function get bpm():uint { return _bpm; }
 		public function get beat():uint { return _beat; }
-		public function get resolution():Number { return _resolution; }
+		public function get tpqn():Number { return _tpqn; }
 		
-		public function get currentUnit():uint { return _currentUnit; }
+		public function get currentTick():uint { return _currentTick; }
 		public function get currentBeat():uint { return _currentBeat; }
 		public function get currentPosition():uint { return _currentPosition; }
-		public function get totalPosition():uint { return _beat * _resolution; }
+		public function get totalPosition():uint { return _beat * _tpqn; }
+		
+		public function get isOnTick():Boolean { return _isOnTick; }
+		public function get isOnBeat():Boolean { return _isOnBeat; }
+		public function get isOnBar():Boolean { return _isOnBar; }
 		
 		
 		
@@ -92,17 +100,17 @@
 		 * ビート再生開始
 		 * @param	bpm		bpm
 		 * @param	beat	拍数, 
-		 * @param	_resolution	1拍にビートを刻む回数
+		 * @param	_tpqn	1拍にビートを刻む回数
 		 */
-		public function start(bpm:uint = 240, beat:uint = 4, resolution:uint = 2):void {
+		public function start(bpm:uint = 240, beat:uint = 4, tpqn:uint = 2):void {
 			
-			_bpm        = bpm;
-			_beat       = beat;
-			_resolution = resolution;
+			_bpm  = bpm;
+			_beat = beat;
+			_tpqn = tpqn;
 			
 			_startTime = getTimer();
 			
-			_currentUnit     = 0;
+			_currentTick     = 0;
 			_currentBeat     = 0;
 			_currentPosition = 0;
 			
@@ -110,12 +118,16 @@
 			_oldBeat = 0;
 			_oldTime = 0;
 			
+			_isOnTick = true;
+			_isOnBeat = true;
+			_isOnBar  = false;
+			
 			addEventListener(Event.ENTER_FRAME, _update);
 			
 			if (_refCounter[_currentPosition] != null) {
 				_dispatchCustomEvent(getEventTypeByPosition(_currentPosition));
 			}
-			_dispatchCustomEvent(BeatDispatcherEvent.UNIT);
+			_dispatchCustomEvent(BeatDispatcherEvent.TICK);
 			_dispatchCustomEvent(BeatDispatcherEvent.BEAT);
 		}
 		
@@ -189,7 +201,7 @@
 		 * @return
 		 */
 		private function _dispatchCustomEvent(type:String):Boolean {
-			var e:BeatDispatcherEvent = new BeatDispatcherEvent(type, this, currentUnit, currentBeat, currentPosition);
+			var e:BeatDispatcherEvent = new BeatDispatcherEvent(type, this, currentTick, currentBeat, currentPosition);
 			return super.dispatchEvent(e);
 		}
 		
@@ -207,38 +219,39 @@
 		 */
 		private function _update(e:Event):void {
 			
-			var isOnPosition:Boolean = false;
-			var isOnUnit:Boolean     = false;
-			var isOnBeat:Boolean     = false;
-			var isOnBar:Boolean      = false;
+			_isOnTick     = false;
+			_isOnBeat     = false;
+			_isOnBar      = false;
+			
+			var hasListener:Boolean = false;
 			
 			var currentTime:Number = getTimer();
-			var elapsedTime:Number = _resolution * _bpm * (currentTime - _startTime) / 60000;
+			var elapsedTime:Number = _tpqn * _bpm * (currentTime - _startTime) / 60000;
 			
 			//ユニット毎に実行
 			if (elapsedTime - _oldTime >= 1) {
 				
 				++_currentPosition;
-				++_currentUnit;
+				++_currentTick;
 				_oldTime = elapsedTime;
 				
 				if (_refCounter[_currentPosition] != null) {
-					isOnPosition = true;
+					hasListener = true;
 				}
-				isOnUnit = true;
+				_isOnTick = true;
 				
-				//trace("update unit " + _currentUnit);
+				//trace("update unit " + _currentTick);
 			}
 			
 			//ビート毎に実行
-			if (int(_currentUnit) % int(_resolution) == 0 &&
-				int(_currentUnit) != int(_oldUnit)) {
+			if (int(_currentTick) % int(_tpqn) == 0 &&
+				int(_currentTick) != int(_oldUnit)) {
 				
 				++_currentBeat;
-				_currentUnit = 0;
+				_currentTick = 0;
 				_oldUnit     = 0;
 				
-				isOnBeat = true;
+				_isOnBeat = true;
 				
 				//trace("update beat " + _currentBeat);
 			}
@@ -251,7 +264,11 @@
 				_oldBeat         = 0;
 				_currentPosition = 0;
 				
-				isOnBar = true;
+				_isOnBar = true;
+				
+				if (_refCounter[_currentPosition] != null) {
+					hasListener = true;
+				}
 				
 				//trace("update bar");
 			}
@@ -263,10 +280,10 @@
 			}
 			
 			//イベントの発行
-			if (isOnPosition) _dispatchCustomEvent(getEventTypeByPosition(_currentPosition));
-			if (isOnBar     ) _dispatchCustomEvent(BeatDispatcherEvent.BAR);
-			if (isOnBeat    ) _dispatchCustomEvent(BeatDispatcherEvent.BEAT);
-			if (isOnUnit    ) _dispatchCustomEvent(BeatDispatcherEvent.UNIT);
+			if (hasListener) _dispatchCustomEvent(getEventTypeByPosition(_currentPosition));
+			if (_isOnBar   ) _dispatchCustomEvent(BeatDispatcherEvent.BAR);
+			if (_isOnBeat  ) _dispatchCustomEvent(BeatDispatcherEvent.BEAT);
+			if (_isOnTick  ) _dispatchCustomEvent(BeatDispatcherEvent.TICK);
 		}
 	}
 }

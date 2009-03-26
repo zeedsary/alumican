@@ -55,6 +55,18 @@
 		
 		
 		//--------------------------------------------------------------------------
+		// SWITCH BUTTON MODE PROPERTY AUTOMATICALLY
+		//--------------------------------------------------------------------------
+		
+		//if true, automatically switch buttonMode property of hitArea in accordance with buttonEnabled
+		function get useAutoButtonMode():Boolean;
+		function set useAutoButtonMode(value:Boolean):void;
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
 		// CUSTOM HITAREA
 		//--------------------------------------------------------------------------
 		
