@@ -155,7 +155,7 @@
 			_particle_container.addChild(p);
 			
 			//新規ビートイベントの追加
-			_beatdispatcher.addBeatEventListener(position, function():void {
+			_beatdispatcher.addBeatEventListener(_beatdispatcher.currentMeasure, _beatdispatcher.currentBeat, _beatdispatcher.currentTick, function():void {
 				
 				// サウンドを鳴らす
 				_sound_ary[index].play();

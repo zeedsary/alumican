@@ -24,34 +24,35 @@
 		// VARIABLES
 		//--------------------------------------------------------------------------
 		
-		private var _bpm:uint;
-		private var _measure:uint;
-		private var _beat:uint;
-		private var _tpqn:uint;
+		private var _isTicking:Boolean;	//トラックが再生中である場合にはtrueとなる
+		
+		private var _bpm:uint;		//BPM(1分間の拍数)
+		private var _measure:uint;	//1トラックを構成する小節数
+		private var _beat:uint;		//1小節を構成する拍数
+		private var _tpqn:uint;		//1拍のタイムベース(拍を構成する音の最小単位の数)
+		
+		private var _currentMeasure:uint;	//トラック頭から数えた現在再生中の小節
+		private var _currentBeat:uint;		//現在再生中の小節頭から数えた再生中の拍
+		private var _currentTick:uint;		//現在再生中の拍頭から数えた再生中のタイムベース
+		
+		private var _currentPosition:uint;	//累積タイムベース(トラック頭から数えた再生中のタイムベース)
+		
+		private var _isOnMeasure:Boolean;	//小節が切り替わった瞬間のフレームにおいてtrueとなる
+		private var _isOnBeat:Boolean;		//拍が切り替わった瞬間のフレームにおいてtrueとなる
+		private var _isOnTick:Boolean;		//タイムベースが切り替わった瞬間のフレームにおいてtrueとなる
+		
+		private var _isOnStart:Boolean;		//トラックが開始した瞬間のフレームにおいてtrueとなる
+		private var _isOnComplete:Boolean;	//トラックが終了した瞬間のフレームにおいてtrueとなる
 		
 		private var _startTime:Number;
-		
-		private var _currentMeasure:uint;
-		private var _currentBeat:uint;
-		private var _currentTick:uint;
-		
-		private var _currentPosition:uint;
-		
 		private var _oldTime:Number;
 		private var _oldMeasure:uint;
 		private var _oldBeat:uint;
 		private var _oldTick:uint;
 		
-		private var _isOnMeasure:Boolean;
-		private var _isOnBeat:Boolean;
-		private var _isOnTick:Boolean;
-		
-		private var _isOnStart:Boolean;
-		private var _isOnComplete:Boolean;
-		
 		private var _refCounter:Dictionary;
 		
-		private var _isTicking:Boolean;
+		
 		
 		
 		
@@ -158,12 +159,33 @@
 		}
 		
 		/**
-		 * 任意のビート位置で発行するイベントを登録する
+		 * 任意の小節, ビート, タイムベース位置で発行するイベントを登録する
 		 * @param	beat
 		 * @param	callback
 		 */
-		public function addBeatEventListener(position:uint, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
+		public function addBeatEventListener(measure:uint, beat:uint, tick:uint, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
+			var position:uint = measure * _measure + beat * _beat + tick * _tpqn;
 			
+			addBeatEventListenerByPosition(position, listener, useCapture, priority, useWeakReference);
+		}
+		
+		/**
+		 * 任意の小節, ビート, タイムベース位置で発行するイベントを解除する
+		 * @param	beat
+		 * @param	callback
+		 */
+		public function removeBeatEventListener(measure:uint, beat:uint, tick:uint, listener:Function, useCapture:Boolean = false):void {
+			var position:uint = measure * _measure + beat * _beat + tick * _tpqn;
+			
+			removeBeatEventListenerByPosition(position, listener, useCapture);
+		}
+		
+		/**
+		 * 任意の累積タイムベース位置で発行するイベントを登録する
+		 * @param	beat
+		 * @param	callback
+		 */
+		public function addBeatEventListenerByPosition(position:uint, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
 			if (_refCounter[position] == null) {
 				_refCounter[position] = 1;
 			} else {
@@ -179,12 +201,11 @@
 		}
 		
 		/**
-		 * 任意のビート位置で発行するイベントを解除する
+		 * 任意の累積タイムベース位置で発行するイベントを解除する
 		 * @param	beat
 		 * @param	callback
 		 */
-		public function removeBeatEventListener(position:uint, listener:Function, useCapture:Boolean = false):void {
-			
+		public function removeBeatEventListenerByPosition(position:uint, listener:Function, useCapture:Boolean = false):void {
 			if (_refCounter[position] == null) return;
 			
 			if (--_refCounter[position] == 0) {
@@ -194,7 +215,11 @@
 			removeEventListener(getEventTypeByPosition(position), listener, useCapture);
 		}
 		
-		//任意のビート位置で発行するイベント名を生成する
+		/**
+		 * 任意の累積タイムベース位置で発行するイベント名を生成する
+		 * @param	position
+		 * @return
+		 */
 		static public function getEventTypeByPosition(position:uint):String {
 			return "ON_" + position;
 		}
@@ -249,7 +274,7 @@
 			_isOnBeat    = false;
 			_isOnTick    = false;
 			
-			_isOnStart    = false;
+			//_isOnStart    = false;
 			_isOnComplete = false;
 			
 			var hasListener:Boolean = false;
@@ -316,7 +341,7 @@
 			*/
 			
 			//イベントの発行
-			if (_isOnStart   ) _dispatchCustomEvent(BeatDispatcherEvent.START);
+			//if (_isOnStart   ) _dispatchCustomEvent(BeatDispatcherEvent.START);
 			if (_isOnComplete) _dispatchCustomEvent(BeatDispatcherEvent.COMPLETE);
 			
 			if (hasListener  ) _dispatchCustomEvent(getEventTypeByPosition(_currentPosition));
