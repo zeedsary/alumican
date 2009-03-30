@@ -29,13 +29,11 @@
 		private var _bpm:uint;		//BPM(1分間の拍数)
 		private var _measure:uint;	//1トラックを構成する小節数
 		private var _beat:uint;		//1小節を構成する拍数
-		private var _tpqn:uint;		//1拍のタイムベース(拍を構成する音の最小単位の数)
+		private var _tpqn:uint;		//1拍のTick(拍を構成する音の最小単位の数)
 		
 		private var _currentMeasure:uint;	//トラック頭から数えた現在再生中の小節
 		private var _currentBeat:uint;		//現在再生中の小節頭から数えた再生中の拍
-		private var _currentTick:uint;		//現在再生中の拍頭から数えた再生中のタイムベース
-		
-		private var _currentPosition:uint;	//累積タイムベース(トラック頭から数えた再生中のタイムベース)
+		private var _currentTick:uint;		//現在再生中の拍頭から数えた再生中のTick
 		
 		private var _isOnMeasure:Boolean;	//小節が切り替わった瞬間のフレームにおいてtrueとなる
 		private var _isOnBeat:Boolean;		//拍が切り替わった瞬間のフレームにおいてtrueとなる
@@ -43,6 +41,9 @@
 		
 		private var _isOnStart:Boolean;		//トラックが開始した瞬間のフレームにおいてtrueとなる
 		private var _isOnComplete:Boolean;	//トラックが終了した瞬間のフレームにおいてtrueとなる
+		
+		private var _currentPosition:uint;
+		private var _totalPosition:uint;
 		
 		private var _startTime:Number;
 		private var _oldTime:Number;
@@ -78,7 +79,7 @@
 		public function get currentTick():uint { return _currentTick; }
 		
 		public function get currentPosition():uint { return _currentPosition; }
-		public function get totalPosition():uint { return _beat * _tpqn; }
+		public function get totalPosition():uint { return _totalPosition; }
 		
 		public function get isOnMeasure():Boolean { return _isOnMeasure; }
 		public function get isOnBeat():Boolean { return _isOnBeat; }
@@ -100,13 +101,15 @@
 		 * @param	bpm		1分間の拍数
 		 * @param	measure	1曲を構成する小節数, 
 		 * @param	beat	1小節を構成する拍数, 
-		 * @param	tpqn	1拍を構成する時間の最小単位
+		 * @param	tpqn	1拍を構成するTick数
 		 */
 		public function BeatDispatcher(bpm:uint = 240, measure:uint = 1, beat:uint = 4, tpqn:uint = 2):void {
 			_bpm     = bpm;
 			_measure = measure;
 			_beat    = beat;
 			_tpqn    = tpqn;
+			
+			_totalPosition = _measure * _beat * _tpqn;
 			
 			_isTicking = false;
 			
@@ -146,8 +149,8 @@
 			_isOnStart    = true;
 			_isOnComplete = false;
 			
+			//イベント発行
 			_dispatchCustomEvent(BeatDispatcherEvent.START);
-			
 			if (_refCounter[_currentPosition] != null) {
 				_dispatchCustomEvent(getEventTypeByPosition(_currentPosition));
 			}
@@ -159,29 +162,29 @@
 		}
 		
 		/**
-		 * 任意の小節, ビート, タイムベース位置で発行するイベントを登録する
+		 * 任意の小節, ビート, Tickで発行するイベントを登録する
 		 * @param	beat
 		 * @param	callback
 		 */
 		public function addBeatEventListener(measure:uint, beat:uint, tick:uint, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
-			var position:uint = measure * _measure + beat * _beat + tick * _tpqn;
+			var position:uint = beatToPosition(measure, beat, tick);
 			
 			addBeatEventListenerByPosition(position, listener, useCapture, priority, useWeakReference);
 		}
 		
 		/**
-		 * 任意の小節, ビート, タイムベース位置で発行するイベントを解除する
+		 * 任意の小節, ビート, Tickで発行するイベントを削除する
 		 * @param	beat
 		 * @param	callback
 		 */
 		public function removeBeatEventListener(measure:uint, beat:uint, tick:uint, listener:Function, useCapture:Boolean = false):void {
-			var position:uint = measure * _measure + beat * _beat + tick * _tpqn;
+			var position:uint = beatToPosition(measure, beat, tick);
 			
 			removeBeatEventListenerByPosition(position, listener, useCapture);
 		}
 		
 		/**
-		 * 任意の累積タイムベース位置で発行するイベントを登録する
+		 * 任意の累積Tickで発行するイベントを登録する
 		 * @param	beat
 		 * @param	callback
 		 */
@@ -194,14 +197,14 @@
 			
 			addEventListener(getEventTypeByPosition(position), listener, useCapture, priority, useWeakReference);
 			
-			//現在のpositionに登録されればすぐにイベントを発行する
+			//現在の累積Tickに登録されればすぐにイベントを発行する
 			if (_isTicking && position == _currentPosition) {
 				_dispatchCustomEvent(getEventTypeByPosition(_currentPosition));
 			}
 		}
 		
 		/**
-		 * 任意の累積タイムベース位置で発行するイベントを解除する
+		 * 任意の累積Tickで発行するイベントを削除する
 		 * @param	beat
 		 * @param	callback
 		 */
@@ -216,7 +219,7 @@
 		}
 		
 		/**
-		 * 任意の累積タイムベース位置で発行するイベント名を生成する
+		 * 任意の累積Tickで発行するイベント名を生成する
 		 * @param	position
 		 * @return
 		 */
@@ -256,6 +259,16 @@
 			return super.dispatchEvent(e);
 		}
 		
+		/**
+		 * 小節・拍・Tickから累積Tickを求める
+		 * @param	measure
+		 * @param	beat
+		 * @param	tick
+		 * @return
+		 */
+		public function beatToPosition(measure:uint, beat:uint, tick:uint):uint {
+			return measure * _beat * _tpqn + beat * _tpqn + tick;
+		}
 		
 		
 		
@@ -274,7 +287,7 @@
 			_isOnBeat    = false;
 			_isOnTick    = false;
 			
-			//_isOnStart    = false;
+			_isOnStart    = false;
 			_isOnComplete = false;
 			
 			var hasListener:Boolean = false;
@@ -341,7 +354,7 @@
 			*/
 			
 			//イベントの発行
-			//if (_isOnStart   ) _dispatchCustomEvent(BeatDispatcherEvent.START);
+			if (_isOnStart   ) _dispatchCustomEvent(BeatDispatcherEvent.START);
 			if (_isOnComplete) _dispatchCustomEvent(BeatDispatcherEvent.COMPLETE);
 			
 			if (hasListener  ) _dispatchCustomEvent(getEventTypeByPosition(_currentPosition));
