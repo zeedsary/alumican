@@ -62,7 +62,7 @@
 			//キーボードイベントの登録
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyDownHandler);
 			
-			addEventListener(Event.ENTER_FRAME, _enterFrameHandler);
+			//addEventListener(Event.ENTER_FRAME, _enterFrameHandler);
 		}
 		
 		/**
@@ -71,11 +71,11 @@
 		private function _initBeatDispatcher():void {
 			
 			//BeatDispatcherの生成
-			_beatdispatcher = new BeatDispatcher(120, 2, 4, 4);
+			_beatdispatcher = new BeatDispatcher(120, 2, 4, 2);
 			
-			//_beatdispatcher.addEventListener(BeatDispatcherEvent.TICK, _unitHanbler);
-			_beatdispatcher.addEventListener(BeatDispatcherEvent.BEAT   , _beatHanbler);
-			_beatdispatcher.addEventListener(BeatDispatcherEvent.MEASURE, _measureHanbler);
+			//_beatdispatcher.addEventListener(BeatDispatcherEvent.TICK   , _tickHanbler);
+			//_beatdispatcher.addEventListener(BeatDispatcherEvent.BEAT   , _beatHanbler);
+			//_beatdispatcher.addEventListener(BeatDispatcherEvent.MEASURE, _measureHanbler);
 			
 			_beatdispatcher.addEventListener(BeatDispatcherEvent.START   , _startHanbler);
 			_beatdispatcher.addEventListener(BeatDispatcherEvent.COMPLETE, _completeHanbler);
@@ -151,7 +151,7 @@
 			var position:uint = _beatdispatcher.currentPosition;
 			
 			// ビジュアライザ用パーティクル生成
-			var p:Particle = new Particle(_beatdispatcher, position, Number(index) / _sound_num, _particle_color[index], _particle_radius[index]);
+			var p:Particle = new Particle(_beatdispatcher, position, index / _sound_num, _particle_color[index], _particle_radius[index]);
 			_particle_container.addChild(p);
 			
 			//新規ビートイベントの追加
