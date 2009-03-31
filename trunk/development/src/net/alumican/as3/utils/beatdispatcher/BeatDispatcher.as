@@ -298,6 +298,10 @@
 			//最小時間単位
 			if (elapsedTime - _oldTime >= 1) {
 				
+				if (_currentPosition == 0) {
+					_isOnStart = true;
+				}
+				
 				++_currentPosition;
 				++_currentTick;
 				_oldTime = elapsedTime;
@@ -330,7 +334,7 @@
 				_isOnMeasure = true;
 			}
 			
-			//1曲
+			//トラック
 			if (_currentMeasure % _measure == 0 &&
 				_currentMeasure != _oldMeasure) {
 				
@@ -344,14 +348,6 @@
 					hasListener = true;
 				}
 			}
-			
-			/*
-			//一分毎に実行
-			if (elapsedTime >= _bpm) {
-				_startTime = getTimer();
-				_oldTime   = 0;
-			}
-			*/
 			
 			//イベントの発行
 			if (_isOnStart   ) _dispatchCustomEvent(BeatDispatcherEvent.START);
