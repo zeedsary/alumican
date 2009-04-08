@@ -17,42 +17,6 @@
 	public class JPPBasicButton extends MovieClip implements IJPPBasicButton {
 		
 		//--------------------------------------------------------------------------
-		// CLASS CONSTANTS
-		//--------------------------------------------------------------------------
-		
-		
-		
-		
-		
-		//--------------------------------------------------------------------------
-		// VARIABLES
-		//--------------------------------------------------------------------------
-		
-		//refference of stage
-		private var _stage:Stage;
-		
-		//stacking all added event handlers
-		private var _eventHandlerStack:Dictionary;		
-		
-		
-		
-		//--------------------------------------------------------------------------
-		// STAGE INSTANCES
-		//--------------------------------------------------------------------------
-		
-		
-		
-		
-		
-		//--------------------------------------------------------------------------
-		// GENERAL GETTER / SETTER
-		//--------------------------------------------------------------------------
-		
-		
-		
-		
-		
-		//--------------------------------------------------------------------------
 		// KILL ALL EVENTS AUTOMATICALLY
 		//--------------------------------------------------------------------------
 		
@@ -161,7 +125,7 @@
 		
 		public function get onDoubleClick():Function          { return _onDoubleClick; }
 		public function set onDoubleClick(f:Function):void    { doubleClickEnabled = (f == null) ? false : true;
-		                                                       _presetAddShortcut(MouseEvent.DOUBLE_CLICK       , "_onDoubleClick"   , f); }
+		                                                        _presetAddShortcut(MouseEvent.DOUBLE_CLICK       , "_onDoubleClick"   , f); }
 		
 		public function get onRollOver():Function             { return _onRollOver; }
 		public function set onRollOver(f:Function):void       { _presetAddShortcut(MouseEvent.ROLL_OVER         , "_onRollOver"      , f); }
@@ -263,6 +227,44 @@
 		
 		//get this as DisplayObjectContainer
 		public function get container():DisplayObjectContainer { return this; }
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// CLASS CONSTANTS
+		//--------------------------------------------------------------------------
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// VARIABLES
+		//--------------------------------------------------------------------------
+		
+		//refference of stage
+		private var _stage:Stage;
+		
+		//stacking all added event handlers
+		private var _eventHandlerStack:Dictionary;		
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// STAGE INSTANCES
+		//--------------------------------------------------------------------------
+		
+		
+		
+		
+		
+		//--------------------------------------------------------------------------
+		// GENERAL GETTER / SETTER
+		//--------------------------------------------------------------------------
 		
 		
 		
