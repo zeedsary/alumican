@@ -11,11 +11,8 @@
 	
 	import org.libspark.ui.SWFWheel;
 	
-	import net.alumican.as3.justputplay.events.JPPMouseEvent;
-	import net.alumican.as3.justputplay.buttons.IJPPBasicButton;
-	
 	/**
-	 * JPPBasicButton.as
+	 * JPPScrollbar.as
 	 *
 	 * @author alumican.net<Yukiya Okuda>
 	 */
@@ -34,17 +31,21 @@
 		// VARIABLES
 		//--------------------------------------------------------------------------
 		
-		private var _up:IJPPBasicButton;
-		private var _down:IJPPBasicButton;
-		private var _base:IJPPBasicButton;
-		private var _slider:IJPPBasicButton;
+		private var _up:MovieClip;
+		private var _down:MovieClip;
+		private var _base:MovieClip;
+		private var _slider:MovieClip;
 		
-		private var _content:DisplayObject;
+		private var _content:*;
+		private var _contentSize:Number;
+		private var _key:String;
 		
 		private var _upperBound:Number;
 		private var _lowerBound:Number;
 		
 		private var _targetScroll:Number;
+		
+		private var _sliderHeight:Number;
 		
 		private var _useArrowScrollUsingRatio:Boolean;
 		private var _arrowScrollAmount:Number;
@@ -60,7 +61,7 @@
 		
 		private var _useFlexibleSlider:Boolean;
 		
-		private var _windowSize:Number;
+		private var _maskSize:Number;
 		
 		private var _usePixelFittingSlider:Boolean;
 		private var _usePixelFittingContent:Boolean;
@@ -73,29 +74,52 @@
 		private var _continuousArrowScrollAmount:Number;
 		private var _isUpPressed:Boolean;
 		
+		private var _prevProperty:Number;
+		
+		private var _useOvershoot:Boolean;
+		private var _useOvershootDeformationSlider:Boolean;
+		private var _overshootEasing:Number;
+		private var _overshootPixels:Number;
+		private var _overShootTargetScroll:Number;
+		
 		
 		
 		//--------------------------------------------------------------------------
 		// GETTER/SETTER
 		//--------------------------------------------------------------------------
 		
-		public function get up():IJPPBasicButton { return _up; }
-		public function set up(value:IJPPBasicButton):void { _up = value; }
+		public function get up():MovieClip { return _up; }
+		public function set up(value:MovieClip):void {
+			_bindArrowUpButton(false);
+			_up = value;
+			_bindArrowUpButton(true);
+		}
 		
-		public function get down():IJPPBasicButton { return _down; }
-		public function set down(value:IJPPBasicButton):void { _down = value; }
+		public function get down():MovieClip { return _down; }
+		public function set down(value:MovieClip):void {
+			_bindArrowDownButton(false);
+			_down = value;
+			_bindArrowDownButton(true);
+		}
 		
-		public function get base():IJPPBasicButton { return _base; }
-		public function set base(value:IJPPBasicButton):void {
+		public function get base():MovieClip { return _base; }
+		public function set base(value:MovieClip):void {
+			_bindBaseButton(false);
 			_base = value;
-			_resizeSlider();
+			_bindBaseButton(true);
+			resizeSlider();
 		}
 		
-		public function get slider():IJPPBasicButton { return _slider; }
-		public function set slider(value:IJPPBasicButton):void {
+		public function get slider():MovieClip { return _slider; }
+		public function set slider(value:MovieClip):void {
+			_bindSliderButton(false);
 			_slider = value;
-			_resizeSlider();
+			_bindSliderButton(true);
+			resizeSlider();
 		}
+		
+		public function get property():Number { return _content[_key]; }
+		public function set property(value:Number):void { _content[_key] = value; }
 		
 		public function get arrowScrollAmount():Number { return _arrowScrollAmount; }
 		public function set arrowScrollAmount(value:Number):void { _arrowScrollAmount = value; }
@@ -117,13 +141,13 @@
 		public function get useFlexibleSlider():Boolean { return _useFlexibleSlider; }
 		public function set useFlexibleSlider(value:Boolean):void {
 			_useFlexibleSlider = value;
-			_resizeSlider();
+			resizeSlider();
 		}
 		
-		public function get windowSize():Number { return _windowSize; }
-		public function set windowSize(value:Number):void {
-			_windowSize = value;
-			_resizeSlider();
+		public function get maskSize():Number { return _maskSize; }
+		public function set maskSize(value:Number):void {
+			_maskSize = value;
+			resizeSlider();
 		}
 		
 		public function get usePixelFittingSlider():Boolean { return _usePixelFittingSlider; }
@@ -135,14 +159,14 @@
 		public function get usePixelFittingContent():Boolean { return _usePixelFittingContent; }
 		public function set usePixelFittingContent(value:Boolean):void {
 			_usePixelFittingContent = value;
-			if (value && !_isScrolling) _content.y = Math.round(_content.y);
+			if (value && !_isScrolling) property = Math.round(property);
 		}
 		
 		public function set buttonEnabled(value:Boolean):void {
-			if (_up)     _up.buttonEnabled     = value;
-			if (_down)   _down.buttonEnabled   = value;
-			if (_base)   _base.buttonEnabled   = value;
-			if (_slider) _slider.buttonEnabled = value;
+			if (_up)     { _up.mouseEnabled     = value; _up.buttonMode = value;     }
+			if (_down)   { _down.mouseEnabled   = value; _down.buttonMode = value;   }
+			if (_base)   { _base.mouseEnabled   = value; _base.buttonMode = value;   }
+			if (_slider) { _slider.mouseEnabled = value; _slider.buttonMode = value; }
 		}
 		
 		public function get useMouseWheel():Boolean { return _useMouseWheel; }
@@ -156,6 +180,21 @@
 		
 		public function get continuousArrowScrollAmount():Number { return _continuousArrowScrollAmount; }
 		public function set continuousArrowScrollAmount(value:Number):void { _continuousArrowScrollAmount = value; }
+		
+		public function get useArrowScrollUsingRatio():Boolean { return _useArrowScrollUsingRatio; }
+		public function set useArrowScrollUsingRatio(value:Boolean):void { _useArrowScrollUsingRatio = value; }
+		
+		public function get useOvershoot():Boolean { return _useOvershoot; }
+		public function set useOvershoot(value:Boolean):void { _useOvershoot = value; }
+		
+		public function get overshootPixels():Number { return _overshootPixels; }
+		public function set overshootPixels(value:Number):void { _overshootPixels = value; }
+		
+		public function get overshootEasing():Number { return _overshootEasing; }
+		public function set overshootEasing(value:Number):void { _overshootEasing = value; }
+		
+		public function get useOvershootDeformationSlider():Boolean { return _useOvershootDeformationSlider; }
+		public function set useOvershootDeformationSlider(value:Boolean):void { _useOvershootDeformationSlider = value; }
 		
 		
 		
@@ -203,19 +242,33 @@
 		/**
 		 * 初期化
 		 */
-		public function initialize(content:DisplayObject, upperBound:Number = NaN, lowerBound:Number = NaN):void {
-			//スクロール対象コンテンツのDisplayObject
+		public function initialize(content:*,
+		                           key:String,
+		                           contentSize:Number,
+		                           maskSize:Number,
+		                           upperBound:Number,
+		                           lowerBound:Number):void {
+			
+			//スクロール対象コンテンツ
 			_content = content;
 			
-			//コンテンツのスクロール上限/下限
-			_upperBound = (String(upperBound) == String(NaN)) ? _content.y : upperBound;
-			_lowerBound = (String(lowerBound) == String(NaN)) ? _upperBound - (_content.height - height) : lowerBound;
+			//スクロール対象のプロパティ
+			_key = key;
+			
+			//スクロールバーが上限に達したときの対象プロパティの値
+			_upperBound = upperBound;
+			
+			//スクロールバーが下限に達したときの対象プロパティの値
+			_lowerBound = lowerBound;
+			
+			//コンテンツの総サイズ
+			_contentSize = contentSize;
 			
 			//コンテンツの表示領域のサイズ
-			_windowSize = height;
+			_maskSize = maskSize;
 			
 			//コンテンツの目標スクロール座標
-			_targetScroll = _content.y;
+			_targetScroll = property;
 			
 			//スクロールアローをクリックしたときのスクロール量として割合を使用する場合はtrue
 			_useArrowScrollUsingRatio = false;
@@ -242,10 +295,10 @@
 			_useFlexibleSlider = true;
 			
 			//スクロール/コンテンツをピクセルに吸着させる場合にはtrue
-			_usePixelFittingSlider  = true;
-			_usePixelFittingContent = true;
+			_usePixelFittingSlider  = false;
+			_usePixelFittingContent = false;
 			
-			//アローボタンを押し続けると連続スクロールする場合はtrue
+			//アローボタンを押し続けたときに連続スクロールさせる場合はtrue
 			_useContinuousArrowScroll = true;
 			
 			//連続スクロールを使用する場合の, 1回目のスクロールから2回目のスクロールが始まるまでの間隔(ミリ秒)
@@ -257,6 +310,18 @@
 			//マウスホイールを使用する場合はtrue
 			_useMouseWheel = true;
 			
+			//iPhoneのような, 端まで行くとちょっと行き過ぎて戻る演出を加える場合はtrue
+			_useOvershoot = true;
+			
+			//オーバーシュートの緩やかさ
+			_overshootEasing = 6;
+			
+			//オーバーシュートの最大行き過ぎ量(pixel)
+			_overshootPixels = 50;
+			
+			//オーバーシュート時にスライダーを伸縮させる場合はtrue
+			_useOvershootDeformationSlider = true;
+			
 			//ボタンインスタンスの設定
 			_up     = _up     || scrollArrow.up;
 			_down   = _down   || scrollArrow.down;
@@ -264,39 +329,90 @@
 			_slider = _slider || scrollBox.slider;
 			
 			//ボタンアクションの設定
-			_setButton();
+			_bindArrowUpButton(true);
+			_bindArrowDownButton(true);
+			_bindBaseButton(true);
+			_bindSliderButton(true);
+			
+			//ボタンを有効化する
+			buttonEnabled = true;
 			
 			//スライダーのリサイズ
-			_resizeSlider();
+			resizeSlider();
 		}
 		
 		/**
-		 * ボタンアクションの設定
+		 * 上向きアローボタンのボタンアクションを設定する関数
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除
 		 */
-		private function _setButton():void {
-			//スクロールアロー
+		private function _bindArrowUpButton(bind:Boolean):void {
 			if (_up) {
-				_up.onMouseDown      = function(e:MouseEvent):void    { _pressArrow(true);   }
-				_up.onMouseUp        = function(e:MouseEvent):void    { _releaseArrow(true); }
-				_up.onReleaseOutside = function(e:JPPMouseEvent):void { _releaseArrow(true); }
-			}
-			
-			if (_down) {
-				_down.onMouseDown      = function(e:MouseEvent):void    { _pressArrow(false);   }
-				_down.onMouseUp        = function(e:MouseEvent):void    { _releaseArrow(false); }
-				_down.onReleaseOutside = function(e:JPPMouseEvent):void { _releaseArrow(false); }
-			}
-			
-			//スクロールエリア
-			if (_base) _base.onMouseDown = function(e:MouseEvent):void { _prsssBase(); }
-			
-			//スクロールスライダー
-			if (_slider && _base) {
-				_slider.onMouseDown      = function(e:MouseEvent):void    { _pressSlider();   }
-				_slider.onMouseUp        = function(e:MouseEvent):void    { _releaseSlider(); }
-				_slider.onReleaseOutside = function(e:JPPMouseEvent):void { _releaseSlider(); }
+				if (bind) {
+					_up.addEventListener(MouseEvent.MOUSE_DOWN  , _arrowUpButtonMouseDownHandler);
+					stage.addEventListener(MouseEvent.MOUSE_UP  , _arrowUpButtonMouseUpHandler  );
+				} else {
+					_up.removeEventListener(MouseEvent.MOUSE_DOWN  , _arrowUpButtonMouseDownHandler);
+					stage.removeEventListener(MouseEvent.MOUSE_UP  , _arrowUpButtonMouseUpHandler  );
+				}
 			}
 		}
+		
+		private function _arrowUpButtonMouseDownHandler(e:MouseEvent):void { _pressArrow(true);   }
+		private function _arrowUpButtonMouseUpHandler(e:MouseEvent):void   { _releaseArrow(true); }
+		
+		/**
+		 * 下向きアローボタンのボタンアクションを設定する関数
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除
+		 */
+		private function _bindArrowDownButton(bind:Boolean):void {
+			if (_down) {
+				if (bind) {
+					_down.addEventListener(MouseEvent.MOUSE_DOWN, _arrowDownButtonMouseDownHandler);
+					stage.addEventListener(MouseEvent.MOUSE_UP  , _arrowDownButtonMouseUpHandler  );
+				} else {
+					_down.removeEventListener(MouseEvent.MOUSE_DOWN, _arrowDownButtonMouseDownHandler);
+					stage.removeEventListener(MouseEvent.MOUSE_UP  , _arrowDownButtonMouseUpHandler  );
+				}
+			}
+		}
+		
+		private function _arrowDownButtonMouseDownHandler(e:MouseEvent):void { _pressArrow(false);   }
+		private function _arrowDownButtonMouseUpHandler(e:MouseEvent):void   { _releaseArrow(false); }
+		
+		/**
+		 * スライダー下地のボタンアクションを設定する関数
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除
+		 */
+		private function _bindBaseButton(bind:Boolean):void {
+			if (_base) {
+				if (bind) {
+					_base.addEventListener(MouseEvent.MOUSE_DOWN, _baseButtonMouseDownHandler);
+				} else {
+					_base.removeEventListener(MouseEvent.MOUSE_DOWN, _baseButtonMouseDownHandler);
+				}
+			}
+		}
+		
+		private function _baseButtonMouseDownHandler(e:MouseEvent):void { _prsssBase(); }
+		
+		/**
+		 * スライダーのボタンアクションを設定する関数
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除
+		 */
+		private function _bindSliderButton(bind:Boolean):void {
+			if (_up) {
+				if (_slider && _base) {
+					_slider.addEventListener(MouseEvent.MOUSE_DOWN, _sliderButtonMouseDownHandler);
+					stage.addEventListener(MouseEvent.MOUSE_UP    , _sliderButtonMouseUpHandler  );
+				} else {
+					_slider.removeEventListener(MouseEvent.MOUSE_DOWN, _sliderButtonMouseDownHandler);
+					stage.removeEventListener(MouseEvent.MOUSE_UP    , _sliderButtonMouseUpHandler  );
+				}
+			}
+		}
+		
+		private function _sliderButtonMouseDownHandler(e:MouseEvent):void { _pressSlider();   }
+		private function _sliderButtonMouseUpHandler(e:MouseEvent):void   { _releaseSlider(); }
 		
 		/**
 		 * 
@@ -341,8 +457,11 @@
 		 * @param	isUp
 		 */
 		private function _releaseArrow(isUp:Boolean):void {
-			_continuousArrowScrollTimer.stop();
-			_continuousArrowScrollTimer.removeEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
+			if(_continuousArrowScrollTimer) {
+				_continuousArrowScrollTimer.stop();
+				_continuousArrowScrollTimer.removeEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
+				_continuousArrowScrollTimer = null;
+			}
 			
 			removeEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
 		}
@@ -425,7 +544,7 @@
 		 * @param	fromTargetPosition
 		 */
 		public function scrollByRelativeRatio(ratio:Number, fromTargetPosition:Boolean = true):void {
-			var o:Number = (fromTargetPosition) ? _targetScroll : _content.y;
+			var o:Number = (fromTargetPosition) ? _targetScroll : property;
 			
 			var pixel:Number = o - (_lowerBound - _upperBound) * ratio;
 			
@@ -448,7 +567,7 @@
 		 * @param	fromTargetPosition
 		 */
 		public function scrollByRelativePixel(pixel:Number, fromTargetPosition:Boolean = true):void {
-			var o:Number = (fromTargetPosition) ? _targetScroll : _content.y;
+			var o:Number = (fromTargetPosition) ? _targetScroll : property;
 			
 			scrollByAbsolutePixel(o + pixel);
 		}
@@ -460,9 +579,17 @@
 		public function scrollByAbsolutePixel(pixel:Number):void {
 			_targetScroll = pixel;
 			
-			_targetScroll = (_targetScroll > _upperBound) ? _upperBound :
-			                (_targetScroll < _lowerBound) ? _lowerBound :
-			                                                _targetScroll;
+			_overShootTargetScroll = (_targetScroll > _upperBound) ? _upperBound :
+			                         (_targetScroll < _lowerBound) ? _lowerBound :
+			                                                         _targetScroll;
+			
+			if (_useOvershoot) {
+				_targetScroll = (_targetScroll > _upperBound + 50) ? _upperBound + 50:
+				                (_targetScroll < _lowerBound - 50) ? _lowerBound - 50:
+				                 _targetScroll;
+			} else {
+				_targetScroll = _overShootTargetScroll;
+			}
 			
 			_startScroll();
 		}
@@ -475,11 +602,26 @@
 			
 			if (_useSmoothScroll) {
 				_isScrolling = true;
+				_prevProperty = property;
 				addEventListener(Event.ENTER_FRAME, _updateScroll);
 			} else {
 				_isScrolling = false;
-				_content.y = _targetScroll;
+				property = _targetScroll;
 				_updateSlider();
+			}
+		}
+		
+		/**
+		 * オーバーシュート時のスクロール到達点の到達点を計算する関数
+		 */
+		private function _updateTargetScroll():void {
+			var d:Number = _overShootTargetScroll - _targetScroll;
+			var a:Number = (d > 0) ? d : -d;
+			
+			if (a < 0.01) {
+				_targetScroll = _overShootTargetScroll;
+			} else {
+				_targetScroll += d / _overshootEasing;
 			}
 		}
 		
@@ -487,24 +629,67 @@
 		 * 
 		 */
 		private function _updateSlider():void {
-			if (_isDragging || _isScrollingByDrag || !_slider || !_base) return;
+			if (!_slider || !_base) return;
 			
-			var contentRatio:Number = (_upperBound - _content.y) / (_upperBound - _lowerBound);
+			var contentRatio:Number = (_upperBound - property) / (_upperBound - _lowerBound);
 			
-			_slider.y = contentRatio * (_base.height - _slider.height);
+			var h:Number = _base.height - _slider.height;
+			var p:Number = contentRatio * h;
+			
+			//スライダーを変形させる
+			if (_useOvershoot && _useOvershootDeformationSlider) {
+				var overshooting:Boolean = false;
+				
+				//上側にオーバーシュートしている
+				if (contentRatio < 0) {
+					overshooting = true;
+					_slider.height += ((_sliderHeight + p) - _slider.height) / 3;
+				}
+				
+				//下側にオーバーシュートしている
+				if (contentRatio > 1) {
+					overshooting = true;
+					_slider.height += ((_sliderHeight - p + h) - _slider.height) / 3;
+				}
+				
+				//オーバーシュートしていない
+				if (!overshooting) {
+					_slider.height += (_sliderHeight - _slider.height) / 10;
+				}
+				
+				//座標の再計算
+				h = _base.height - _slider.height;
+				p = contentRatio * h;
+				
+				if (_isDragging) {
+					var bound:Rectangle = new Rectangle(_base.x, _base.y, 0, h + 1);
+					Sprite(_slider).startDrag(false, bound);
+					return;
+				}
+				if (_isScrollingByDrag) return;
+			}
+			
+			if (_isDragging || _isScrollingByDrag) return;
+			
+			//スライダーの座標を補正する
+			_slider.y = (p < 0) ? 0 :
+						(p > h) ? h :
+								  p;
 		}
 		
 		/**
-		 * 
+		 * 現在のコンテンツサイズ, マスクサイズ, ベースサイズに合わせてスライダーをリサイズする関数
 		 */
-		private function _resizeSlider():void {
+		public function resizeSlider():void {
 			if (!_useFlexibleSlider || !_slider || !base) return;
 			
-			var contentRatio:Number = _windowSize / _content.height;
+			var contentRatio:Number = _maskSize / _contentSize;
 			
-			var sliderHeight:Number = contentRatio * _base.height;
+			_sliderHeight = contentRatio * _base.height;
 			
-			_slider.height = (_usePixelFittingSlider) ? Math.round(sliderHeight) : sliderHeight;
+			_slider.height = (_usePixelFittingSlider) ? Math.round(_sliderHeight) : _sliderHeight;
+			
+			_updateSlider();
 		}
 		
 		
@@ -546,14 +731,18 @@
 		 * @param	e
 		 */
 		private function _updateScroll(e:Event):void {
-			var d:Number = _targetScroll - _content.y;
+			if(_useOvershoot) {
+				_updateTargetScroll();
+			}
+			
+			var d:Number = _targetScroll - property;
 			var a:Number = (d > 0) ? d : -d;
 			
-			if (a < 1) {
+			if (a < 0.01) {
 				_isScrolling = false;
 				_isScrollingByDrag = false;
 				
-				_content.y = _targetScroll;
+				property = _targetScroll;
 				
 				_updateSlider();
 				if (_slider && _usePixelFittingSlider) _slider.y = Math.round(_slider.y);
@@ -561,9 +750,16 @@
 				removeEventListener(Event.ENTER_FRAME, _updateScroll);
 				
 			} else {
-				_content.y += d / _smoothScrollEasing;
+				property += d / _smoothScrollEasing;
 				
 				_updateSlider();
+				
+				//前回から計算結果が変化していない場合は計算精度が限界なので打ち切り
+				if (property == _prevProperty) {
+					property = _targetScroll;
+				} else {
+					_prevProperty = property;
+				}
 			}
 		}
 		
