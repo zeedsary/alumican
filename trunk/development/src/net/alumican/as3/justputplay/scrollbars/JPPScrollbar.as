@@ -31,10 +31,15 @@
 		// VARIABLES
 		//--------------------------------------------------------------------------
 		
-		private var _up:MovieClip;
-		private var _down:MovieClip;
-		private var _base:MovieClip;
-		private var _slider:MovieClip;
+		//連続スクロール用
+		private var _continuousArrowScrollTimer:Timer;
+		private var _isUpPressed:Boolean;
+		
+		//オーバーシュート用
+		private var _overShootTargetScroll:Number;
+		
+		//計算精度限界時のスクロール打ち切り用
+		private var _prevProperty:Number;
 		
 		private var _content:*;
 		private var _contentSize:Number;
@@ -47,46 +52,32 @@
 		
 		private var _sliderHeight:Number;
 		
-		private var _useArrowScrollUsingRatio:Boolean;
-		private var _arrowScrollAmount:Number;
-		
-		private var _useSmoothScroll:Boolean;
-		private var _smoothScrollEasing:Number;
-		
-		private var _isScrolling:Boolean;
 		
 		private var _isDragging:Boolean;
 		
 		private var _isScrollingByDrag:Boolean;
 		
-		private var _useFlexibleSlider:Boolean;
 		
-		private var _maskSize:Number;
 		
-		private var _usePixelFittingSlider:Boolean;
-		private var _usePixelFittingContent:Boolean;
-		
-		private var _useMouseWheel:Boolean;
-		
-		private var _useContinuousArrowScroll:Boolean;
-		private var _continuousArrowScrollInterval:uint;
-		private var _continuousArrowScrollTimer:Timer;
-		private var _continuousArrowScrollAmount:Number;
-		private var _isUpPressed:Boolean;
-		
-		private var _prevProperty:Number;
-		
-		private var _useOvershoot:Boolean;
-		private var _useOvershootDeformationSlider:Boolean;
-		private var _overshootEasing:Number;
-		private var _overshootPixels:Number;
-		private var _overShootTargetScroll:Number;
 		
 		
 		
 		//--------------------------------------------------------------------------
 		// GETTER/SETTER
 		//--------------------------------------------------------------------------
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//==========================================================================
+		// スクロールバーのパーツとしてバインドされるインスタンスに関する事項
+		//==========================================================================
 		
 		public function get up():MovieClip { return _up; }
 		public function set up(value:MovieClip):void {
@@ -118,12 +109,66 @@
 			resizeSlider();
 		}
 		
-		public function get property():Number { return _content[_key]; }
-		public function set property(value:Number):void { _content[_key] = value; }
+		private var _up:MovieClip;
+		private var _down:MovieClip;
+		private var _base:MovieClip;
+		private var _slider:MovieClip;
 		
-		public function get arrowScrollAmount():Number { return _arrowScrollAmount; }
-		public function set arrowScrollAmount(value:Number):void { _arrowScrollAmount = value; }
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		//==========================================================================
+		// スクロールの対象となるコンテンツに関する事項
+		//==========================================================================
+		
+		
+		/*--------------------------------------------------------------------------
+		 * maskSize
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スクロール対象コンテンツの表示部分の大きさを設定します. </p>
+		 * <p>このプロパティは伸縮スライドバーを使用する場合のスライドバーのサイズ計算に用いられます. </p>
+		 */
+		public function get maskSize():Number { return _maskSize; }
+		public function set maskSize(value:Number):void {
+			_maskSize = value;
+			resizeSlider();
+		}
+		
+		private var _maskSize:Number;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * property
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>スクロール対象コンテンツのプロパティを設定します. </p>
+		 */
+		private function get property():Number { return _content[_key]; }
+		private function set property(value:Number):void { _content[_key] = value; }
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//==========================================================================
+		// スクロールのスムージングに関する事項
+		//==========================================================================
 		public function get useSmoothScroll():Boolean { return _useSmoothScroll; }
 		public function set useSmoothScroll(value:Boolean):void {
 			_useSmoothScroll = value;
@@ -133,35 +178,145 @@
 			}
 		}
 		
+		private var _useSmoothScroll:Boolean = true;
+		
+		
+		
+		
 		public function get smoothScrollEasing():Number { return _smoothScrollEasing; }
 		public function set smoothScrollEasing(value:Number):void { _smoothScrollEasing = (value < 1) ? 1 : value; }
 		
+		private var _smoothScrollEasing:Number = 6;
+		
+		
+		
+		
 		public function get isScrolling():Boolean { return _isScrolling; }
 		
+		private var _isScrolling:Boolean;
+		
+		
+		
+		
+		//==========================================================================
+		// スライダーに関する事項
+		//==========================================================================
+		
+		
+		/*--------------------------------------------------------------------------
+		 * useFlexibleSlider
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>コンテンツ量に応じて伸縮するスライダーを使用するかどうかを設定します. </p>
+		 * <p>使用する場合にはtrueを設定します. </p>
+		 * 
+		 * @default true
+		 */
 		public function get useFlexibleSlider():Boolean { return _useFlexibleSlider; }
 		public function set useFlexibleSlider(value:Boolean):void {
 			_useFlexibleSlider = value;
 			resizeSlider();
 		}
 		
-		public function get maskSize():Number { return _maskSize; }
-		public function set maskSize(value:Number):void {
-			_maskSize = value;
+		private var _useFlexibleSlider:Boolean = true;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * minSliderHeight
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>コンテンツ量に応じて伸縮するスライダーを使用する場合, スライダーの最小サイズをピクセル値で設定します. </p>
+		 * 
+		 * @default 10
+		 */
+		public function get minSliderHeight():Number { return _minSliderHeight; }
+		public function set minSliderHeight(value:Number):void {
+			_minSliderHeight = value;
 			resizeSlider();
 		}
 		
+		private var _minSliderHeight:Number = 10;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//==========================================================================
+		// スライダーおよび対象プロパティの整数値吸着に関する事項
+		//==========================================================================
+		
+		
+		/*--------------------------------------------------------------------------
+		 * usePixelFittingSlider
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スクロール完了時にスライダーをピクセルに吸着させるかどうかを設定します. </p>
+		 * <p>吸着させる場合にはtrueを設定します. </p>
+		 * 
+		 * @default false
+		 */
 		public function get usePixelFittingSlider():Boolean { return _usePixelFittingSlider; }
 		public function set usePixelFittingSlider(value:Boolean):void {
 			_usePixelFittingSlider = value;
-			if (value && !_isScrolling) _slider.y = Math.round(_slider.y);
+			if (value && !_isScrolling) {
+				_slider.y = Math.round(_slider.y);
+				_slider.height = Math.round(_sliderHeight);
+			}
 		}
 		
+		private var _usePixelFittingSlider:Boolean = false;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * usePixelFittingContent
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スクロール完了時に対象プロパティを整数値に吸着させるかどうかを設定します. </p>
+		 * <p>吸着させる場合にはtrueを設定します. </p>
+		 */
 		public function get usePixelFittingContent():Boolean { return _usePixelFittingContent; }
 		public function set usePixelFittingContent(value:Boolean):void {
 			_usePixelFittingContent = value;
 			if (value && !_isScrolling) property = Math.round(property);
 		}
 		
+		private var _usePixelFittingContent:Boolean = false;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//==========================================================================
+		// スクロールバーの有効化/無効化に関する事項
+		//==========================================================================
+		
+		
+		/*--------------------------------------------------------------------------
+		 * buttonEnabled
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>アローボタン, スライダー, ベースボタンの有効/無効を一括して切り替えます. </p>
+		 * <p>ボタンを有効化させる場合はtrueを設定します. </p>
+		 * <p>mouseChildrenプロパティは変更されません. </p>
+		 * <p>このプロパティは書き込み専用です. </p>
+		 * <p>初期設定時にtrueが設定されます. </p>
+		 */
 		public function set buttonEnabled(value:Boolean):void {
 			if (_up)     { _up.mouseEnabled     = value; _up.buttonMode = value;     }
 			if (_down)   { _down.mouseEnabled   = value; _down.buttonMode = value;   }
@@ -169,32 +324,208 @@
 			if (_slider) { _slider.mouseEnabled = value; _slider.buttonMode = value; }
 		}
 		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * useMouseWheel
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>マウスホイールの使用/不使用を切り替えます. </p>
+		 * <p>マウスホイールを使用する場合はtrueを設定します. </p>
+		 * 
+		 * @default	true
+		 */
 		public function get useMouseWheel():Boolean { return _useMouseWheel; }
 		public function set useMouseWheel(value:Boolean):void { _useMouseWheel = value; }
 		
-		public function get useContinuousArrowScroll():Boolean { return _useContinuousArrowScroll; }
-		public function set useContinuousArrowScroll(value:Boolean):void { _useContinuousArrowScroll = value; }
+		private var _useMouseWheel:Boolean = true;
 		
-		public function get continuousArrowScrollInterval():uint { return _continuousArrowScrollInterval; }
-		public function set continuousArrowScrollInterval(value:uint):void { _continuousArrowScrollInterval = value; }
 		
-		public function get continuousArrowScrollAmount():Number { return _continuousArrowScrollAmount; }
-		public function set continuousArrowScrollAmount(value:Number):void { _continuousArrowScrollAmount = value; }
 		
+		
+		
+		
+		
+		
+		
+		
+		//==========================================================================
+		// アローボタンのスクロールに関する事項
+		//==========================================================================
+		
+		
+		/*--------------------------------------------------------------------------
+		 * arrowScrollAmount
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>アローボタンを1回クリックしたときのスクロール量を設定します. </p>
+		 * <p>scrollUp(), scrollDownメソッドを呼び出した際のスクロール量もこの値に従います. </p>
+		 * 
+		 * @default	100
+		 */
+		public function get arrowScrollAmount():Number { return _arrowScrollAmount; }
+		public function set arrowScrollAmount(value:Number):void { _arrowScrollAmount = value; }
+		
+		private var _arrowScrollAmount:Number = 100;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * useArrowScrollUsingRatio
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>continuousArrowScrollAmountおよびarrowScrollAmountに使用するスクロール単位を切り替えます. </p>
+		 * <p>trueの場合はスクロール量をコンテンツ全体に対する割合で設定します(0より大きく1以下の数値). </p>
+		 * <p>falseの場合はスクロール量をピクセル数で設定します(0以上の数値). </p>
+		 * 
+		 * @default	false
+		 */
 		public function get useArrowScrollUsingRatio():Boolean { return _useArrowScrollUsingRatio; }
 		public function set useArrowScrollUsingRatio(value:Boolean):void { _useArrowScrollUsingRatio = value; }
 		
+		private var _useArrowScrollUsingRatio:Boolean = false;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * useContinuousArrowScroll
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>アローボタンを押し続けた場合に, 連続スクロールを発生させるかどうかを切り替えます. </p>
+		 * <p> 連続スクロールを使用する場合はtrueを設定します. </p>
+		 * 
+		 * @default	true
+		 */
+		public function get useContinuousArrowScroll():Boolean { return _useContinuousArrowScroll; }
+		public function set useContinuousArrowScroll(value:Boolean):void { _useContinuousArrowScroll = value; }
+		
+		private var _useContinuousArrowScroll:Boolean = true;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * continuousArrowScrollInterval
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>アローボタンを押し続けた場合に発生する連続スクロールを使用する場合, 連続スクロールが始まるまでの時間(ミリ秒)を設定します</p>
+		 * 
+		 * @default	300
+		 */
+		public function get continuousArrowScrollInterval():uint { return _continuousArrowScrollInterval; }
+		public function set continuousArrowScrollInterval(value:uint):void { _continuousArrowScrollInterval = value; }
+		
+		private var _continuousArrowScrollInterval:uint = 300;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * continuousArrowScrollAmount
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>アローボタンを押し続けた場合に発生する連続スクロールを使用する場合, 毎フレームのスクロール量を設定します. </p>
+		 * 
+		 * @default	10
+		 */
+		public function get continuousArrowScrollAmount():Number { return _continuousArrowScrollAmount; }
+		public function set continuousArrowScrollAmount(value:Number):void { _continuousArrowScrollAmount = value; }
+		
+		private var _continuousArrowScrollAmount:Number = 10;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//==========================================================================
+		// オーバーシュート演出に関する事項
+		//==========================================================================
+		
+		
+		/*--------------------------------------------------------------------------
+		 * useOvershoot
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>オーバーシュート(iPhoneのように, 端まで行くとちょっと行き過ぎて戻る演出)を加えるかどうかを切り替えます. </p>
+		 * <p>オーバーシュートを使用する場合はtrueを設定します. </p>
+		 * 
+		 * @default	true
+		 */
 		public function get useOvershoot():Boolean { return _useOvershoot; }
 		public function set useOvershoot(value:Boolean):void { _useOvershoot = value; }
 		
+		private var _useOvershoot:Boolean = true;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * overshootPixels
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>オーバーシュートを使用する場合, オーバーシュートの最大行き過ぎ量をピクセル数で設定します. </p>
+		 * 
+		 * @default	50
+		 */
 		public function get overshootPixels():Number { return _overshootPixels; }
 		public function set overshootPixels(value:Number):void { _overshootPixels = value; }
 		
+		private var _overshootPixels:Number = 50;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * overshootEasing
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>オーバーシュートを使用する場合, オーバーシュートから本来のスクロール座標へ戻る際の緩やかさを設定します. </p>
+		 * <p>1以上の数値を設定し, 数値が大きくなるほど緩やかに戻るようになります.</p>
+		 * 
+		 * @default 6
+		 */
 		public function get overshootEasing():Number { return _overshootEasing; }
 		public function set overshootEasing(value:Number):void { _overshootEasing = value; }
 		
+		private var _overshootEasing:Number = 6;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * useOvershootDeformationSlider
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>オーバーシュートを使用する場合, オーバーシュート時にスクロールバーが縮む演出を加えるかどうかを切り替えます. </p>
+		 * <p>演出を使用する場合はtrueを設定します. </p>
+		 * 
+		 * @default true
+		 */
 		public function get useOvershootDeformationSlider():Boolean { return _useOvershootDeformationSlider; }
 		public function set useOvershootDeformationSlider(value:Boolean):void { _useOvershootDeformationSlider = value; }
+		
+		private var _useOvershootDeformationSlider:Boolean = true;
+		
+		
+		
+		
+		
 		
 		
 		
@@ -227,7 +558,6 @@
 		 * コンストラクタ
 		 */
 		public function JPPScrollbar():void {
-			
 			addEventListener(Event.ADDED_TO_STAGE, _addedToStageHandler);
 		}
 		
@@ -271,16 +601,16 @@
 			_targetScroll = property;
 			
 			//スクロールアローをクリックしたときのスクロール量として割合を使用する場合はtrue
-			_useArrowScrollUsingRatio = false;
+			//_useArrowScrollUsingRatio = false;
 			
 			//スクロールアローを1回クリックしたときのスクロール量
-			_arrowScrollAmount = 100;
+			//_arrowScrollAmount = 100;
 			
 			//スムーズスクロールを使用する場合はtrue
-			_useSmoothScroll = true;
+			//_useSmoothScroll = true;
 			
 			//スムーズスクロールのイージング強度
-			_smoothScrollEasing = 6;
+			//_smoothScrollEasing = 6;
 			
 			//コンテンツがスクロール中の場合はtrue
 			_isScrolling = false;
@@ -292,35 +622,36 @@
 			_isScrollingByDrag = false;
 			
 			//コンテンツ量に合わせて伸縮するスライダーを使用する場合はtrue
-			_useFlexibleSlider = true;
+			//_useFlexibleSlider = true;
 			
 			//スクロール/コンテンツをピクセルに吸着させる場合にはtrue
-			_usePixelFittingSlider  = false;
-			_usePixelFittingContent = false;
+			//_usePixelFittingSlider  = true;
+			//_usePixelFittingContent = false;
 			
 			//アローボタンを押し続けたときに連続スクロールさせる場合はtrue
-			_useContinuousArrowScroll = true;
+			//_useContinuousArrowScroll = true;
 			
 			//連続スクロールを使用する場合の, 1回目のスクロールから2回目のスクロールが始まるまでの間隔(ミリ秒)
-			_continuousArrowScrollInterval = 300;
+			//0とした
+			//_continuousArrowScrollInterval = 300;
 			
 			//連続スクロールを使用する場合の, 2回目以降のスクロール量
-			_continuousArrowScrollAmount = 10;
+			//_continuousArrowScrollAmount = 10;
 			
 			//マウスホイールを使用する場合はtrue
-			_useMouseWheel = true;
+			//_useMouseWheel = true;
 			
 			//iPhoneのような, 端まで行くとちょっと行き過ぎて戻る演出を加える場合はtrue
-			_useOvershoot = true;
+			//_useOvershoot = true;
 			
 			//オーバーシュートの緩やかさ
-			_overshootEasing = 6;
+			//_overshootEasing = 6;
 			
 			//オーバーシュートの最大行き過ぎ量(pixel)
-			_overshootPixels = 50;
+			//_overshootPixels = 50;
 			
 			//オーバーシュート時にスライダーを伸縮させる場合はtrue
-			_useOvershootDeformationSlider = true;
+			//_useOvershootDeformationSlider = true;
 			
 			//ボタンインスタンスの設定
 			_up     = _up     || scrollArrow.up;
@@ -426,9 +757,22 @@
 			
 			//連続スクロール
 			if (_useContinuousArrowScroll) {
-				_continuousArrowScrollTimer = new Timer(_continuousArrowScrollInterval, 1);
-				_continuousArrowScrollTimer.addEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
-				_continuousArrowScrollTimer.start();
+				
+				if (_continuousArrowScrollInterval == 0) {
+					
+					if(_continuousArrowScrollTimer) {
+						_continuousArrowScrollTimer.stop();
+						_continuousArrowScrollTimer.removeEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
+						_continuousArrowScrollTimer = null;
+					}
+					
+					addEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
+						
+				} else {
+					_continuousArrowScrollTimer = new Timer(_continuousArrowScrollInterval, 1);
+					_continuousArrowScrollTimer.addEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
+					_continuousArrowScrollTimer.start();
+				}
 			}
 		}
 		
@@ -685,9 +1029,13 @@
 			
 			var contentRatio:Number = _maskSize / _contentSize;
 			
-			_sliderHeight = contentRatio * _base.height;
+			//var h:Number = contentRatio * _base.height
+			//_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
+			//_slider.height = (_usePixelFittingSlider) ? Math.round(_sliderHeight) : _sliderHeight;
 			
-			_slider.height = (_usePixelFittingSlider) ? Math.round(_sliderHeight) : _sliderHeight;
+			var h:Number = contentRatio * _base.height
+			_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
+			_slider.height = (_usePixelFittingSlider) ? _sliderHeight = Math.round(_sliderHeight) : _sliderHeight;
 			
 			_updateSlider();
 		}
@@ -745,7 +1093,11 @@
 				property = _targetScroll;
 				
 				_updateSlider();
-				if (_slider && _usePixelFittingSlider) _slider.y = Math.round(_slider.y);
+				
+				if (_slider && _usePixelFittingSlider) {
+					_slider.y = Math.round(_slider.y);
+					//_slider.height = Math.round(_sliderHeight);
+				}
 				
 				removeEventListener(Event.ENTER_FRAME, _updateScroll);
 				
