@@ -182,7 +182,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _content
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>_content[_key]=propertyを保持している, スクロール対象コンテンツを表します. </p>
 		 */
@@ -195,7 +194,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _key
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>スクロール対象コンテンツが保持している, スクロールによって実際に変化させたいプロパティ名を表します. </p>
 		 */
@@ -208,7 +206,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * property
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>スクロール対象コンテンツが保持している, スクロールによって実際に変化させたいプロパティ値を取得/設定します. </p>
 		 */
@@ -223,7 +220,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _upperBound
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>スライダーが上限に達したときの変化対象プロパティの値を表します. </p>
 		 */
@@ -236,7 +232,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _lowerBound
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>スライダーが下限に達したときの変化対象プロパティの値を表します. </p>
 		 */
@@ -330,7 +325,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _prevProperty
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>減速スクロールを使用する場合, 前フレームで更新した対象プロパティの値を保存します. </p>
 		 * <p>Flashの演算精度上の問題により目標スクロール値へ到達できない場合, 減速スクロールを打ち切るために使用します.</p>
@@ -409,7 +403,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _isDragging
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>スライダーがユーザによって現在ドラッグされているかどうかを取得します. </p>
 		 * <p>ドラッグされている場合, trueを返します. </p>
@@ -423,7 +416,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _isScrollingByDrag
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>ユーザのスライダードラッグ動作によるスクロールが現在進行中であるかどうかを取得します. </p>
 		 * <p>スクロールが進行中である場合, trueを返します. </p>
@@ -637,7 +629,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _continuousArrowScrollTimer
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>アローボタンを押し続けた場合に発生する連続スクロールを使用する場合, 連続スクロールが発生するまでのタイムラグを管理するためのTimerです. </p>
 		 */
@@ -650,7 +641,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _isUpPressed
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>押され続けているアローボタンがUPなのかDOWNなのかを判別するために使用します. </p>
 		 */
@@ -744,7 +734,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _overShootTargetScroll
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>オーバーシュートを使用する場合, スクロール目標値が最終的に到達する値を表します. </p>
 		 * <p>上にオーバーシュートしている場合はスライダ座標の上限値, 下にオーバーシュートしている場合はスライダ座標の下限値となります. </p>
@@ -889,235 +878,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		/*--------------------------------------------------------------------------
-		 * _bindArrowUpButton
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>上向きアローボタンのボタンアクションを設定する関数. </p>
-		 * 
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
-		 */
-		private function _bindArrowUpButton(bind:Boolean):void {
-			if (_up) {
-				if (bind) {
-					_up.addEventListener(MouseEvent.MOUSE_DOWN  , _arrowUpButtonMouseDownHandler);
-					stage.addEventListener(MouseEvent.MOUSE_UP  , _arrowUpButtonMouseUpHandler  );
-				} else {
-					_up.removeEventListener(MouseEvent.MOUSE_DOWN  , _arrowUpButtonMouseDownHandler);
-					stage.removeEventListener(MouseEvent.MOUSE_UP  , _arrowUpButtonMouseUpHandler  );
-				}
-			}
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _bindArrowDownButton
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>下向きアローボタンのボタンアクションを設定する関数. </p>
-		 * 
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
-		 */
-		private function _bindArrowDownButton(bind:Boolean):void {
-			if (_down) {
-				if (bind) {
-					_down.addEventListener(MouseEvent.MOUSE_DOWN, _arrowDownButtonMouseDownHandler);
-					stage.addEventListener(MouseEvent.MOUSE_UP  , _arrowDownButtonMouseUpHandler  );
-				} else {
-					_down.removeEventListener(MouseEvent.MOUSE_DOWN, _arrowDownButtonMouseDownHandler);
-					stage.removeEventListener(MouseEvent.MOUSE_UP  , _arrowDownButtonMouseUpHandler  );
-				}
-			}
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _bindBaseButton
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>スライダーのベースエリアのボタンアクションを設定する関数. </p>
-		 * 
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
-		 */
-		private function _bindBaseButton(bind:Boolean):void {
-			if (_base) {
-				if (bind) {
-					_base.addEventListener(MouseEvent.MOUSE_DOWN, _baseButtonMouseDownHandler);
-				} else {
-					_base.removeEventListener(MouseEvent.MOUSE_DOWN, _baseButtonMouseDownHandler);
-				}
-			}
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _bindSliderButton
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>スライダーのボタンアクションを設定する関数. </p>
-		 * 
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
-		 */
-		private function _bindSliderButton(bind:Boolean):void {
-			if (_up) {
-				if (_slider && _base) {
-					_slider.addEventListener(MouseEvent.MOUSE_DOWN, _sliderButtonMouseDownHandler);
-					stage.addEventListener(MouseEvent.MOUSE_UP    , _sliderButtonMouseUpHandler  );
-				} else {
-					_slider.removeEventListener(MouseEvent.MOUSE_DOWN, _sliderButtonMouseDownHandler);
-					stage.removeEventListener(MouseEvent.MOUSE_UP    , _sliderButtonMouseUpHandler  );
-				}
-			}
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _pressArrow
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>アローボタンが押されたときに呼び出される関数. </p>
-		 * <p>_arrowDownButtonMouseDownHandlerもしくは_arrowUpButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
-		 * 
-		 * @param	isUp	trueの場合は上方向アローボタンが, falseの場合は下方向アローボタンが押されたことを表します. 
-		 */
-		private function _pressArrow(isUp:Boolean):void {
-			_isUpPressed = isUp;
-			
-			//1回目のスクロール処理を実行する
-			(isUp) ? scrollUp() : scrollDown();
-			
-			//2回目移行のスクロール処理を実行する
-			if (_useContinuousArrowScroll) {
-				
-				if (_continuousArrowScrollInterval == 0) {
-					//タイムラグ無しで毎フレームの連続スクロールを開始する
-					
-					if(_continuousArrowScrollTimer) {
-						_continuousArrowScrollTimer.stop();
-						_continuousArrowScrollTimer.removeEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
-						_continuousArrowScrollTimer = null;
-					}
-					
-					addEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
-						
-				} else {
-					//タイムラグの後, 毎フレームの連続スクロールを開始する
-					_continuousArrowScrollTimer = new Timer(_continuousArrowScrollInterval, 1);
-					_continuousArrowScrollTimer.addEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
-					_continuousArrowScrollTimer.start();
-				}
-			}
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _releaseArrow
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>アローボタンが離されたときに呼び出される関数. </p>
-		 * <p>_arrowDownButtonMouseUpHandlerもしくは_arrowUpButtonMouseUpHandlerイベントハンドラを通じて呼び出されます. </a>
-		 * 
-		 * @param	isUp	trueの場合は上方向アローボタンが, falseの場合は下方向アローボタンが離されたことを表します. 
-		 */
-		private function _releaseArrow(isUp:Boolean):void {
-			if(_continuousArrowScrollTimer) {
-				_continuousArrowScrollTimer.stop();
-				_continuousArrowScrollTimer.removeEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
-				_continuousArrowScrollTimer = null;
-			}
-			
-			removeEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _prsssBase
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>スライダーのベースエリアが押されたときに呼び出される関数. </p>
-		 * <p>_baseButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
-		 */
-		private function _prsssBase():void {
-			_isScrollingByDrag = false;
-			
-			var ratio:Number = (_slider) ? _base.mouseY / (_base.height - _slider.height) :
-			                               _base.mouseY / (_base.height - 1);
-			
-			//スクロール処理を実行する
-			scrollByAbsoluteRatio(ratio);
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _pressSlider
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>スライダーが押されたときに呼び出される関数. </p>
-		 * <p>_sliderButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
-		 */
-		private function _pressSlider():void {
-			_isDragging = true;
-			
-			var bound:Rectangle = new Rectangle(_base.x, _base.y, 0, _base.height - _slider.height + 1);
-			
-			Sprite(_slider).startDrag(false, bound);
-			
-			stage.addEventListener(MouseEvent.MOUSE_MOVE, _moveSliderHandler);
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _releaseSlider
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>スライダーが離されたときに呼び出される関数. </p>
-		 * <p>_sliderButtonMouseUpHandlerイベントハンドラを通じて呼び出されます. </a>
-		 */
-		private function _releaseSlider():void {
-			_isDragging = false;
-			
-			Sprite(_slider).stopDrag();
-			
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, _moveSliderHandler);
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
 		 * scrollUp
 		 *---------------------------------------------------------------------*//**
 		 * 
@@ -1147,40 +907,6 @@ package net.alumican.as3.justputplay.scrollbars {
 			
 			(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(-_arrowScrollAmount) :
 			                              scrollByRelativePixel(-_arrowScrollAmount);
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _continuousScrollUp
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>アローボタンを押し続けたときの連続スクロールを実行する関数です. </p>
-		 * <p>スライダーは上方向へと移動します. </p>
-		 */
-		private function _continuousScrollUp():void {
-			(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(_continuousArrowScrollAmount) :
-			                              scrollByRelativePixel(_continuousArrowScrollAmount);
-		}
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _continuousScrollDown
-		 *---------------------------------------------------------------------*//**
-		 * @private
-		 * 
-		 * <p>アローボタンを押し続けたときの連続スクロールを実行する関数です. </p>
-		 * <p>スライダーは下方向へと移動します. </p>
-		 */
-		private function _continuousScrollDown():void {
-			(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(-_continuousArrowScrollAmount) :
-			                              scrollByRelativePixel(-_continuousArrowScrollAmount);
 		}
 		
 		
@@ -1295,9 +1021,297 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		/*--------------------------------------------------------------------------
+		 * resizeSlider
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>現在の対象コンテンツ総計サイズ,, 対象コンテンツ表示領域サイズ, スライダのベースエリアのサイズに合わせて, スライダーをリサイズする関数です. </p>
+		 */
+		public function resizeSlider():void {
+			if (!_useFlexibleSlider || !_slider || !base) return;
+			
+			var contentRatio:Number = _maskSize / _contentSize;
+			
+			//var h:Number = contentRatio * _base.height
+			//_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
+			//_slider.height = (_usePixelFittingSlider) ? Math.round(_sliderHeight) : _sliderHeight;
+			
+			var h:Number = contentRatio * _base.height
+			_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
+			_slider.height = (_usePixelFittingSlider) ? _sliderHeight = Math.round(_sliderHeight) : _sliderHeight;
+			
+			//位置合わせをおこなう
+			_updateSlider();
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//==========================================================================
+		// PRIVATE METHODS
+		//==========================================================================
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _bindArrowUpButton
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>上向きアローボタンのボタンアクションを設定する関数. </p>
+		 * 
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
+		 */
+		private function _bindArrowUpButton(bind:Boolean):void {
+			if (_up) {
+				if (bind) {
+					_up.addEventListener(MouseEvent.MOUSE_DOWN  , _arrowUpButtonMouseDownHandler);
+					stage.addEventListener(MouseEvent.MOUSE_UP  , _arrowUpButtonMouseUpHandler  );
+				} else {
+					_up.removeEventListener(MouseEvent.MOUSE_DOWN  , _arrowUpButtonMouseDownHandler);
+					stage.removeEventListener(MouseEvent.MOUSE_UP  , _arrowUpButtonMouseUpHandler  );
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _bindArrowDownButton
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>下向きアローボタンのボタンアクションを設定する関数. </p>
+		 * 
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
+		 */
+		private function _bindArrowDownButton(bind:Boolean):void {
+			if (_down) {
+				if (bind) {
+					_down.addEventListener(MouseEvent.MOUSE_DOWN, _arrowDownButtonMouseDownHandler);
+					stage.addEventListener(MouseEvent.MOUSE_UP  , _arrowDownButtonMouseUpHandler  );
+				} else {
+					_down.removeEventListener(MouseEvent.MOUSE_DOWN, _arrowDownButtonMouseDownHandler);
+					stage.removeEventListener(MouseEvent.MOUSE_UP  , _arrowDownButtonMouseUpHandler  );
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _bindBaseButton
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スライダーのベースエリアのボタンアクションを設定する関数. </p>
+		 * 
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
+		 */
+		private function _bindBaseButton(bind:Boolean):void {
+			if (_base) {
+				if (bind) {
+					_base.addEventListener(MouseEvent.MOUSE_DOWN, _baseButtonMouseDownHandler);
+				} else {
+					_base.removeEventListener(MouseEvent.MOUSE_DOWN, _baseButtonMouseDownHandler);
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _bindSliderButton
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スライダーのボタンアクションを設定する関数. </p>
+		 * 
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
+		 */
+		private function _bindSliderButton(bind:Boolean):void {
+			if (_up) {
+				if (_slider && _base) {
+					_slider.addEventListener(MouseEvent.MOUSE_DOWN, _sliderButtonMouseDownHandler);
+					stage.addEventListener(MouseEvent.MOUSE_UP    , _sliderButtonMouseUpHandler  );
+				} else {
+					_slider.removeEventListener(MouseEvent.MOUSE_DOWN, _sliderButtonMouseDownHandler);
+					stage.removeEventListener(MouseEvent.MOUSE_UP    , _sliderButtonMouseUpHandler  );
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _pressArrow
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>アローボタンが押されたときに呼び出される関数. </p>
+		 * <p>_arrowDownButtonMouseDownHandlerもしくは_arrowUpButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
+		 * 
+		 * @param	isUp	trueの場合は上方向アローボタンが, falseの場合は下方向アローボタンが押されたことを表します. 
+		 */
+		private function _pressArrow(isUp:Boolean):void {
+			_isUpPressed = isUp;
+			
+			//1回目のスクロール処理を実行する
+			(isUp) ? scrollUp() : scrollDown();
+			
+			//2回目移行のスクロール処理を実行する
+			if (_useContinuousArrowScroll) {
+				
+				if (_continuousArrowScrollInterval == 0) {
+					//タイムラグ無しで毎フレームの連続スクロールを開始する
+					
+					if(_continuousArrowScrollTimer) {
+						_continuousArrowScrollTimer.stop();
+						_continuousArrowScrollTimer.removeEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
+						_continuousArrowScrollTimer = null;
+					}
+					
+					addEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
+						
+				} else {
+					//タイムラグの後, 毎フレームの連続スクロールを開始する
+					_continuousArrowScrollTimer = new Timer(_continuousArrowScrollInterval, 1);
+					_continuousArrowScrollTimer.addEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
+					_continuousArrowScrollTimer.start();
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _releaseArrow
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>アローボタンが離されたときに呼び出される関数. </p>
+		 * <p>_arrowDownButtonMouseUpHandlerもしくは_arrowUpButtonMouseUpHandlerイベントハンドラを通じて呼び出されます. </a>
+		 * 
+		 * @param	isUp	trueの場合は上方向アローボタンが, falseの場合は下方向アローボタンが離されたことを表します. 
+		 */
+		private function _releaseArrow(isUp:Boolean):void {
+			if(_continuousArrowScrollTimer) {
+				_continuousArrowScrollTimer.stop();
+				_continuousArrowScrollTimer.removeEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
+				_continuousArrowScrollTimer = null;
+			}
+			
+			removeEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _prsssBase
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スライダーのベースエリアが押されたときに呼び出される関数. </p>
+		 * <p>_baseButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
+		 */
+		private function _prsssBase():void {
+			_isScrollingByDrag = false;
+			
+			var ratio:Number = (_slider) ? _base.mouseY / (_base.height - _slider.height) :
+			                               _base.mouseY / (_base.height - 1);
+			
+			//スクロール処理を実行する
+			scrollByAbsoluteRatio(ratio);
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _pressSlider
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スライダーが押されたときに呼び出される関数. </p>
+		 * <p>_sliderButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
+		 */
+		private function _pressSlider():void {
+			_isDragging = true;
+			
+			var bound:Rectangle = new Rectangle(_base.x, _base.y, 0, _base.height - _slider.height + 1);
+			
+			Sprite(_slider).startDrag(false, bound);
+			
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, _moveSliderHandler);
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _releaseSlider
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スライダーが離されたときに呼び出される関数. </p>
+		 * <p>_sliderButtonMouseUpHandlerイベントハンドラを通じて呼び出されます. </a>
+		 */
+		private function _releaseSlider():void {
+			_isDragging = false;
+			
+			Sprite(_slider).stopDrag();
+			
+			stage.removeEventListener(MouseEvent.MOUSE_MOVE, _moveSliderHandler);
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _continuousScrollUp
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>アローボタンを押し続けたときの連続スクロールを実行する関数です. </p>
+		 * <p>スライダーは上方向へと移動します. </p>
+		 */
+		private function _continuousScrollUp():void {
+			(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(_continuousArrowScrollAmount) :
+			                              scrollByRelativePixel(_continuousArrowScrollAmount);
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _continuousScrollDown
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>アローボタンを押し続けたときの連続スクロールを実行する関数です. </p>
+		 * <p>スライダーは下方向へと移動します. </p>
+		 */
+		private function _continuousScrollDown():void {
+			(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(-_continuousArrowScrollAmount) :
+			                              scrollByRelativePixel(-_continuousArrowScrollAmount);
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
 		 * _startScroll
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>スクロール処理を開始する関数です. </p>
 		 */
@@ -1325,7 +1339,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _updateTargetScroll
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>オーバーシュート時に, スクロール目標点が到達する値を計算する関数です. </p>
 		 */
@@ -1347,7 +1360,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _updateSlider
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>コンテンツのスクロール量に応じてスライダーの形状と位置を計算する関数です. </p>
 		 */
@@ -1406,33 +1418,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		
-		/*--------------------------------------------------------------------------
-		 * resizeSlider
-		 *---------------------------------------------------------------------*//**
-		 * 
-		 * <p>現在の対象コンテンツ総計サイズ,, 対象コンテンツ表示領域サイズ, スライダのベースエリアのサイズに合わせて, スライダーをリサイズする関数です. </p>
-		 */
-		public function resizeSlider():void {
-			if (!_useFlexibleSlider || !_slider || !base) return;
-			
-			var contentRatio:Number = _maskSize / _contentSize;
-			
-			//var h:Number = contentRatio * _base.height
-			//_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
-			//_slider.height = (_usePixelFittingSlider) ? Math.round(_sliderHeight) : _sliderHeight;
-			
-			var h:Number = contentRatio * _base.height
-			_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
-			_slider.height = (_usePixelFittingSlider) ? _sliderHeight = Math.round(_sliderHeight) : _sliderHeight;
-			
-			//位置合わせをおこなう
-			_updateSlider();
-		}
-		
-		
-		
-		
-		
 		
 		
 		
@@ -1446,7 +1431,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * button event handlers
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>各パーツのボタンアクションにバインドされるイベントハンドラです. </p>
 		 * 
@@ -1467,11 +1451,9 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		
-		
 		/*--------------------------------------------------------------------------
 		 * _mouseWheelHandler
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>マウスホイールの動作時に呼び出されるイベントハンドラです. </p>
 		 * 
@@ -1490,7 +1472,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _mouseWheelHandler
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>アローボタンを押し続けたときの連続スクロールを発生させるまでの遅延完了時に呼び出されるイベントハンドラです. </p>
 		 * 
@@ -1510,7 +1491,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _continuousArrowScrollTimerUpdater
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>アローボタンを押し続けたときの連続スクロールを実行するために毎フレーム呼び出されるイベントハンドラです. </p>
 		 * 
@@ -1528,7 +1508,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _moveSliderHandler
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>スライダのドラッグ時に呼び出されるイベントハンドラです. </p>
 		 * 
@@ -1549,7 +1528,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _updateScroll
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>スクロールアクションが始まってから完了するまで毎フレーム呼び出されるイベントハンドラです. </p>
 		 * <p>対象プロパティ, スライダの更新をおこないます. </p>
@@ -1600,7 +1578,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _addedToStageHandler
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>ステージに配置されたときに呼び出されるイベントハンドラです. </p>
 		 * 
@@ -1624,7 +1601,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * _removedFromStageHandler
 		 *---------------------------------------------------------------------*//**
-		 * @private
 		 * 
 		 * <p>ステージから削除されるときに呼び出されるイベントハンドラです. </p>
 		 * 
