@@ -1,4 +1,29 @@
-﻿package net.alumican.as3.justputplay.scrollbars {
+﻿/**
+ * Licensed under the MIT License
+ * 
+ * Copyright (c) 2009 alumican.net (www.alumican.net) and Spark project (www.libspark.org)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ * In Japanese, http://sourceforge.jp/projects/opensource/wiki/licenses%2FMIT_license
+ */
+package net.alumican.as3.justputplay.scrollbars {
 	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
@@ -9,110 +34,101 @@
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
 	
+	//SWFWheel (http://www.libspark.org/wiki/SWFWheel)
 	import org.libspark.ui.SWFWheel;
 	
 	/**
 	 * JPPScrollbar.as
-	 *
+	 * 
+	 * <p>ActionScript3.0で簡単に設置できるスクロールバーのコアクラスです. </p>
+	 * 
 	 * @author alumican.net<Yukiya Okuda>
+	 * @link http://alumican.net
+	 * 
+	 * @link http://www.libspark.org/wiki/alumican/JustPutPlay/JPPScrollbar
 	 */
 	
 	public class JPPScrollbar extends Sprite {
-		
-		//--------------------------------------------------------------------------
-		// CLASS CONSTANTS
-		//--------------------------------------------------------------------------
-		
-		
-		
-		
-		
-		//--------------------------------------------------------------------------
-		// VARIABLES
-		//--------------------------------------------------------------------------
-		
-		//連続スクロール用
-		private var _continuousArrowScrollTimer:Timer;
-		private var _isUpPressed:Boolean;
-		
-		//オーバーシュート用
-		private var _overShootTargetScroll:Number;
-		
-		//計算精度限界時のスクロール打ち切り用
-		private var _prevProperty:Number;
-		
-		private var _content:*;
-		private var _contentSize:Number;
-		private var _key:String;
-		
-		private var _upperBound:Number;
-		private var _lowerBound:Number;
-		
-		private var _targetScroll:Number;
-		
-		private var _sliderHeight:Number;
-		
-		
-		private var _isDragging:Boolean;
-		
-		private var _isScrollingByDrag:Boolean;
-		
-		
-		
-		
-		
-		
-		//--------------------------------------------------------------------------
-		// GETTER/SETTER
-		//--------------------------------------------------------------------------
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		
 		//==========================================================================
 		// スクロールバーのパーツとしてバインドされるインスタンスに関する事項
 		//==========================================================================
 		
-		public function get up():MovieClip { return _up; }
-		public function set up(value:MovieClip):void {
+		
+		/*--------------------------------------------------------------------------
+		 * up
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>上向きアローボタンとしてバインドするインスタンスを設定します. </p>
+		 */
+		public function get up():Sprite { return _up; }
+		public function set up(value:Sprite):void {
 			_bindArrowUpButton(false);
 			_up = value;
 			_bindArrowUpButton(true);
 		}
 		
-		public function get down():MovieClip { return _down; }
-		public function set down(value:MovieClip):void {
+		private var _up:Sprite;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * down
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>下向きアローボタンとしてバインドするインスタンスを設定します. </p>
+		 */
+		public function get down():Sprite { return _down; }
+		public function set down(value:Sprite):void {
 			_bindArrowDownButton(false);
 			_down = value;
 			_bindArrowDownButton(true);
 		}
 		
-		public function get base():MovieClip { return _base; }
-		public function set base(value:MovieClip):void {
+		private var _down:Sprite;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * base
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スライダを敷くベースエリアとしてバインドするインスタンスを設定します. </p>
+		 */
+		public function get base():Sprite { return _base; }
+		public function set base(value:Sprite):void {
 			_bindBaseButton(false);
 			_base = value;
 			_bindBaseButton(true);
 			resizeSlider();
 		}
 		
-		public function get slider():MovieClip { return _slider; }
-		public function set slider(value:MovieClip):void {
+		private var _base:Sprite;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * slider
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スライダとしてバインドするインスタンスを設定します. </p>
+		 */
+		public function get slider():Sprite{ return _slider; }
+		public function set slider(value:Sprite):void {
 			_bindSliderButton(false);
 			_slider = value;
 			_bindSliderButton(true);
 			resizeSlider();
 		}
 		
-		private var _up:MovieClip;
-		private var _down:MovieClip;
-		private var _base:MovieClip;
-		private var _slider:MovieClip;
+		private var _slider:Sprite;
 		
 		
 		
@@ -129,10 +145,26 @@
 		
 		
 		/*--------------------------------------------------------------------------
+		 * contentSize
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スクロール対象コンテンツの総計サイズを設定します. </p>
+		 * <p>このプロパティは伸縮スライドバーを使用する場合のスライドバーのサイズ計算に用いられます. </p>
+		 */
+		public function get contentSize():Number { return _contentSize; }
+		public function set contentSize(value:Number):void { _contentSize = value; }
+		
+		private var _contentSize:Number;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
 		 * maskSize
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>スクロール対象コンテンツの表示部分の大きさを設定します. </p>
+		 * <p>スクロール対象コンテンツの表示部分のサイズを設定します. </p>
 		 * <p>このプロパティは伸縮スライドバーを使用する場合のスライドバーのサイズ計算に用いられます. </p>
 		 */
 		public function get maskSize():Number { return _maskSize; }
@@ -148,11 +180,37 @@
 		
 		
 		/*--------------------------------------------------------------------------
+		 * _content
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>_content[_key]=propertyを保持している, スクロール対象コンテンツを表します. </p>
+		 */
+		private var _content:*;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _key
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>スクロール対象コンテンツが保持している, スクロールによって実際に変化させたいプロパティ名を表します. </p>
+		 */
+		private var _key:String;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
 		 * property
 		 *---------------------------------------------------------------------*//**
 		 * @private
 		 * 
-		 * <p>スクロール対象コンテンツのプロパティを設定します. </p>
+		 * <p>スクロール対象コンテンツが保持している, スクロールによって実際に変化させたいプロパティ値を取得/設定します. </p>
 		 */
 		private function get property():Number { return _content[_key]; }
 		private function set property(value:Number):void { _content[_key] = value; }
@@ -162,13 +220,51 @@
 		
 		
 		
+		/*--------------------------------------------------------------------------
+		 * _upperBound
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>スライダーが上限に達したときの変化対象プロパティの値を表します. </p>
+		 */
+		private var _upperBound:Number;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _lowerBound
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>スライダーが下限に達したときの変化対象プロパティの値を表します. </p>
+		 */
+		private var _lowerBound:Number;
+		
+		
+		
+		
+		
+		
 		
 		
 		
 		
 		//==========================================================================
-		// スクロールのスムージングに関する事項
+		// 基本的なスクロール動作に関する事項
 		//==========================================================================
+		
+		
+		/*--------------------------------------------------------------------------
+		 * useSmoothScroll
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>減速スクロールを使用するかどうかを設定します. </p>
+		 * <p>使用する場合にはtrueを設定します. </p>
+		 * 
+		 * @default true
+		 */
 		public function get useSmoothScroll():Boolean { return _useSmoothScroll; }
 		public function set useSmoothScroll(value:Boolean):void {
 			_useSmoothScroll = value;
@@ -183,6 +279,16 @@
 		
 		
 		
+		
+		/*--------------------------------------------------------------------------
+		 * smoothScrollEasing
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>減速スクロールを使用する場合の, 減速の緩やかさを設定します. </p>
+		 * <p>1以上の数値を設定し, 数値が大きくなるほど緩やかに戻るようになります.</p>
+		 * 
+		 * @default 6
+		 */
 		public function get smoothScrollEasing():Number { return _smoothScrollEasing; }
 		public function set smoothScrollEasing(value:Number):void { _smoothScrollEasing = (value < 1) ? 1 : value; }
 		
@@ -191,9 +297,51 @@
 		
 		
 		
+		
+		/*--------------------------------------------------------------------------
+		 * isScrolling
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>減速スクロールを使用する場合, 現在スクロールが進行中であるかどうかを取得します. </p>
+		 * <p>スクロールが進行中の場合isScrollingプロパティはtrueを返します.</p>
+		 */
 		public function get isScrolling():Boolean { return _isScrolling; }
 		
 		private var _isScrolling:Boolean;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * targetScroll
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>減速スクロールを使用する場合, スクロール完了時に対象プロパティが到達する目標値を表します. </p>
+		 */
+		public function get targetScroll():Number { return _targetScroll; }
+		
+		private var _targetScroll:Number;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _prevProperty
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>減速スクロールを使用する場合, 前フレームで更新した対象プロパティの値を保存します. </p>
+		 * <p>Flashの演算精度上の問題により目標スクロール値へ到達できない場合, 減速スクロールを打ち切るために使用します.</p>
+		 */
+		private var _prevProperty:Number;
+		
+		
+		
+		
+		
+		
 		
 		
 		
@@ -240,6 +388,47 @@
 		
 		private var _minSliderHeight:Number = 10;
 		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * sliderHeight
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>useOvershootDeformationSlider=true時のオーバーシュート演出によって変形していないときのスライダーの高さを取得します. </p>
+		 */
+		public function get sliderHeight():Number { return _sliderHeight; }
+		
+		private var _sliderHeight:Number;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _isDragging
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>スライダーがユーザによって現在ドラッグされているかどうかを取得します. </p>
+		 * <p>ドラッグされている場合, trueを返します. </p>
+		 */
+		private var _isDragging:Boolean;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _isScrollingByDrag
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>ユーザのスライダードラッグ動作によるスクロールが現在進行中であるかどうかを取得します. </p>
+		 * <p>スクロールが進行中である場合, trueを返します. </p>
+		 */
+		private var _isScrollingByDrag:Boolean;
 		
 		
 		
@@ -445,6 +634,32 @@
 		
 		
 		
+		/*--------------------------------------------------------------------------
+		 * _continuousArrowScrollTimer
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>アローボタンを押し続けた場合に発生する連続スクロールを使用する場合, 連続スクロールが発生するまでのタイムラグを管理するためのTimerです. </p>
+		 */
+		private var _continuousArrowScrollTimer:Timer;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _isUpPressed
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>押され続けているアローボタンがUPなのかDOWNなのかを判別するために使用します. </p>
+		 */
+		private var _isUpPressed:Boolean;
+		
+		
+		
+		
+		
 		
 		
 		
@@ -526,14 +741,44 @@
 		
 		
 		
+		/*--------------------------------------------------------------------------
+		 * _overShootTargetScroll
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>オーバーシュートを使用する場合, スクロール目標値が最終的に到達する値を表します. </p>
+		 * <p>上にオーバーシュートしている場合はスライダ座標の上限値, 下にオーバーシュートしている場合はスライダ座標の下限値となります. </p>
+		 */
+		private var _overShootTargetScroll:Number;
 		
 		
 		
 		
 		
-		//--------------------------------------------------------------------------
+		
+		
+		
+		
+		
+		//==========================================================================
+		// CLASS CONSTANTS
+		//==========================================================================
+		
+		
+		
+		
+		
+		//==========================================================================
+		// VARIABLES
+		//==========================================================================
+		
+		
+		
+		
+		
+		//==========================================================================
 		// STAGE INSTANCES
-		//--------------------------------------------------------------------------
+		//==========================================================================
 		
 		public var scrollBox:MovieClip;
 		public var scrollArrow:MovieClip;
@@ -542,20 +787,24 @@
 		
 		
 		
-		//--------------------------------------------------------------------------
+		//==========================================================================
 		// GETTER/SETTER
-		//--------------------------------------------------------------------------
+		//==========================================================================
 		
 		
 		
 		
 		
-		//--------------------------------------------------------------------------
+		//==========================================================================
 		// CONSTRUCTOR
-		//--------------------------------------------------------------------------
+		//==========================================================================
 		
-		/**
-		 * コンストラクタ
+		
+		/*--------------------------------------------------------------------------
+		 * JPPScrollbar
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>コンストラクタです. </p>
 		 */
 		public function JPPScrollbar():void {
 			addEventListener(Event.ADDED_TO_STAGE, _addedToStageHandler);
@@ -565,12 +814,29 @@
 		
 		
 		
-		//--------------------------------------------------------------------------
-		// METHODS
-		//--------------------------------------------------------------------------
 		
-		/**
-		 * 初期化
+		
+		
+		
+		
+		//==========================================================================
+		// METHODS
+		//==========================================================================
+		
+		
+		/*--------------------------------------------------------------------------
+		 * initialize
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>初期化関数. </p>
+		 * <p>最初に実行される必要があります. </p>
+		 * 
+		 * @param	content	　　スクロール対象のオブジェクト(コンテンツ)です. 
+		 * @param	key	　　　　スクロールによって実際に変化させたいプロパティ名です. 
+		 * @param	contentSize	スクロール対象オブジェクトの総計サイズです. 
+		 * @param	maskSize	実際に表示されるスクロール対象オブジェクトのサイズです. 
+		 * @param	upperBound	スライダーが上限に達したときの変化対象プロパティの値です. 
+		 * @param	lowerBound	スライダーが下限に達したときの変化対象プロパティの値です. 
 		 */
 		public function initialize(content:*,
 		                           key:String,
@@ -579,87 +845,33 @@
 		                           upperBound:Number,
 		                           lowerBound:Number):void {
 			
-			//スクロール対象コンテンツ
-			_content = content;
-			
-			//スクロール対象のプロパティ
-			_key = key;
-			
-			//スクロールバーが上限に達したときの対象プロパティの値
-			_upperBound = upperBound;
-			
-			//スクロールバーが下限に達したときの対象プロパティの値
-			_lowerBound = lowerBound;
-			
-			//コンテンツの総サイズ
+			//各種引数を受け取る
+			_content     = content;
+			_key         = key;
 			_contentSize = contentSize;
+			_maskSize    = maskSize;
+			_upperBound  = upperBound;
+			_lowerBound  = lowerBound;
 			
-			//コンテンツの表示領域のサイズ
-			_maskSize = maskSize;
-			
-			//コンテンツの目標スクロール座標
+			//スクロール完了時に対象プロパティが到達する目標値を現在のプロパティ値に設定する
 			_targetScroll = property;
 			
-			//スクロールアローをクリックしたときのスクロール量として割合を使用する場合はtrue
-			//_useArrowScrollUsingRatio = false;
-			
-			//スクロールアローを1回クリックしたときのスクロール量
-			//_arrowScrollAmount = 100;
-			
-			//スムーズスクロールを使用する場合はtrue
-			//_useSmoothScroll = true;
-			
-			//スムーズスクロールのイージング強度
-			//_smoothScrollEasing = 6;
-			
-			//コンテンツがスクロール中の場合はtrue
+			//現在スクロールが進行中であるかどうかのフラグを初期化する
 			_isScrolling = false;
 			
-			//スライダーをドラッグ中の場合はtrue
+			//スライダーがユーザによって現在ドラッグされているかどうかのフラグを初期化する
 			_isDragging = false;
 			
-			//スライダーの操作によるスクロールが進行中の場合はtrue
+			//ユーザのスライダードラッグ動作によるスクロールが現在進行中であるかどうかのフラグを初期化する
 			_isScrollingByDrag = false;
 			
-			//コンテンツ量に合わせて伸縮するスライダーを使用する場合はtrue
-			//_useFlexibleSlider = true;
-			
-			//スクロール/コンテンツをピクセルに吸着させる場合にはtrue
-			//_usePixelFittingSlider  = true;
-			//_usePixelFittingContent = false;
-			
-			//アローボタンを押し続けたときに連続スクロールさせる場合はtrue
-			//_useContinuousArrowScroll = true;
-			
-			//連続スクロールを使用する場合の, 1回目のスクロールから2回目のスクロールが始まるまでの間隔(ミリ秒)
-			//0とした
-			//_continuousArrowScrollInterval = 300;
-			
-			//連続スクロールを使用する場合の, 2回目以降のスクロール量
-			//_continuousArrowScrollAmount = 10;
-			
-			//マウスホイールを使用する場合はtrue
-			//_useMouseWheel = true;
-			
-			//iPhoneのような, 端まで行くとちょっと行き過ぎて戻る演出を加える場合はtrue
-			//_useOvershoot = true;
-			
-			//オーバーシュートの緩やかさ
-			//_overshootEasing = 6;
-			
-			//オーバーシュートの最大行き過ぎ量(pixel)
-			//_overshootPixels = 50;
-			
-			//オーバーシュート時にスライダーを伸縮させる場合はtrue
-			//_useOvershootDeformationSlider = true;
-			
-			//ボタンインスタンスの設定
+			//スクロールバーのパーツとしてバインドされるインスタンスの設定
 			_up     = _up     || scrollArrow.up;
 			_down   = _down   || scrollArrow.down;
 			_base   = _base   || scrollBox.base;
 			_slider = _slider || scrollBox.slider;
 			
-			//ボタンアクションの設定
+			//ボタンアクションをバインドする
 			_bindArrowUpButton(true);
 			_bindArrowDownButton(true);
 			_bindBaseButton(true);
@@ -668,13 +880,22 @@
 			//ボタンを有効化する
 			buttonEnabled = true;
 			
-			//スライダーのリサイズ
+			//スライダーのリサイズを実行する
 			resizeSlider();
 		}
 		
-		/**
-		 * 上向きアローボタンのボタンアクションを設定する関数
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _bindArrowUpButton
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>上向きアローボタンのボタンアクションを設定する関数. </p>
+		 * 
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
 		 */
 		private function _bindArrowUpButton(bind:Boolean):void {
 			if (_up) {
@@ -688,12 +909,18 @@
 			}
 		}
 		
-		private function _arrowUpButtonMouseDownHandler(e:MouseEvent):void { _pressArrow(true);   }
-		private function _arrowUpButtonMouseUpHandler(e:MouseEvent):void   { _releaseArrow(true); }
 		
-		/**
-		 * 下向きアローボタンのボタンアクションを設定する関数
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _bindArrowDownButton
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>下向きアローボタンのボタンアクションを設定する関数. </p>
+		 * 
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
 		 */
 		private function _bindArrowDownButton(bind:Boolean):void {
 			if (_down) {
@@ -707,12 +934,18 @@
 			}
 		}
 		
-		private function _arrowDownButtonMouseDownHandler(e:MouseEvent):void { _pressArrow(false);   }
-		private function _arrowDownButtonMouseUpHandler(e:MouseEvent):void   { _releaseArrow(false); }
 		
-		/**
-		 * スライダー下地のボタンアクションを設定する関数
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _bindBaseButton
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>スライダーのベースエリアのボタンアクションを設定する関数. </p>
+		 * 
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
 		 */
 		private function _bindBaseButton(bind:Boolean):void {
 			if (_base) {
@@ -724,11 +957,18 @@
 			}
 		}
 		
-		private function _baseButtonMouseDownHandler(e:MouseEvent):void { _prsssBase(); }
 		
-		/**
-		 * スライダーのボタンアクションを設定する関数
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _bindSliderButton
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>スライダーのボタンアクションを設定する関数. </p>
+		 * 
+		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
 		 */
 		private function _bindSliderButton(bind:Boolean):void {
 			if (_up) {
@@ -742,23 +982,31 @@
 			}
 		}
 		
-		private function _sliderButtonMouseDownHandler(e:MouseEvent):void { _pressSlider();   }
-		private function _sliderButtonMouseUpHandler(e:MouseEvent):void   { _releaseSlider(); }
 		
-		/**
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _pressArrow
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
-		 * @param	isUp
+		 * <p>アローボタンが押されたときに呼び出される関数. </p>
+		 * <p>_arrowDownButtonMouseDownHandlerもしくは_arrowUpButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
+		 * 
+		 * @param	isUp	trueの場合は上方向アローボタンが, falseの場合は下方向アローボタンが押されたことを表します. 
 		 */
 		private function _pressArrow(isUp:Boolean):void {
 			_isUpPressed = isUp;
 			
-			//初回スクロール
+			//1回目のスクロール処理を実行する
 			(isUp) ? scrollUp() : scrollDown();
 			
-			//連続スクロール
+			//2回目移行のスクロール処理を実行する
 			if (_useContinuousArrowScroll) {
 				
 				if (_continuousArrowScrollInterval == 0) {
+					//タイムラグ無しで毎フレームの連続スクロールを開始する
 					
 					if(_continuousArrowScrollTimer) {
 						_continuousArrowScrollTimer.stop();
@@ -769,6 +1017,7 @@
 					addEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
 						
 				} else {
+					//タイムラグの後, 毎フレームの連続スクロールを開始する
 					_continuousArrowScrollTimer = new Timer(_continuousArrowScrollInterval, 1);
 					_continuousArrowScrollTimer.addEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
 					_continuousArrowScrollTimer.start();
@@ -776,29 +1025,19 @@
 			}
 		}
 		
-		/**
-		 * 
-		 * @param	e
-		 */
-		private function _continuousArrowScrollTimerHandler(e:TimerEvent):void {
-			_continuousArrowScrollTimer.removeEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
-			
-			//2回目以降のスクロールは毎フレーム実行する
-			addEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
-		}
 		
-		/**
-		 * 
-		 * @param	e
-		 */
-		private function _continuousArrowScrollTimerUpdater(e:Event):void {
-			//2回目以降のスクロール
-			(_isUpPressed) ? _continuousScrollUp() : _continuousScrollDown();
-		}
 		
-		/**
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _releaseArrow
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
-		 * @param	isUp
+		 * <p>アローボタンが離されたときに呼び出される関数. </p>
+		 * <p>_arrowDownButtonMouseUpHandlerもしくは_arrowUpButtonMouseUpHandlerイベントハンドラを通じて呼び出されます. </a>
+		 * 
+		 * @param	isUp	trueの場合は上方向アローボタンが, falseの場合は下方向アローボタンが離されたことを表します. 
 		 */
 		private function _releaseArrow(isUp:Boolean):void {
 			if(_continuousArrowScrollTimer) {
@@ -810,8 +1049,17 @@
 			removeEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _prsssBase
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
+		 * <p>スライダーのベースエリアが押されたときに呼び出される関数. </p>
+		 * <p>_baseButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
 		 */
 		private function _prsssBase():void {
 			_isScrollingByDrag = false;
@@ -819,11 +1067,21 @@
 			var ratio:Number = (_slider) ? _base.mouseY / (_base.height - _slider.height) :
 			                               _base.mouseY / (_base.height - 1);
 			
+			//スクロール処理を実行する
 			scrollByAbsoluteRatio(ratio);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _pressSlider
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
+		 * <p>スライダーが押されたときに呼び出される関数. </p>
+		 * <p>_sliderButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
 		 */
 		private function _pressSlider():void {
 			_isDragging = true;
@@ -835,8 +1093,17 @@
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, _moveSliderHandler);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _releaseSlider
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
+		 * <p>スライダーが離されたときに呼び出される関数. </p>
+		 * <p>_sliderButtonMouseUpHandlerイベントハンドラを通じて呼び出されます. </a>
 		 */
 		private function _releaseSlider():void {
 			_isDragging = false;
@@ -846,8 +1113,16 @@
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, _moveSliderHandler);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * scrollUp
+		 *---------------------------------------------------------------------*//**
 		 * 
+		 * <p>arrowScrollAmountプロパティに設定された量だけコンテンツをスクロールさせる関数です. </p>
+		 * <p>スライダーは上方向へと移動します. </p>
 		 */
 		public function scrollUp():void {
 			_isScrollingByDrag = false;
@@ -856,8 +1131,16 @@
 			                              scrollByRelativePixel(_arrowScrollAmount);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * scrollDown
+		 *---------------------------------------------------------------------*//**
 		 * 
+		 * <p>arrowScrollAmountプロパティに設定された量だけコンテンツをスクロールさせる関数です. </p>
+		 * <p>スライダーは下方向へと移動します. </p>
 		 */
 		public function scrollDown():void {
 			_isScrollingByDrag = false;
@@ -866,26 +1149,58 @@
 			                              scrollByRelativePixel(-_arrowScrollAmount);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _continuousScrollUp
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
+		 * <p>アローボタンを押し続けたときの連続スクロールを実行する関数です. </p>
+		 * <p>スライダーは上方向へと移動します. </p>
 		 */
 		private function _continuousScrollUp():void {
 			(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(_continuousArrowScrollAmount) :
 			                              scrollByRelativePixel(_continuousArrowScrollAmount);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _continuousScrollDown
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
+		 * <p>アローボタンを押し続けたときの連続スクロールを実行する関数です. </p>
+		 * <p>スライダーは下方向へと移動します. </p>
 		 */
 		private function _continuousScrollDown():void {
 			(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(-_continuousArrowScrollAmount) :
 			                              scrollByRelativePixel(-_continuousArrowScrollAmount);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * scrollByRelativeRatio
+		 *---------------------------------------------------------------------*//**
 		 * 
-		 * @param	ratio
-		 * @param	fromTargetPosition
+		 * <p>現在のプロパティ値からの相対的なスクロール量を, 割合として指定してスクロールを実行する関数です. </p>
+		 * 
+		 * @param ratio
+		 * 	スクロールさせる割合の相対値です. 
+		 * 	0を指定するとスライダーは動かず, 0.5を指定するとスライダが基準値から全可動域の半分下へ移動します.
+		 *  また, -0.5を指定するとスライダが全可動域の半分上へ移動します.
+		 * 
+		 * @param fromTargetPosition
+		 * 	減速スクロールの目標値を基準値として割合を指定する場合はtrueを,現在の暫定プロパティ値を基準値とする場合はfalseを指定します. 
+		 * 	@default true
 		 */
 		public function scrollByRelativeRatio(ratio:Number, fromTargetPosition:Boolean = true):void {
 			var o:Number = (fromTargetPosition) ? _targetScroll : property;
@@ -895,9 +1210,20 @@
 			scrollByAbsolutePixel(pixel);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * scrollByAbsoluteRatio
+		 *---------------------------------------------------------------------*//**
 		 * 
-		 * @param	ratio
+		 * <p>スクロール位置を指定し, スクロールを実行する関数です. </p>
+		 * <p>値の指定には割合を指定します. </p>
+		 * 
+		 * @param ratio
+		 * 	スクロールさせる割合です. 
+		 * 	0を指定するとスライダーが一番上へ, 1を指定するとスライダーが一番下へ移動します. 
 		 */
 		public function scrollByAbsoluteRatio(ratio:Number):void {
 			var pixel:Number = (_lowerBound - _upperBound) * ratio + _upperBound;
@@ -905,10 +1231,24 @@
 			scrollByAbsolutePixel(pixel);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * scrollByRelativePixel
+		 *---------------------------------------------------------------------*//**
 		 * 
-		 * @param	pixel
-		 * @param	fromTargetPosition
+		 * <p>現在のプロパティ値からの相対的なスクロール量を, ピクセル数として指定してスクロールを実行する関数です. </p>
+		 * 
+		 * @param pixel
+		 * 	スクロールさせるピクセル数の相対値です. 
+		 * 	0を指定するとスライダーは動かず, 100を指定するとスライダーが対象コンテンツ100ピクセル分上へ移動します.
+		 *  また, -100を指定するとスライダーが対象コンテンツ100ピクセル分上へ移動します.
+		 * 
+		 * @param fromTargetPosition
+		 * 	減速スクロールの目標値を基準値として割合を指定する場合はtrueを,現在の暫定プロパティ値を基準値とする場合はfalseを指定します. 
+		 * 	@default true
 		 */
 		public function scrollByRelativePixel(pixel:Number, fromTargetPosition:Boolean = true):void {
 			var o:Number = (fromTargetPosition) ? _targetScroll : property;
@@ -916,9 +1256,20 @@
 			scrollByAbsolutePixel(o + pixel);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * scrollByAbsolutePixel
+		 *---------------------------------------------------------------------*//**
 		 * 
-		 * @param	pixel
+		 * <p>スクロール位置を指定し, スクロールを実行する関数です. </p>
+		 * <p>値の指定にはピクセルを指定します. </p>
+		 * 
+		 * @param ratio
+		 * 	スクロール後の位置です. 
+		 * 	upperBoundを指定するとスライダーが一番上へ, lowerBoundを指定するとスライダーが一番下へ移動します. 
 		 */
 		public function scrollByAbsolutePixel(pixel:Number):void {
 			_targetScroll = pixel;
@@ -935,28 +1286,48 @@
 				_targetScroll = _overShootTargetScroll;
 			}
 			
+			//スクロールを開始する
 			_startScroll();
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _startScroll
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
+		 * <p>スクロール処理を開始する関数です. </p>
 		 */
 		private function _startScroll():void {
 			if (_usePixelFittingContent) _targetScroll = Math.round(_targetScroll);
 			
 			if (_useSmoothScroll) {
+				//減速スクロールの開始
 				_isScrolling = true;
 				_prevProperty = property;
 				addEventListener(Event.ENTER_FRAME, _updateScroll);
+				
 			} else {
+				//ダイレクトスクロール
 				_isScrolling = false;
 				property = _targetScroll;
 				_updateSlider();
 			}
 		}
 		
-		/**
-		 * オーバーシュート時のスクロール到達点の到達点を計算する関数
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _updateTargetScroll
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>オーバーシュート時に, スクロール目標点が到達する値を計算する関数です. </p>
 		 */
 		private function _updateTargetScroll():void {
 			var d:Number = _overShootTargetScroll - _targetScroll;
@@ -969,8 +1340,16 @@
 			}
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _updateSlider
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
+		 * <p>コンテンツのスクロール量に応じてスライダーの形状と位置を計算する関数です. </p>
 		 */
 		private function _updateSlider():void {
 			if (!_slider || !_base) return;
@@ -1005,11 +1384,13 @@
 				h = _base.height - _slider.height;
 				p = contentRatio * h;
 				
+				//ドラッグ中であればドラッグ可能領域を再計算する
 				if (_isDragging) {
 					var bound:Rectangle = new Rectangle(_base.x, _base.y, 0, h + 1);
 					Sprite(_slider).startDrag(false, bound);
 					return;
 				}
+				
 				if (_isScrollingByDrag) return;
 			}
 			
@@ -1021,8 +1402,15 @@
 								  p;
 		}
 		
-		/**
-		 * 現在のコンテンツサイズ, マスクサイズ, ベースサイズに合わせてスライダーをリサイズする関数
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * resizeSlider
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>現在の対象コンテンツ総計サイズ,, 対象コンテンツ表示領域サイズ, スライダのベースエリアのサイズに合わせて, スライダーをリサイズする関数です. </p>
 		 */
 		public function resizeSlider():void {
 			if (!_useFlexibleSlider || !_slider || !base) return;
@@ -1037,6 +1425,7 @@
 			_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
 			_slider.height = (_usePixelFittingSlider) ? _sliderHeight = Math.round(_sliderHeight) : _sliderHeight;
 			
+			//位置合わせをおこなう
 			_updateSlider();
 		}
 		
@@ -1044,27 +1433,106 @@
 		
 		
 		
-		//--------------------------------------------------------------------------
-		// EVENT HANDLER
-		//--------------------------------------------------------------------------
 		
-		/**
+		
+		
+		
+		
+		//==========================================================================
+		// EVENT HANDLER
+		//==========================================================================
+		
+		
+		/*--------------------------------------------------------------------------
+		 * button event handlers
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
-		 * @param	e
+		 * <p>各パーツのボタンアクションにバインドされるイベントハンドラです. </p>
+		 * 
+		 * @param	e	MouseEvent
+		 */
+		private function _arrowUpButtonMouseDownHandler(e:MouseEvent):void { _pressArrow(true);   }
+		private function _arrowUpButtonMouseUpHandler(e:MouseEvent):void   { _releaseArrow(true); }
+		
+		private function _arrowDownButtonMouseDownHandler(e:MouseEvent):void { _pressArrow(false);   }
+		private function _arrowDownButtonMouseUpHandler(e:MouseEvent):void   { _releaseArrow(false); }
+		
+		private function _baseButtonMouseDownHandler(e:MouseEvent):void { _prsssBase(); }
+		
+		private function _sliderButtonMouseDownHandler(e:MouseEvent):void { _pressSlider();   }
+		private function _sliderButtonMouseUpHandler(e:MouseEvent):void   { _releaseSlider(); }
+		
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _mouseWheelHandler
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>マウスホイールの動作時に呼び出されるイベントハンドラです. </p>
+		 * 
+		 * @param	e	MouseEvent
 		 */
 		private function _mouseWheelHandler(e:MouseEvent):void {
 			if (!_useMouseWheel) return;
 			
-			if (e.delta > 0) {
-				scrollUp();
-			} else {
-				scrollDown();
-			}
+			(e.delta > 0) ? scrollUp() : scrollDown();
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _mouseWheelHandler
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
-		 * @param	e
+		 * <p>アローボタンを押し続けたときの連続スクロールを発生させるまでの遅延完了時に呼び出されるイベントハンドラです. </p>
+		 * 
+		 * @param	e	TimerEvent
+		 */
+		private function _continuousArrowScrollTimerHandler(e:TimerEvent):void {
+			_continuousArrowScrollTimer.removeEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
+			
+			//2回目以降のスクロールは毎フレーム実行する
+			addEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _continuousArrowScrollTimerUpdater
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>アローボタンを押し続けたときの連続スクロールを実行するために毎フレーム呼び出されるイベントハンドラです. </p>
+		 * 
+		 * @param	e	Event
+		 */
+		private function _continuousArrowScrollTimerUpdater(e:Event):void {
+			//2回目以降のスクロール
+			(_isUpPressed) ? _continuousScrollUp() : _continuousScrollDown();
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _moveSliderHandler
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>スライダのドラッグ時に呼び出されるイベントハンドラです. </p>
+		 * 
+		 * @param	e	MouseEvent
 		 */
 		private function _moveSliderHandler(e:MouseEvent):void {
 			_isScrollingByDrag = true;
@@ -1074,9 +1542,19 @@
 			scrollByAbsoluteRatio(ratio);
 		}
 		
-		/**
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _updateScroll
+		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
-		 * @param	e
+		 * <p>スクロールアクションが始まってから完了するまで毎フレーム呼び出されるイベントハンドラです. </p>
+		 * <p>対象プロパティ, スライダの更新をおこないます. </p>
+		 * 
+		 * @param	e	Event
 		 */
 		private function _updateScroll(e:Event):void {
 			if(_useOvershoot) {
@@ -1115,9 +1593,18 @@
 			}
 		}
 		
-		/**
-		 * ステージに配置された時に呼び出されるイベントハンドラ
-		 * @param	e
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _addedToStageHandler
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>ステージに配置されたときに呼び出されるイベントハンドラです. </p>
+		 * 
+		 * @param	e	Event
 		 */
 		private function _addedToStageHandler(e:Event):void {
 			//SWFWheelの初期化
@@ -1130,9 +1617,18 @@
 			addEventListener(Event.REMOVED_FROM_STAGE, _removedFromStageHandler);
 		}
 		
-		/**
-		 * ステージから削除される時に呼び出されるイベントハンドラ
-		 * @param	e
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _removedFromStageHandler
+		 *---------------------------------------------------------------------*//**
+		 * @private
+		 * 
+		 * <p>ステージから削除されるときに呼び出されるイベントハンドラです. </p>
+		 * 
+		 * @param	e	Event
 		 */
 		private function _removedFromStageHandler(e:Event):void {
 			removeEventListener(Event.REMOVED_FROM_STAGE, _removedFromStageHandler);
