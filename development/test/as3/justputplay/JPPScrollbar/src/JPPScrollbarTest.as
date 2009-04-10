@@ -1,7 +1,7 @@
 ﻿package {
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import net.alumican.as3.justputplay.scrollbars.JPPScrollbar;
+	import net.alumican.as3.justputplay.scrollbars.JPPScrollbarKit;
 	
 	/**
 	 * JPPScrollbarTest.as
@@ -40,10 +40,8 @@
 		//-------------------------------------
 		
 		//スクロールバー
-		public var scrollbar:JPPScrollbar;
+		public var scrollbar:JPPScrollbarKit;
 		
-		//スクロール対象のオブジェクト
-		public var content:Sprite;
 		
 		
 		
@@ -64,7 +62,6 @@
 		 * コンストラクタ
 		 */
 		public function JPPScrollbarTest():void {
-			
 			addEventListener(Event.ADDED_TO_STAGE, _addedToStageHandler);
 		}
 		
@@ -85,13 +82,7 @@
 		//-------------------------------------
 		
 		private function _addedToStageHandler(e:Event):void {
-			
 			removeEventListener(Event.ADDED_TO_STAGE, _addedToStageHandler);
-			//scrollbar.initialize(content, "x", content.width, 100, content.x, content.x + 100);
-			scrollbar.initialize(content, "y", content.height, 300, content.y, content.y - (content.height - 300));
-			//scrollbar.initialize(content, "alpha", 100, 10, 1, 0);
-			//scrollbar.arrowScrollAmount = 0.1;
-			//scrollbar.continuousArrowScrollAmount = 0.01;
 		}
 	}
 }
