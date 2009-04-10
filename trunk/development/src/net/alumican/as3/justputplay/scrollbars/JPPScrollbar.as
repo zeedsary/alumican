@@ -68,7 +68,6 @@ package net.alumican.as3.justputplay.scrollbars {
 			_up = value;
 			_bindArrowUpButton(true);
 		}
-		
 		private var _up:Sprite;
 		
 		
@@ -87,7 +86,6 @@ package net.alumican.as3.justputplay.scrollbars {
 			_down = value;
 			_bindArrowDownButton(true);
 		}
-		
 		private var _down:Sprite;
 		
 		
@@ -107,7 +105,6 @@ package net.alumican.as3.justputplay.scrollbars {
 			_bindBaseButton(true);
 			resizeSlider();
 		}
-		
 		private var _base:Sprite;
 		
 		
@@ -127,7 +124,6 @@ package net.alumican.as3.justputplay.scrollbars {
 			_bindSliderButton(true);
 			resizeSlider();
 		}
-		
 		private var _slider:Sprite;
 		
 		
@@ -153,7 +149,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get contentSize():Number { return _contentSize; }
 		public function set contentSize(value:Number):void { _contentSize = value; }
-		
 		private var _contentSize:Number;
 		
 		
@@ -172,7 +167,6 @@ package net.alumican.as3.justputplay.scrollbars {
 			_maskSize = value;
 			resizeSlider();
 		}
-		
 		private var _maskSize:Number;
 		
 		
@@ -268,7 +262,6 @@ package net.alumican.as3.justputplay.scrollbars {
 				_startScroll();
 			}
 		}
-		
 		private var _useSmoothScroll:Boolean = true;
 		
 		
@@ -286,7 +279,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get smoothScrollEasing():Number { return _smoothScrollEasing; }
 		public function set smoothScrollEasing(value:Number):void { _smoothScrollEasing = (value < 1) ? 1 : value; }
-		
 		private var _smoothScrollEasing:Number = 6;
 		
 		
@@ -301,7 +293,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>スクロールが進行中の場合isScrollingプロパティはtrueを返します.</p>
 		 */
 		public function get isScrolling():Boolean { return _isScrolling; }
-		
 		private var _isScrolling:Boolean;
 		
 		
@@ -315,7 +306,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>減速スクロールを使用する場合, スクロール完了時に対象プロパティが到達する目標値を表します. </p>
 		 */
 		public function get targetScroll():Number { return _targetScroll; }
-		
 		private var _targetScroll:Number;
 		
 		
@@ -355,11 +345,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * @default true
 		 */
 		public function get useFlexibleSlider():Boolean { return _useFlexibleSlider; }
-		public function set useFlexibleSlider(value:Boolean):void {
-			_useFlexibleSlider = value;
-			resizeSlider();
-		}
-		
+		public function set useFlexibleSlider(value:Boolean):void { _useFlexibleSlider = value; resizeSlider(); }
 		private var _useFlexibleSlider:Boolean = true;
 		
 		
@@ -375,11 +361,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * @default 10
 		 */
 		public function get minSliderHeight():Number { return _minSliderHeight; }
-		public function set minSliderHeight(value:Number):void {
-			_minSliderHeight = value;
-			resizeSlider();
-		}
-		
+		public function set minSliderHeight(value:Number):void { _minSliderHeight = value; resizeSlider(); }
 		private var _minSliderHeight:Number = 10;
 		
 		
@@ -393,7 +375,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>useOvershootDeformationSlider=true時のオーバーシュート演出によって変形していないときのスライダーの高さを取得します. </p>
 		 */
 		public function get sliderHeight():Number { return _sliderHeight; }
-		
 		private var _sliderHeight:Number;
 		
 		
@@ -452,7 +433,6 @@ package net.alumican.as3.justputplay.scrollbars {
 				_slider.height = Math.round(_sliderHeight);
 			}
 		}
-		
 		private var _usePixelFittingSlider:Boolean = false;
 		
 		
@@ -471,7 +451,6 @@ package net.alumican.as3.justputplay.scrollbars {
 			_usePixelFittingContent = value;
 			if (value && !_isScrolling) property = Math.round(property);
 		}
-		
 		private var _usePixelFittingContent:Boolean = false;
 		
 		
@@ -520,7 +499,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get useMouseWheel():Boolean { return _useMouseWheel; }
 		public function set useMouseWheel(value:Boolean):void { _useMouseWheel = value; }
-		
 		private var _useMouseWheel:Boolean = true;
 		
 		
@@ -548,7 +526,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get arrowScrollAmount():Number { return _arrowScrollAmount; }
 		public function set arrowScrollAmount(value:Number):void { _arrowScrollAmount = value; }
-		
 		private var _arrowScrollAmount:Number = 100;
 		
 		
@@ -567,7 +544,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get useArrowScrollUsingRatio():Boolean { return _useArrowScrollUsingRatio; }
 		public function set useArrowScrollUsingRatio(value:Boolean):void { _useArrowScrollUsingRatio = value; }
-		
 		private var _useArrowScrollUsingRatio:Boolean = false;
 		
 		
@@ -585,7 +561,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get useContinuousArrowScroll():Boolean { return _useContinuousArrowScroll; }
 		public function set useContinuousArrowScroll(value:Boolean):void { _useContinuousArrowScroll = value; }
-		
 		private var _useContinuousArrowScroll:Boolean = true;
 		
 		
@@ -602,7 +577,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get continuousArrowScrollInterval():uint { return _continuousArrowScrollInterval; }
 		public function set continuousArrowScrollInterval(value:uint):void { _continuousArrowScrollInterval = value; }
-		
 		private var _continuousArrowScrollInterval:uint = 300;
 		
 		
@@ -619,7 +593,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get continuousArrowScrollAmount():Number { return _continuousArrowScrollAmount; }
 		public function set continuousArrowScrollAmount(value:Number):void { _continuousArrowScrollAmount = value; }
-		
 		private var _continuousArrowScrollAmount:Number = 10;
 		
 		
@@ -671,7 +644,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get useOvershoot():Boolean { return _useOvershoot; }
 		public function set useOvershoot(value:Boolean):void { _useOvershoot = value; }
-		
 		private var _useOvershoot:Boolean = true;
 		
 		
@@ -688,7 +660,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get overshootPixels():Number { return _overshootPixels; }
 		public function set overshootPixels(value:Number):void { _overshootPixels = value; }
-		
 		private var _overshootPixels:Number = 50;
 		
 		
@@ -706,7 +677,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get overshootEasing():Number { return _overshootEasing; }
 		public function set overshootEasing(value:Number):void { _overshootEasing = value; }
-		
 		private var _overshootEasing:Number = 6;
 		
 		
@@ -724,7 +694,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get useOvershootDeformationSlider():Boolean { return _useOvershootDeformationSlider; }
 		public function set useOvershootDeformationSlider(value:Boolean):void { _useOvershootDeformationSlider = value; }
-		
 		private var _useOvershootDeformationSlider:Boolean = true;
 		
 		
@@ -1462,7 +1431,18 @@ package net.alumican.as3.justputplay.scrollbars {
 		private function _mouseWheelHandler(e:MouseEvent):void {
 			if (!_useMouseWheel) return;
 			
-			(e.delta > 0) ? scrollUp() : scrollDown();
+			//(e.delta > 0) ? scrollUp() : scrollDown();
+			
+			_isScrollingByDrag = false;
+			
+			if (e.delta > 0) {
+				(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(_arrowScrollAmount, false) :
+											  scrollByRelativePixel(_arrowScrollAmount, false);
+				
+			} else {
+				(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(-_arrowScrollAmount, false) :
+											  scrollByRelativePixel(-_arrowScrollAmount, false);
+			}
 		}
 		
 		
