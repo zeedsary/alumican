@@ -239,6 +239,31 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		/*--------------------------------------------------------------------------
+		 * isOverFlow
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>contentSizeがmaskSizeよりも大きい場合にtrueを返します. </p>
+		 */
+		public function get isOverFlow():Boolean { return !_isUnderFlow; }
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * isUnderFlow
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>contentSizeがmaskSize以下の場合にtrueを返します. </p>
+		 */
+		public function get isUnderFlow():Boolean { return _isUnderFlow; }
+		private var _isUnderFlow:Boolean;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
 		 * _content
 		 *---------------------------------------------------------------------*//**
 		 * 
@@ -462,8 +487,28 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * @default 10
 		 */
 		public function get minSliderHeight():Number { return _minSliderHeight; }
-		public function set minSliderHeight(value:Number):void { _minSliderHeight = value; resizeSlider(); }
+		public function set minSliderHeight(value:Number):void {
+			_minSliderHeight = value;
+			resizeSlider();
+		}
 		private var _minSliderHeight:Number = 10;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _useIgnoreSliderHeight
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スライダーの高さを常に0として扱うかどうかを設定します. </p>
+		 */
+		public function get useIgnoreSliderHeight():Boolean { return _useIgnoreSliderHeight; }
+		public function set useIgnoreSliderHeight(value:Boolean):void {
+			_useIgnoreSliderHeight = value;
+			resizeSlider();
+		}
+		private var _useIgnoreSliderHeight:Boolean = false;
 		
 		
 		
@@ -512,6 +557,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		
+		
 		//==========================================================================
 		// スライダーおよび対象プロパティの整数値吸着に関する事項
 		//==========================================================================
@@ -529,7 +575,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		public function get usePixelFittingSlider():Boolean { return _usePixelFittingSlider; }
 		public function set usePixelFittingSlider(value:Boolean):void {
 			_usePixelFittingSlider = value;
-			if (value && !_isScrolling) {
+			if (value && !_isScrolling && !_useIgnoreSliderHeight) {
 				_slider.y = Math.round(_slider.y);
 				_slider.height = Math.round(_sliderHeight);
 			}
@@ -582,6 +628,10 @@ package net.alumican.as3.justputplay.scrollbars {
 			upEnabled = downEnabled = sliderEnabled = baseEnabled = value;
 		}
 		
+		
+		
+		
+		
 		/*--------------------------------------------------------------------------
 		 * upEnabled
 		 *---------------------------------------------------------------------*//**
@@ -595,6 +645,10 @@ package net.alumican.as3.justputplay.scrollbars {
 		public function set upEnabled(value:Boolean):void {
 			if (_up) _up.mouseEnabled = _up.buttonMode = value;
 		}
+		
+		
+		
+		
 		
 		/*--------------------------------------------------------------------------
 		 * downEnabled
@@ -610,6 +664,10 @@ package net.alumican.as3.justputplay.scrollbars {
 			if (_down) _down.mouseEnabled = _down.buttonMode = value;
 		}
 		
+		
+		
+		
+		
 		/*--------------------------------------------------------------------------
 		 * sliderEnabled
 		 *---------------------------------------------------------------------*//**
@@ -621,8 +679,12 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>setup時にtrueが設定されます. </p>
 		 */
 		public function set sliderEnabled(value:Boolean):void {
-			if (_base) _base.mouseEnabled = _base.buttonMode = value;
+			if (_slider) _slider.mouseEnabled = _slider.buttonMode = value;
 		}
+		
+		
+		
+		
 		
 		/*--------------------------------------------------------------------------
 		 * baseEnabled
@@ -635,7 +697,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>setup時にtrueが設定されます. </p>
 		 */
 		public function set baseEnabled(value:Boolean):void {
-			if (_slider) _slider.mouseEnabled = _slider.buttonMode = value;
+			if (_base) _base.mouseEnabled = _base.buttonMode = value;
 		}
 		
 		
@@ -1108,6 +1170,9 @@ package net.alumican.as3.justputplay.scrollbars {
 			//オーバーシュートしていない
 			_isOvershooting = false;
 			
+			//コンテンツサイズがマスクサイズ以下である場合はtrue
+			_isUnderFlow = (_contentSize <= _maskSize) ? true : false;
+			
 			//ボタンアクションをバインドする
 			_bindArrowUpButton(true);
 			_bindArrowDownButton(true);
@@ -1341,7 +1406,16 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>現在の対象コンテンツ総計サイズ, 対象コンテンツ表示領域サイズ, スライダのベースエリアのサイズに合わせて, スライダーをリサイズする関数です. </p>
 		 */
 		public function resizeSlider():void {
+			_isUnderFlow = (_contentSize <= _maskSize) ? true : false;
+			
 			if (!_isReady || !_slider) return;
+			
+			//スライダーの高さ0として扱う
+			if (_useIgnoreSliderHeight) {
+				_sliderHeight = 0;
+				_updateSlider();
+				return;
+			}
 			
 			//バーを伸縮させない場合
 			if (!_useFlexibleSlider) {
@@ -1355,13 +1429,23 @@ package net.alumican.as3.justputplay.scrollbars {
 			
 			var contentRatio:Number = _maskSize / _contentSize;
 			
-			//var h:Number = contentRatio * _base.height
-			//_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
-			//_slider.height = (_usePixelFittingSlider) ? Math.round(_sliderHeight) : _sliderHeight;
+			//コンテンツサイズがマスクサイズに満たない場合
+			if (_isUnderFlow) {
+				//buttonEnabled = false;
+				
+				_slider.height = _base.height;
+				_sliderHeight = _base.height;
+				
+				_updateSlider();
+				return;
+			}
 			
-			var h:Number = contentRatio * _base.height
+			var h:Number = contentRatio * _base.height;
 			_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
-			_slider.height = (_usePixelFittingSlider) ? _sliderHeight = Math.round(_sliderHeight) : _sliderHeight;
+			
+			_sliderHeight = (_usePixelFittingSlider) ? Math.round(_sliderHeight) : _sliderHeight;
+			
+			_slider.height =  _sliderHeight;
 			
 			//位置合わせをおこなう
 			_updateSlider();
@@ -1582,8 +1666,8 @@ package net.alumican.as3.justputplay.scrollbars {
 			//ドラッグ以外のスクロールであることを示す
 			_isScrollingByDrag = false;
 			
-			var ratio:Number = (_slider) ? _base.mouseY / (_base.height - _slider.height) :
-			                               _base.mouseY / (_base.height - 1);
+			var ratio:Number = (_slider && !_useIgnoreSliderHeight) ? _base.mouseY / (_base.height - _slider.height) :
+			                                                          _base.mouseY / (_base.height - 1);
 			
 			//スクロール処理を実行する
 			scrollByAbsoluteRatio(ratio);
@@ -1611,7 +1695,10 @@ package net.alumican.as3.justputplay.scrollbars {
 			
 			_isDragging = true;
 			
-			var bound:Rectangle = new Rectangle(_base.x, _base.y, 0, _base.height - _slider.height + 1);
+			var boundHeight:Number = (_useIgnoreSliderHeight) ?  _base.height :
+			                                                    (_base.height - _slider.height);
+			
+			var bound:Rectangle = new Rectangle(_base.x, _base.y, 0, boundHeight);
 			
 			Sprite(_slider).startDrag(false, bound);
 			
@@ -1769,13 +1856,20 @@ package net.alumican.as3.justputplay.scrollbars {
 		private function _updateSlider():void {
 			if (!_slider || !_base || !_content) return;
 			
+			if (_contentSize <= _maskSize) return;
+			
+			//var contentRatio:Number = (_isUnderFlow) ? (_upperBound - property) / (_maskSize   - _contentSize) : 
+			//                                          (_upperBound - property) / (_upperBound - _lowerBound);
+			
 			var contentRatio:Number = (_upperBound - property) / (_upperBound - _lowerBound);
 			
-			var h:Number = _base.height - _slider.height;
+			var h:Number = (_useIgnoreSliderHeight) ?  _base.height : 
+			                                          (_base.height - _slider.height);
+			
 			var p:Number = contentRatio * h;
 			
 			//スライダーを変形させる
-			if (_useOvershoot && _useOvershootDeformationSlider) {
+			if (_useOvershoot && _useOvershootDeformationSlider && !_useIgnoreSliderHeight) {
 				if (_useSmoothScroll) {
 					
 					_isOvershooting = false;
@@ -1807,7 +1901,7 @@ package net.alumican.as3.justputplay.scrollbars {
 				
 				//ドラッグ中であればドラッグ可能領域を再計算する
 				if (_isDragging) {
-					var bound:Rectangle = new Rectangle(_base.x, _base.y, 0, h + 1);
+					var bound:Rectangle = new Rectangle(_base.x, _base.y, 0, h);
 					Sprite(_slider).startDrag(false, bound);
 					return;
 				}
@@ -1983,7 +2077,10 @@ package net.alumican.as3.justputplay.scrollbars {
 		private function _moveSliderHandler(e:MouseEvent):void {
 			_isScrollingByDrag = true;
 			
-			var ratio:Number = _slider.y / (_base.height - _slider.height);
+			var h:Number = (_useIgnoreSliderHeight) ?  _base.height : 
+			                                          (_base.height - _slider.height);
+			
+			var ratio:Number = _slider.y / h;
 			
 			scrollByAbsoluteRatio(ratio);
 		}
@@ -2020,7 +2117,7 @@ package net.alumican.as3.justputplay.scrollbars {
 				_updateSlider();
 				
 				//スライダーの最終調整
-				if (_slider) {
+				if (_slider && !_useIgnoreSliderHeight) {
 					if (_usePixelFittingSlider) {
 						_slider.y = Math.round(_slider.y);
 						_slider.height = Math.round(_sliderHeight);
