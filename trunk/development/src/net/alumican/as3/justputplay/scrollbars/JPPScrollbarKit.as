@@ -118,9 +118,21 @@ package net.alumican.as3.justputplay.scrollbars {
 			_scrollbar.base   = base;
 			
 			//スクロールバーの初期化
-			_scrollbar.setup(body, "y", content.height, mask.height, upperBound, lowerBound);
+			_scrollbar.setup(body, "y", body.height, mask.height, upperBound, lowerBound);
 			
+			//コンテンツサイズがマスクサイズに満たない場合の処理
+			if (_scrollbar.isUnderFlow) {
+				_scrollbar.up.visible      = false;
+				_scrollbar.down.visible    = false;
+				_scrollbar.slider.visible  = false;
+				//_scrollbar.base.visible    = false;
+				
+				_scrollbar.baseEnabled = false;
+			}
+			
+			//_scrollbar.useIgnoreSliderHeight = true;
 			//_scrollbar.useContinuousArrowScroll = false;
+			//_scrollbar.continuousArrowScrollInterval = 0;
 			//_scrollbar.useSmoothScroll = false;
 			//_scrollbar.useOvershoot = false;
 			//_scrollbar.useFlexibleSlider = false;
