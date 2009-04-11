@@ -24,6 +24,7 @@
  * In Japanese, http://sourceforge.jp/projects/opensource/wiki/licenses%2FMIT_license
  */
 package net.alumican.as3.justputplay.scrollbars {
+	import caurina.transitions.Tweener;
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.events.Event;
@@ -119,12 +120,23 @@ package net.alumican.as3.justputplay.scrollbars {
 			//スクロールバーの初期化
 			_scrollbar.setup(body, "y", content.height, mask.height, upperBound, lowerBound);
 			
-			_scrollbar.useContinuousArrowScroll = false;
-			_scrollbar.useSmoothScroll = false;
-			_scrollbar.useOvershoot = false;
-			_scrollbar.useFlexibleSlider = false;
+			//_scrollbar.useContinuousArrowScroll = false;
+			//_scrollbar.useSmoothScroll = false;
+			//_scrollbar.useOvershoot = false;
+			//_scrollbar.useFlexibleSlider = false;
 			//_scrollbar.startAutoScroll(true);
 			//_scrollbar.useAutoScrollCancelable = false;
+			//_scrollbar.useOvershootDeformationSlider = false;
+			
+			/*
+			Tweener.addTween(this, {
+				delay:5,
+				onComplete:function():void {
+					_scrollbar.lowerBound -= 500;
+					_scrollbar.contentSize += 500;
+				}
+			});
+			*/
 		}
 		
 		
