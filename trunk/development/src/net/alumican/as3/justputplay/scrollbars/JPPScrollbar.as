@@ -179,6 +179,19 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		
+		/*--------------------------------------------------------------------------
+		 * _isScrollingByUser
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>ユーザアクションによるスクロールが現在進行中であるかどうかを取得します. </p>
+		 * <p>スクロールが進行中である場合, trueを返します. </p>
+		 */
+		private var _isScrollingByUser:Boolean;
+		
+		
+		
+		
+		
 		
 		
 		
@@ -197,7 +210,10 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>このプロパティは伸縮スライドバーを使用する場合のスライドバーのサイズ計算に用いられます. </p>
 		 */
 		public function get contentSize():Number { return _contentSize; }
-		public function set contentSize(value:Number):void { _contentSize = value; }
+		public function set contentSize(value:Number):void {
+			_contentSize = value;
+			resizeSlider();
+		}
 		private var _contentSize:Number;
 		
 		
@@ -261,11 +277,16 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		/*--------------------------------------------------------------------------
-		 * _upperBound
+		 * upperBound
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>スライダーが上限に達したときの変化対象プロパティの値を表します. </p>
+		 * <p>スライダーが上限に達したときの変化対象プロパティの値を設定します. </p>
 		 */
+		public function get upperBound():Number { return _upperBound; }
+		public function set upperBound(value:Number):void {
+			_upperBound = value;
+			resizeSlider();
+		}
 		private var _upperBound:Number;
 		
 		
@@ -273,11 +294,16 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		/*--------------------------------------------------------------------------
-		 * _lowerBound
+		 * lowerBound
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>スライダーが下限に達したときの変化対象プロパティの値を表します. </p>
+		 * <p>スライダーが下限に達したときの変化対象プロパティの値を設定します. </p>
 		 */
+		public function get lowerBound():Number { return _lowerBound; }
+		public function set lowerBound(value:Number):void {
+			_lowerBound = value;
+			resizeSlider();
+		}
 		private var _lowerBound:Number;
 		
 		
@@ -290,7 +316,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		//==========================================================================
-		// 基本的なスクロール動作に関する事項
+		// スクロールの基本動作に関する事項
 		//==========================================================================
 		
 		
@@ -306,10 +332,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		public function get useSmoothScroll():Boolean { return _useSmoothScroll; }
 		public function set useSmoothScroll(value:Boolean):void {
 			_useSmoothScroll = value;
-			if (!value && _isScrolling) {
-				removeEventListener(Event.ENTER_FRAME, _updateScroll);
-				_startScroll();
-			}
+			if (!value && _isScrolling) _startScroll();
 		}
 		private var _useSmoothScroll:Boolean = true;
 		
@@ -375,6 +398,19 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		/*--------------------------------------------------------------------------
+		 * _terminateScrollFlag
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スクロール進行中にもかかわらず, 前フレームからプロパティ値が変化していない場合にtrueとなります. </p>
+		 * <p>Flashの演算精度上の問題により目標スクロール値へ到達できない場合, 減速スクロールを打ち切るために使用します.</p>
+		 */
+		private var _terminateScrollFlag:Boolean;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
 		 * _isReady
 		 *---------------------------------------------------------------------*//**
 		 * 
@@ -408,11 +444,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 */
 		public function get useFlexibleSlider():Boolean { return _useFlexibleSlider; }
 		public function set useFlexibleSlider(value:Boolean):void {
-			_useFlexibleSlider = value; resizeSlider();
-			if (!value) {
-				_slider.scaleY = 1;
-				_updateSlider();
-			}
+			_useFlexibleSlider = value;
+			resizeSlider();
 		}
 		private var _useFlexibleSlider:Boolean = true;
 		
@@ -811,6 +844,19 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		/*--------------------------------------------------------------------------
+		 * isOvershooting
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>現在オーバーシュートをしている場合はtrueを返します. </p>
+		 */
+		public function get isOvershooting():Boolean { return _isOvershooting; }
+		private var _isOvershooting:Boolean = false;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
 		 * _overShootTargetScroll
 		 *---------------------------------------------------------------------*//**
 		 * 
@@ -818,18 +864,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>上にオーバーシュートしている場合はスライダ座標の上限値, 下にオーバーシュートしている場合はスライダ座標の下限値となります. </p>
 		 */
 		private var _overShootTargetScroll:Number;
-		
-		
-		
-		
-		
-		/*--------------------------------------------------------------------------
-		 * _isOvershooting
-		 *---------------------------------------------------------------------*//**
-		 * 
-		 * <p>現在オーバーシュートをしている場合はtrueを返します. </p>
-		 */
-		private var _isOvershooting:Boolean = false;
 		
 		
 		
@@ -851,7 +885,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * 
 		 * <p>オートスクロールの強制力を切り替えます. </p>
 		 * <p>trueの場合は, 何らかのユーザーアクションによるスクロールが発生した時点でオートスクロールを終了します. </p>
-		 * <p>falseの場合は, ユーザーアクションによるスクロールが優先されますが, ユーザーアクションが終了するとオートスクロールは復帰します. </p>
+		 * <p>falseの場合は, ユーザーアクションによるスクロールが優先されますが, ユーザーアクションが終了するとオートスクロールは再開します. </p>
 		 * 
 		 * @default	true
 		 */
@@ -928,12 +962,23 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * autoScrollVelocity
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>実行中のオートスクロールの速度を取得します. </p>
+		 * <p>実行中のオートスクロールの速度を表します. </p>
 		 * 
 		 * @default	0
 		 */
-		public function get autoScrollVelocity():Number { return _autoScrollVelocity; }
 		private var _autoScrollVelocity:Number = 0;
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _calledFromUpdateAutoScroll
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>スクロール実行メソッドが. updateAutoScrollメソッドから呼び出されたことを示すフラグです. </p>
+		 */
+		private var _calledFromUpdateAutoScroll:Boolean;
 		
 		
 		
@@ -1026,8 +1071,16 @@ package net.alumican.as3.justputplay.scrollbars {
 		                      upperBound:Number,
 		                      lowerBound:Number):void {
 			
-			if (_isReady) return;
+			if (_isReady) {
+				_stopUserActionScroll();
+				stopAutoScroll();
+			}
 			_isReady = true;
+			
+			if (!stage) {
+				trace("WARNING: JPPScrollbarのsetupメソッドはaddChild後に実行される必要があります.");
+				return;
+			}
 			
 			//各種引数を受け取る
 			_content     = content;
@@ -1048,6 +1101,12 @@ package net.alumican.as3.justputplay.scrollbars {
 			
 			//ユーザのスライダードラッグ動作によるスクロールが現在進行中であるかどうかのフラグを初期化する
 			_isScrollingByDrag = false;
+			
+			//ユーザの動作によるスクロールが現在進行中であるかどうかのフラグを初期化する
+			_isScrollingByUser = false;
+			
+			//オーバーシュートしていない
+			_isOvershooting = false;
 			
 			//ボタンアクションをバインドする
 			_bindArrowUpButton(true);
@@ -1205,7 +1264,7 @@ package net.alumican.as3.justputplay.scrollbars {
 			                         (_targetScroll < _lowerBound) ? _lowerBound :
 			                                                         _targetScroll;
 			
-			if (_useOvershoot && !_calledFromUpdateAutoScroll) {
+			if (_useOvershoot && _useSmoothScroll && !_calledFromUpdateAutoScroll) {
 				_targetScroll = (_targetScroll > _upperBound + 50) ? _upperBound + 50:
 				                (_targetScroll < _lowerBound - 50) ? _lowerBound - 50:
 				                 _targetScroll;
@@ -1279,12 +1338,20 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * resizeSlider
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>現在の対象コンテンツ総計サイズ,, 対象コンテンツ表示領域サイズ, スライダのベースエリアのサイズに合わせて, スライダーをリサイズする関数です. </p>
+		 * <p>現在の対象コンテンツ総計サイズ, 対象コンテンツ表示領域サイズ, スライダのベースエリアのサイズに合わせて, スライダーをリサイズする関数です. </p>
 		 */
 		public function resizeSlider():void {
-			if (!_isReady) return;
+			if (!_isReady || !_slider) return;
 			
-			if (!_useFlexibleSlider || !_slider || !base) return;
+			//バーを伸縮させない場合
+			if (!_useFlexibleSlider) {
+				_slider.scaleY = 1;
+				_sliderHeight = _slider.height;
+				_updateSlider();
+				return;
+			}
+			
+			if (!base) return;
 			
 			var contentRatio:Number = _maskSize / _contentSize;
 			
@@ -1441,6 +1508,12 @@ package net.alumican.as3.justputplay.scrollbars {
 			//オートスクロールの中断
 			if (_useAutoScrollCancelable) stopAutoScroll();
 			
+			//ユーザーアクションによるスクロールであることを示す
+			_isScrollingByUser = true;
+			
+			//ドラッグ以外のスクロールであることを示す
+			_isScrollingByDrag = false;
+			
 			//1回目のスクロール処理を実行する
 			(_isUpPressed) ? scrollUp() : scrollDown();
 			
@@ -1503,6 +1576,10 @@ package net.alumican.as3.justputplay.scrollbars {
 			//オートスクロールの中断
 			if (_useAutoScrollCancelable) stopAutoScroll();
 			
+			//ユーザーアクションによるスクロールであることを示す
+			_isScrollingByUser = true;
+			
+			//ドラッグ以外のスクロールであることを示す
 			_isScrollingByDrag = false;
 			
 			var ratio:Number = (_slider) ? _base.mouseY / (_base.height - _slider.height) :
@@ -1528,6 +1605,9 @@ package net.alumican.as3.justputplay.scrollbars {
 			
 			//オートスクロールの中断
 			if (_useAutoScrollCancelable) stopAutoScroll();
+			
+			//ユーザーアクションによるスクロールであることを示す
+			_isScrollingByUser = true;
 			
 			_isDragging = true;
 			
@@ -1569,6 +1649,13 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>スライダーは上方向へと移動します. </p>
 		 */
 		private function _continuousScrollUp():void {
+			//ユーザーアクションによるスクロールであることを示す
+			_isScrollingByUser = true;
+			
+			//ドラッグ以外のスクロールであることを示す
+			_isScrollingByDrag = false;
+			
+			//スクロールを実行する
 			(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(_continuousArrowScrollAmount) :
 			                              scrollByRelativePixel(_continuousArrowScrollAmount);
 		}
@@ -1585,6 +1672,13 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>スライダーは下方向へと移動します. </p>
 		 */
 		private function _continuousScrollDown():void {
+			//ユーザーアクションによるスクロールであることを示す
+			_isScrollingByUser = true;
+			
+			//ドラッグ以外のスクロールであることを示す
+			_isScrollingByDrag = false;
+			
+			//スクロールを実行する
 			(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(-_continuousArrowScrollAmount) :
 			                              scrollByRelativePixel(-_continuousArrowScrollAmount);
 		}
@@ -1605,15 +1699,40 @@ package net.alumican.as3.justputplay.scrollbars {
 			if (_useSmoothScroll) {
 				//減速スクロールの開始
 				_isScrolling = true;
-				_prevProperty = property;
+				_prevProperty = NaN;
+				_terminateScrollFlag = false;
 				addEventListener(Event.ENTER_FRAME, _updateScroll);
 				
 			} else {
 				//ダイレクトスクロール
+				if (_isScrolling) removeEventListener(Event.ENTER_FRAME, _updateScroll);
+				if (_isOvershooting) {
+					_targetScroll = _overShootTargetScroll;
+					_isOvershooting = false;
+				}
 				_isScrolling = false;
+				_isScrollingByUser = false;
+				_isScrollingByDrag = false;
 				property = _targetScroll;
 				_updateSlider();
 			}
+		}
+		
+		
+		
+		
+		
+		/*--------------------------------------------------------------------------
+		 * _stopUserActionScroll
+		 *---------------------------------------------------------------------*//**
+		 * 
+		 * <p>ボタンアクション, マウスホイールによるスクロール処理を停止する関数です. </p>
+		 */
+		private function _stopUserActionScroll():void {
+			_targetScroll =  (_usePixelFittingContent) ? Math.round(property) : property;
+			if (_isScrolling) removeEventListener(Event.ENTER_FRAME, _updateScroll);
+			_isScrolling = false;
+			_updateSlider();
 		}
 		
 		
@@ -1657,23 +1776,29 @@ package net.alumican.as3.justputplay.scrollbars {
 			
 			//スライダーを変形させる
 			if (_useOvershoot && _useOvershootDeformationSlider) {
-				_isOvershooting = false;
-				
-				//上側にオーバーシュートしている
-				if (contentRatio < 0) {
-					_isOvershooting = true;
-					_slider.height += ((_sliderHeight + p) - _slider.height) / 3;
-				}
-				
-				//下側にオーバーシュートしている
-				if (contentRatio > 1) {
-					_isOvershooting = true;
-					_slider.height += ((_sliderHeight - p + h) - _slider.height) / 3;
-				}
-				
-				//オーバーシュートしていない
-				if (!_isOvershooting) {
-					_slider.height += (_sliderHeight - _slider.height) / 10;
+				if (_useSmoothScroll) {
+					
+					_isOvershooting = false;
+					
+					//上側にオーバーシュートしている
+					if (contentRatio < 0) {
+						_isOvershooting = true;
+						_slider.height += ((_sliderHeight + p) - _slider.height) / 3;
+					}
+					
+					//下側にオーバーシュートしている
+					if (contentRatio > 1) {
+						_isOvershooting = true;
+						_slider.height += ((_sliderHeight - p + h) - _slider.height) / 3;
+					}
+					
+					//オーバーシュートしていない
+					if (!_isOvershooting) {
+						_slider.height += (_sliderHeight - _slider.height) / 10;
+					}
+					
+				} else {
+					_slider.height = _sliderHeight;
 				}
 				
 				//座標の再計算
@@ -1789,9 +1914,13 @@ package net.alumican.as3.justputplay.scrollbars {
 			//オートスクロールの中断
 			if (_useAutoScrollCancelable) stopAutoScroll();
 			
-			//(e.delta > 0) ? scrollUp() : scrollDown();
+			//ユーザーアクションによるスクロールであることを示す
+			_isScrollingByUser = true;
 			
+			//ドラッグ以外のスクロールであることを示す
 			_isScrollingByDrag = false;
+			
+			//(e.delta > 0) ? scrollUp() : scrollDown();
 			
 			if (e.delta > 0) {
 				(_useArrowScrollUsingRatio) ? scrollByRelativeRatio(_arrowScrollAmount, false) :
@@ -1873,16 +2002,18 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * @param	e	Event
 		 */
 		private function _updateScroll(e:Event):void {
-			if (_useOvershoot) {
+			if (_useOvershoot || _useSmoothScroll) {
 				_updateTargetScroll();
 			}
 			
 			var d:Number = _targetScroll - property;
 			var a:Number = (d > 0) ? d : -d;
 			
-			if (a < 0.01) {
+			if (a < 0.01 || _terminateScrollFlag) {
 				_isScrolling = false;
+				_isScrollingByUser = false;
 				_isScrollingByDrag = false;
+				_isOvershooting = false;
 				
 				property = _targetScroll;
 				
@@ -1901,16 +2032,14 @@ package net.alumican.as3.justputplay.scrollbars {
 				removeEventListener(Event.ENTER_FRAME, _updateScroll);
 				
 			} else {
+				_prevProperty = property;
+				
 				property += d / _smoothScrollEasing;
 				
 				_updateSlider();
 				
-				//前回から計算結果が変化していない場合は計算精度が限界なので打ち切り
-				if (property == _prevProperty) {
-					property = _targetScroll;
-				} else {
-					_prevProperty = property;
-				}
+				//前回から計算結果が変化していない場合は計算精度が限界なので次フレームで打ち切り
+				_terminateScrollFlag = (property == _prevProperty) ? true : false;
 			}
 		}
 		
@@ -1927,7 +2056,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * @param e Event
 		 */
 		private function _updateAutoScroll(e:Event):void {
-			if (_isUpPressed || _isDownPressed || _isBasePressed || _isSliderPressed) return;
+			if (_isScrollingByUser || isBasePressed) return;
 			
 			_isScrollingByDrag = false;
 			
@@ -1935,11 +2064,9 @@ package net.alumican.as3.justputplay.scrollbars {
 			
 			(_useAutoScrollUsingRatio) ? scrollByRelativeRatio(_autoScrollVelocity) :
 			                             scrollByRelativePixel(_autoScrollVelocity);
-		
-			_calledFromUpdateAutoScroll = false; 
+			
+			_calledFromUpdateAutoScroll = false;
 		}
-		
-		private var _calledFromUpdateAutoScroll:Boolean = false;
 		
 		
 		
