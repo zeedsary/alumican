@@ -24,8 +24,6 @@
  * In Japanese, http://sourceforge.jp/projects/opensource/wiki/licenses%2FMIT_license
  */
 package net.alumican.as3.justputplay.scrollbars {
-	import caurina.transitions.Tweener;
-	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	

@@ -26,7 +26,6 @@
 package net.alumican.as3.justputplay.scrollbars {
 	
 	import flash.display.DisplayObject;
-	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
