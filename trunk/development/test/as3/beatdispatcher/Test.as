@@ -71,7 +71,7 @@
 		private function _initBeatDispatcher():void {
 			
 			//BeatDispatcherの生成
-			_beatdispatcher = new BeatDispatcher(120, 2, 4, 2);
+			_beatdispatcher = new BeatDispatcher(120, 1, 4, 8);
 			
 			//_beatdispatcher.addEventListener(BeatDispatcherEvent.TICK   , _tickHanbler);
 			//_beatdispatcher.addEventListener(BeatDispatcherEvent.BEAT   , _beatHanbler);
@@ -211,7 +211,7 @@
 		 */
 		private function _keyDownHandler(e:KeyboardEvent):void {
 			
-			var id:int = -1;;
+			var id:int = -1;
 			
 			switch(e.keyCode) {
 				
