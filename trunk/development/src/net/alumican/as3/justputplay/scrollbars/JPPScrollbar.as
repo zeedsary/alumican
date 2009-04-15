@@ -1118,12 +1118,12 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>初期化関数. </p>
 		 * <p>スクロールバーのアクティベーションをおこないます. </p>
 		 * 
-		 * @param	content	　　スクロール対象のオブジェクト(コンテンツ)です. 
-		 * @param	key	　　　　スクロールによって実際に変化させたいプロパティ名です. 
-		 * @param	contentSize	スクロール対象オブジェクトの総計サイズです. 
-		 * @param	maskSize	実際に表示されるスクロール対象オブジェクトのサイズです. 
-		 * @param	upperBound	スライダーが上限に達したときの変化対象プロパティの値です. 
-		 * @param	lowerBound	スライダーが下限に達したときの変化対象プロパティの値です. 
+		 * @param content     <p>スクロール対象のオブジェクト(コンテンツ)です. </p>
+		 * @param key         <p>スクロールによって実際に変化させたいプロパティ名です. </p>
+		 * @param contentSize <p>スクロール対象オブジェクトの総計サイズです. </p>
+		 * @param maskSize    <p>実際に表示されるスクロール対象オブジェクトのサイズです. </p>
+		 * @param upperBound  <p>スライダーが上限に達したときの変化対象プロパティの値です. </p>
+		 * @param lowerBound  <p>スライダーが下限に達したときの変化対象プロパティの値です. </p>
 		 */
 		public function setup(content:*,
 		                      key:String,
@@ -1236,12 +1236,12 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>現在のプロパティ値からの相対的なスクロール量を, 割合として指定してスクロールを実行する関数です. </p>
 		 * 
 		 * @param ratio
-		 * 	スクロールさせる割合の相対値です. 
-		 * 	0を指定するとスライダーは動かず, 0.5を指定するとスライダが基準値から全可動域の半分下へ移動します.
-		 *  また, -0.5を指定するとスライダが全可動域の半分上へ移動します.
+		 * 	<p>スクロールさせる割合の相対値です. </p>
+		 * 	<p>0を指定するとスライダーは動かず, 0.5を指定するとスライダが基準値から全可動域の半分下へ移動します.</p>
+		 *  <p>また, -0.5を指定するとスライダが全可動域の半分上へ移動します.</p>
 		 * 
 		 * @param fromTargetPosition
-		 * 	減速スクロールの目標値を基準値として割合を指定する場合はtrueを,現在の暫定プロパティ値を基準値とする場合はfalseを指定します. 
+		 * 	<p>減速スクロールの目標値を基準値として割合を指定する場合はtrueを,現在の暫定プロパティ値を基準値とする場合はfalseを指定します. </p>
 		 * 	@default true
 		 */
 		public function scrollByRelativeRatio(ratio:Number, fromTargetPosition:Boolean = true):void {
@@ -1266,8 +1266,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>値の指定には割合を指定します. </p>
 		 * 
 		 * @param ratio
-		 * 	スクロールさせる割合です. 
-		 * 	0を指定するとスライダーが一番上へ, 1を指定するとスライダーが一番下へ移動します. 
+		 * 	<p>スクロールさせる割合です. </p>
+		 * 	<p>0を指定するとスライダーが一番上へ, 1を指定するとスライダーが一番下へ移動します. </p>
 		 */
 		public function scrollByAbsoluteRatio(ratio:Number):void {
 			if (!_isReady) return;
@@ -1288,12 +1288,12 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>現在のプロパティ値からの相対的なスクロール量を, ピクセル数として指定してスクロールを実行する関数です. </p>
 		 * 
 		 * @param pixel
-		 * 	スクロールさせるピクセル数の相対値です. 
-		 * 	0を指定するとスライダーは動かず, 100を指定するとスライダーが対象コンテンツ100ピクセル分上へ移動します.
-		 *  また, -100を指定するとスライダーが対象コンテンツ100ピクセル分上へ移動します.
+		 * 	<p>スクロールさせるピクセル数の相対値です. </p>
+		 * 	<p>0を指定するとスライダーは動かず, 100を指定するとスライダーが対象コンテンツ100ピクセル分上へ移動します.</p>
+		 *  <p>また, -100を指定するとスライダーが対象コンテンツ100ピクセル分上へ移動します.</p>
 		 * 
 		 * @param fromTargetPosition
-		 * 	減速スクロールの目標値を基準値として割合を指定する場合はtrueを,現在の暫定プロパティ値を基準値とする場合はfalseを指定します. 
+		 * 	<p>減速スクロールの目標値を基準値として割合を指定する場合はtrueを,現在の暫定プロパティ値を基準値とする場合はfalseを指定します. </p>
 		 * 	@default true
 		 */
 		public function scrollByRelativePixel(pixel:Number, fromTargetPosition:Boolean = true):void {
@@ -1316,8 +1316,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>値の指定にはピクセルを指定します. </p>
 		 * 
 		 * @param ratio
-		 * 	スクロール後の位置です. 
-		 * 	upperBoundを指定するとスライダーが一番上へ, lowerBoundを指定するとスライダーが一番下へ移動します. 
+		 * 	<p>スクロール後の位置です. </p>
+		 * 	<p>upperBoundを指定するとスライダーが一番上へ, lowerBoundを指定するとスライダーが一番下へ移動します. </p>
 		 */
 		public function scrollByAbsolutePixel(pixel:Number):void {
 			if (!_isReady) return;
@@ -1351,8 +1351,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>オートスクロールを開始します. </p>
 		 * 
 		 * @param isDown
-		 * 	スクロール方向です.
-		 * 	trueの場合下方向へスクロールします. 
+		 * 	<p>スクロール方向です.</p>
+		 * 	<p>trueの場合は下方向へ, falseの場合は上方向へスクロールします. </p>
 		 * 	@default 10
 		 */
 		public function startAutoScroll(isDown:Boolean = true):void {
@@ -1382,8 +1382,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>オートスクロールを停止します. </p>
 		 * 
 		 * @param isDown
-		 * 	スクロール方向です.
-		 * 	trueの場合下方向へスクロールします. 
+		 * 	<p>スクロール方向です. </p>
+		 * 	<p>trueの場合下方向へスクロールします. </p>
 		 * 	@default 10
 		 */
 		public function stopAutoScroll():void {
@@ -1468,9 +1468,10 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * _bindArrowUpButton
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>上向きアローボタンのボタンアクションを設定する関数. </p>
+		 * <p>上向きアローボタンのボタンアクションを設定する関数です. </p>
 		 * 
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
+		 * @param bind
+		 *  <p>trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. </p>
 		 */
 		private function _bindArrowUpButton(bind:Boolean):void {
 			if (_up) {
@@ -1497,9 +1498,10 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * _bindArrowDownButton
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>下向きアローボタンのボタンアクションを設定する関数. </p>
+		 * <p>下向きアローボタンのボタンアクションを設定する関数です. </p>
 		 * 
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
+		 * @param bind
+		 *  <p>trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. </p>
 		 */
 		private function _bindArrowDownButton(bind:Boolean):void {
 			if (_down) {
@@ -1526,9 +1528,10 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * _bindBaseButton
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>スライダーのベースエリアのボタンアクションを設定する関数. </p>
+		 * <p>スライダーのベースエリアのボタンアクションを設定する関数です. </p>
 		 * 
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
+		 * @param bind
+		 *  <p>trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. </p>
 		 */
 		private function _bindBaseButton(bind:Boolean):void {
 			if (_base) {
@@ -1555,9 +1558,10 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * _bindSliderButton
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>スライダーのボタンアクションを設定する関数. </p>
+		 * <p>スライダーのボタンアクションを設定する関数です. </p>
 		 * 
-		 * @param	bind	trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. 
+		 * @param bind
+		 *  <p>trueの場合はイベントハンドラの登録, falseの場合はイベントハンドラの削除をします. </p>
 		 */
 		private function _bindSliderButton(bind:Boolean):void {
 			if (_slider) {
@@ -1584,7 +1588,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * _pressArrow
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>アローボタンが押されたときに呼び出される関数. </p>
+		 * <p>アローボタンが押されたときに呼び出される関数です. </p>
 		 * <p>_arrowDownButtonMouseDownHandlerもしくは_arrowUpButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </p>
 		 */
 		private function _pressArrow():void {
@@ -1631,7 +1635,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * _releaseArrow
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>アローボタンが離されたときに呼び出される関数. </p>
+		 * <p>アローボタンが離されたときに呼び出される関数です. </p>
 		 * <p>_arrowDownButtonMouseUpHandlerもしくは_arrowUpButtonMouseUpHandlerイベントハンドラを通じて呼び出されます. </a>
 		 */
 		private function _releaseArrow():void {
@@ -1652,7 +1656,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * _prsssBase
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>スライダーのベースエリアが押されたときに呼び出される関数. </p>
+		 * <p>スライダーのベースエリアが押されたときに呼び出される関数です. </p>
 		 * <p>_baseButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
 		 */
 		private function _prsssBase():void {
@@ -1680,7 +1684,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * _pressSlider
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>スライダーが押されたときに呼び出される関数. </p>
+		 * <p>スライダーが押されたときに呼び出される関数です. </p>
 		 * <p>_sliderButtonMouseDownHandlerイベントハンドラを通じて呼び出されます. </a>
 		 */
 		private function _pressSlider():void {
@@ -1712,7 +1716,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * _releaseSlider
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>スライダーが離されたときに呼び出される関数. </p>
+		 * <p>スライダーが離されたときに呼び出される関数です. </p>
 		 * <p>_sliderButtonMouseUpHandlerイベントハンドラを通じて呼び出されます. </a>
 		 */
 		private function _releaseSlider():void {
@@ -1936,7 +1940,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * 
 		 * <p>各パーツのボタンアクションにバインドされるイベントハンドラです. </p>
 		 * 
-		 * @param	e	MouseEvent
+		 * @param e
+		 *  <p>MouseEvent</p>
 		 */
 		private function _arrowUpButtonMouseDownHandler(e:MouseEvent):void {
 			_isUpPressed = true;
@@ -1999,7 +2004,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * 
 		 * <p>マウスホイールの動作時に呼び出されるイベントハンドラです. </p>
 		 * 
-		 * @param	e	MouseEvent
+		 * @param e
+		 *  <p>MouseEvent</p>
 		 */
 		private function _mouseWheelHandler(e:MouseEvent):void {
 			if (!_isReady || !_useMouseWheel) return;
@@ -2035,7 +2041,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * 
 		 * <p>アローボタンを押し続けたときの連続スクロールを発生させるまでの遅延完了時に呼び出されるイベントハンドラです. </p>
 		 * 
-		 * @param	e	TimerEvent
+		 * @param e
+		 *  <p>TimerEvent</p>
 		 */
 		private function _continuousArrowScrollTimerHandler(e:TimerEvent):void {
 			_continuousArrowScrollTimer.removeEventListener(TimerEvent.TIMER, _continuousArrowScrollTimerHandler);
@@ -2054,7 +2061,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * 
 		 * <p>アローボタンを押し続けたときの連続スクロールを実行するために毎フレーム呼び出されるイベントハンドラです. </p>
 		 * 
-		 * @param	e	Event
+		 * @param e
+		 *  <p>Event</p>
 		 */
 		private function _continuousArrowScrollTimerUpdater(e:Event):void {
 			//2回目以降のスクロール
@@ -2071,7 +2079,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * 
 		 * <p>スライダのドラッグ時に呼び出されるイベントハンドラです. </p>
 		 * 
-		 * @param	e	MouseEvent
+		 * @param e
+		 *  <p>TimerEvent</p>
 		 */
 		private function _moveSliderHandler(e:MouseEvent):void {
 			_isScrollingByDrag = true;
@@ -2095,7 +2104,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>スクロールアクションが始まってから完了するまで毎フレーム呼び出されるイベントハンドラです. </p>
 		 * <p>対象プロパティ, スライダの更新をおこないます. </p>
 		 * 
-		 * @param	e	Event
+		 * @param e
+		 *  <p>Event</p>
 		 */
 		private function _updateScroll(e:Event):void {
 			if (_useOvershoot || _useSmoothScroll) {
@@ -2149,7 +2159,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * 
 		 * <p>オートスクロールを実行中の場合に毎フレーム更新します. </p>
 		 * 
-		 * @param e Event
+		 * @param e
+		 *  <p>Event</p>
 		 */
 		private function _updateAutoScroll(e:Event):void {
 			if (_isScrollingByUser || isBasePressed) return;
@@ -2173,7 +2184,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * 
 		 * <p>ステージに配置されたときに呼び出されるイベントハンドラです. </p>
 		 * 
-		 * @param	e	Event
+		 * @param e
+		 *  <p>Event</p>
 		 */
 		private function _addedToStageHandler(e:Event):void {
 			//SWFWheelの初期化
@@ -2196,7 +2208,8 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * 
 		 * <p>ステージから削除されるときに呼び出されるイベントハンドラです. </p>
 		 * 
-		 * @param	e	Event
+		 * @param e
+		 *  <p>Event</p>
 		 */
 		private function _removedFromStageHandler(e:Event):void {
 			removeEventListener(Event.REMOVED_FROM_STAGE, _removedFromStageHandler);
