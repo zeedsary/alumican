@@ -51,6 +51,9 @@ package net.alumican.as3.justputplay.scrollbars {
 		// VARIABLES
 		//==========================================================================
 		
+		/**
+		 * スクロールバー
+		 */
 		private var _scrollbar:JPPScrollbar;
 		
 		
@@ -59,6 +62,9 @@ package net.alumican.as3.justputplay.scrollbars {
 		// STAGE INSTANCES
 		//==========================================================================
 		
+		/**
+		 * ステージに配置してあるMovieClip
+		 */
 		public var arrowUp:MovieClip;
 		public var arrowDown:MovieClip;
 		public var scrollBox:MovieClip;
@@ -87,38 +93,38 @@ package net.alumican.as3.justputplay.scrollbars {
 		}
 		
 		/**
-		 * 初期化
+		 * 初期化関数
 		 * @param	e
 		 */
 		private function _initialize(e:Event):void {
 			removeEventListener(Event.ADDED_TO_STAGE, _initialize);
 			
-			//各パーツへのパス
+			//各パーツへのパスを設定する
 			var body:MovieClip   = content.contentBody;
 			var mask:MovieClip   = content.contentMask;
 			var slider:MovieClip = scrollBox.slider;
 			var base:MovieClip   = scrollBox.base;
 			
-			//コンテンツの上限値, 下限値
+			//コンテンツの上限値, 下限値を設定する
 			var upperBound:Number = body.y;
 			var lowerBound:Number = body.y - (content.height - mask.height);
 			
-			//スクロールバーインスタンスの生成
+			//スクロールバーインスタンスを生成する
 			_scrollbar = new JPPScrollbar();
 			
-			//ステージに配置
+			//ステージに配置する
 			addChild(_scrollbar);
 			
-			//パーツのバインド
+			//パーツのバインドをおこなう
 			_scrollbar.up     = arrowUp;
 			_scrollbar.down   = arrowDown;
 			_scrollbar.slider = slider;
 			_scrollbar.base   = base;
 			
-			//スクロールバーの初期化
+			//スクロールバーの初期化をおこなう
 			_scrollbar.setup(body, "y", body.height, mask.height, upperBound, lowerBound);
 			
-			//コンテンツサイズがマスクサイズに満たない場合の処理
+			//コンテンツサイズがマスクサイズに満たない場合の処理の記述
 			if (_scrollbar.isUnderFlow) {
 				_scrollbar.up.visible      = false;
 				_scrollbar.down.visible    = false;
@@ -137,16 +143,6 @@ package net.alumican.as3.justputplay.scrollbars {
 			//_scrollbar.startAutoScroll(true);
 			//_scrollbar.useAutoScrollCancelable = false;
 			//_scrollbar.useOvershootDeformationSlider = false;
-			
-			/*
-			Tweener.addTween(this, {
-				delay:5,
-				onComplete:function():void {
-					_scrollbar.lowerBound -= 500;
-					_scrollbar.contentSize += 500;
-				}
-			});
-			*/
 		}
 		
 		
