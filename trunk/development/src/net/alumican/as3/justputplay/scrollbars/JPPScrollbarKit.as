@@ -30,8 +30,8 @@ package net.alumican.as3.justputplay.scrollbars {
 	/**
 	 * JPPScrollbarSet.as
 	 * 
-	 * <p>ActionScript3.0で簡単に設置できるスクロールバーを管理するクラスです. </p>
-	 * <p>適切な階層構造を持ったDIsplayObjectにリンケージすることで, 簡単にスクロールバーを設置することができます. </p>
+	 * <p>ActionScript3.0で簡単に設置できるスクロールバーセット用のクラスです. </p>
+	 * <p>適切な階層構造を持ったDisplayObjectにリンケージすることで, 簡単にスクロールバーを設置することができます. </p>
 	 * 
 	 * @author alumican.net<Yukiya Okuda>
 	 * @link http://alumican.net
@@ -52,7 +52,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		//==========================================================================
 		
 		/**
-		 * スクロールバー
+		 * <p>スクロールバークラスです. </p>
 		 */
 		private var _scrollbar:JPPScrollbar;
 		
@@ -63,11 +63,23 @@ package net.alumican.as3.justputplay.scrollbars {
 		//==========================================================================
 		
 		/**
-		 * ステージに配置してあるMovieClip
+		 * <p>上方向アローボタンとしてステージに配置してあるMovieClipです. </p>
 		 */
 		public var arrowUp:MovieClip;
+		
+		/**
+		 * <p>下方向アローボタンとしてステージに配置してあるMovieClipです. </p>
+		 */
 		public var arrowDown:MovieClip;
+		
+		/**
+		 * <p>slider(スライダー), base(スライダーの可動範囲を表すオブジェクト)を内包した, ステージに配置してあるMovieClipです. </p>
+		 */
 		public var scrollBox:MovieClip;
+		
+		/**
+		 * <p>contentBody(スクロール対象), contentMask(マスクオブジェクト)を内包した, ステージに配置してあるMovieClipです. </p>
+		 */
 		public var content:MovieClip;
 		
 		
@@ -86,15 +98,17 @@ package net.alumican.as3.justputplay.scrollbars {
 		//==========================================================================
 		
 		/**
-		 * コンストラクタ
+		 * <p>コンストラクタです. </p>
 		 */
 		public function JPPScrollbarKit():void {
 			addEventListener(Event.ADDED_TO_STAGE, _initialize);
 		}
 		
 		/**
-		 * 初期化関数
-		 * @param	e
+		 * <p>初期化関数です. </p>
+		 * <p>ステージに配置されたときに呼び出されます. </p>
+		 * @param e
+		 * 	<p>Event</p>
 		 */
 		private function _initialize(e:Event):void {
 			removeEventListener(Event.ADDED_TO_STAGE, _initialize);
@@ -130,10 +144,10 @@ package net.alumican.as3.justputplay.scrollbars {
 				_scrollbar.down.visible    = false;
 				_scrollbar.slider.visible  = false;
 				//_scrollbar.base.visible    = false;
-				
 				_scrollbar.baseEnabled = false;
 			}
 			
+			//各種オプションの設定
 			//_scrollbar.useIgnoreSliderHeight = true;
 			//_scrollbar.useContinuousArrowScroll = false;
 			//_scrollbar.continuousArrowScrollInterval = 0;

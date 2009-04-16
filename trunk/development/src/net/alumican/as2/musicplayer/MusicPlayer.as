@@ -341,7 +341,7 @@ class net.alumican.as2.musicplayer.MusicPlayer {
 	 */
 	private function setVolume(v:Number, fade:Boolean):Void {
 		
-		v = Math.max(0, Math.min(100, v);
+		v = Math.max(0, Math.min(100, v));
 		
 		if (v == volume) { return; }
 		
