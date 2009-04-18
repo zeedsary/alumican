@@ -844,11 +844,11 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>オーバーシュート(iPhoneのように, 端まで行くとちょっと行き過ぎて戻る演出)を加えるかどうかを切り替えます. </p>
 		 * <p>オーバーシュートを使用する場合はtrueを設定します. </p>
 		 * 
-		 * @default	true
+		 * @default	false
 		 */
 		public function get useOvershoot():Boolean { return _useOvershoot; }
 		public function set useOvershoot(value:Boolean):void { _useOvershoot = value; }
-		private var _useOvershoot:Boolean = true;
+		private var _useOvershoot:Boolean = false;
 		
 		
 		
