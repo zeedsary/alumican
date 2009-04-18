@@ -55,6 +55,9 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>スクロールバークラスです. </p>
 		 */
 		private var _scrollbar:JPPScrollbar;
+		public function get scrollbar():JPPScrollbar { return _scrollbar; }
+		
+		
 		
 		
 		

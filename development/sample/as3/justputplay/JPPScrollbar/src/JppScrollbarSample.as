@@ -4,12 +4,12 @@
 	import net.alumican.as3.justputplay.scrollbars.JPPScrollbarKit;
 	
 	/**
-	 * JPPScrollbarTest.as
+	 * JPPScrollbarSample.as
 	 *
-	 * @author ...
+	 * @author alumican.net<Yukiya Okuda>
 	 */
 	
-	public class JPPScrollbarTest extends Sprite {
+	public class JPPScrollbarSample extends Sprite {
 		
 		//-------------------------------------
 		// CLASS CONSTANTS
