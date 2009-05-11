@@ -143,7 +143,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * isDownPressed
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>上方向アローボタンが現在押下されているかどうかを取得します. </p>
+		 * <p>下方向アローボタンが現在押下されているかどうかを取得します. </p>
 		 */
 		public function get isDownPressed():Boolean { return _isDownPressed; }
 		private var _isDownPressed:Boolean;
@@ -289,8 +289,9 @@ package net.alumican.as3.justputplay.scrollbars {
 		/*--------------------------------------------------------------------------
 		 * property
 		 *---------------------------------------------------------------------*//**
+		 * @private
 		 * 
-		 * <p>スクロール対象コンテンツが保持している, スクロールによって実際に変化させたいプロパティ値を取得/設定します. </p>
+		 * <p>スクロール対象コンテンツが保持している, スクロールによって実際に変化させたいプロパティ値を設定します. </p>
 		 */
 		private function get property():Number { return _content[_key]; }
 		private function set property(value:Number):void { _content[_key] = value; }
@@ -738,11 +739,11 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * <p>アローボタンを1回クリックしたときのスクロール量を設定します. </p>
 		 * <p>scrollUp(), scrollDownメソッドを呼び出した際のスクロール量もこの値に従います. </p>
 		 * 
-		 * @default	100
+		 * @default	200
 		 */
 		public function get arrowScrollAmount():Number { return _arrowScrollAmount; }
 		public function set arrowScrollAmount(value:Number):void { _arrowScrollAmount = value; }
-		private var _arrowScrollAmount:Number = 100;
+		private var _arrowScrollAmount:Number = 200;
 		
 		
 		
@@ -771,7 +772,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 *---------------------------------------------------------------------*//**
 		 * 
 		 * <p>アローボタンを押し続けた場合に, 連続スクロールを発生させるかどうかを切り替えます. </p>
-		 * <p> 連続スクロールを使用する場合はtrueを設定します. </p>
+		 * <p>連続スクロールを使用する場合はtrueを設定します. </p>
 		 * 
 		 * @default	true
 		 */
@@ -787,7 +788,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 * continuousArrowScrollInterval
 		 *---------------------------------------------------------------------*//**
 		 * 
-		 * <p>アローボタンを押し続けた場合に発生する連続スクロールを使用する場合, 連続スクロールが始まるまでの時間(ミリ秒)を設定します</p>
+		 * <p>アローボタンを押し続けた場合に発生する連続スクロールを使用する場合, 連続スクロールが始まるまでの時間(ミリ秒)を設定します．</p>
 		 * 
 		 * @default	300
 		 */
@@ -1380,11 +1381,6 @@ package net.alumican.as3.justputplay.scrollbars {
 		 *---------------------------------------------------------------------*//**
 		 * 
 		 * <p>オートスクロールを停止します. </p>
-		 * 
-		 * @param isDown
-		 * 	<p>スクロール方向です. </p>
-		 * 	<p>trueの場合下方向へスクロールします. </p>
-		 * 	@default 10
 		 */
 		public function stopAutoScroll():void {
 			if (!_isReady || !_isAutoScrolling) return;
