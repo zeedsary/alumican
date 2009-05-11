@@ -45,6 +45,11 @@
 		private var _currentPosition:uint;
 		private var _totalPosition:uint;
 		
+		private var _currentTime:Number;
+		private var _totalTime:Number;
+		private var _currentRatio:Number;
+		private var _trackStartTime:Number;
+		
 		private var _startTime:Number;
 		private var _oldTime:Number;
 		private var _oldMeasure:uint;
@@ -81,6 +86,11 @@
 		public function get currentPosition():uint { return _currentPosition; }
 		public function get totalPosition():uint { return _totalPosition; }
 		
+		public function get currentTime():Number { return _currentTime; }
+		public function get totalTime():Number { return _totalTime; }
+		
+		public function get currentRatio():Number { return _currentRatio; }
+		
 		public function get isOnMeasure():Boolean { return _isOnMeasure; }
 		public function get isOnBeat():Boolean { return _isOnBeat; }
 		public function get isOnTick():Boolean { return _isOnTick; }
@@ -110,6 +120,8 @@
 			_tpqn    = tpqn;
 			
 			_totalPosition = _measure * _beat * _tpqn;
+			
+			_totalTime = 1000 * _measure * _beat * 60 / bpm;
 			
 			_isTicking = false;
 			
@@ -148,6 +160,10 @@
 			
 			_isOnStart    = true;
 			_isOnComplete = false;
+			
+			_trackStartTime = _startTime;
+			_currentRatio   = 0;
+			_currentTime    = 0;
 			
 			//イベント発行
 			_dispatchCustomEvent(BeatDispatcherEvent.START);
@@ -292,8 +308,8 @@
 			
 			var hasListener:Boolean = false;
 			
-			var currentTime:Number = getTimer();
-			var elapsedTime:Number = _tpqn * _bpm * (currentTime - _startTime) / 60000;
+			var time:Number = getTimer();
+			var elapsedTime:Number = _tpqn * _bpm * (time - _startTime) / 60000;
 			
 			//最小時間単位
 			if (elapsedTime - _oldTime >= 1) {
@@ -305,6 +321,7 @@
 				++_currentPosition;
 				++_currentTick;
 				_oldTime = elapsedTime;
+				_currentRatio = 0;
 				
 				if (_refCounter[_currentPosition] != null) {
 					hasListener = true;
@@ -342,12 +359,17 @@
 				_oldMeasure      = 0;
 				_currentPosition = 0;
 				
+				_trackStartTime = getTimer();
+				
 				_isOnComplete = true;
 				
 				if (_refCounter[_currentPosition] != null) {
 					hasListener = true;
 				}
 			}
+			
+			_currentTime  = time - _trackStartTime;
+			_currentRatio = _currentTime / _totalTime;
 			
 			//イベントの発行
 			if (_isOnStart   ) _dispatchCustomEvent(BeatDispatcherEvent.START);
