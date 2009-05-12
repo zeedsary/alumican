@@ -7,7 +7,7 @@
 	/**
 	 * JPPScrollbarKit.as
 	 * 
-	 * <p>ActionScript3.0で簡単に設置できるスクロールバーセット用のクラスです. </p>
+	 * <p>ActionScript3.0で簡単に設置できるスクロールバー. </p>
 	 * <p>適切な階層構造を持ったDisplayObjectにリンケージすることで, 簡単にスクロールバーを設置することができます. </p>
 	 * 
 	 * @author alumican.net<Yukiya Okuda>
@@ -32,7 +32,6 @@
 		 * <p>スクロールバークラスです. </p>
 		 */
 		private var _scrollbar:JPPScrollbar;
-		public function get scrollbar():JPPScrollbar { return _scrollbar; }
 		
 		
 		
@@ -153,14 +152,14 @@
 				lowerBound   //スライダーが下限に達したときの変化対象プロパティの値を設定します.
 			);
 			
-			/*
-			_scrollbar.upperBound;  //スライダーが上限に達したときの変化対象プロパティの値を設定します.
-			_scrollbar.lowerBound;  //スライダーが下限に達したときの変化対象プロパティの値を設定します.
-			_scrollbar.contentSize; //スクロール対象コンテンツの総計サイズを設定します.
+			//後から値を変更できます．
+		//	_scrollbar.upperBound;  //スライダーが上限に達したときの変化対象プロパティの値を設定します.
+		//	_scrollbar.lowerBound;  //スライダーが下限に達したときの変化対象プロパティの値を設定します.
+		//	_scrollbar.contentSize; //スクロール対象コンテンツの総計サイズを設定します.
 			                        //このプロパティは伸縮スライドバーを使用する場合のスライドバーのサイズ計算に用いられます．
-			_scrollbar.maskSize;    //スクロール対象コンテンツの表示部分のサイズを設定します.
+		//	_scrollbar.maskSize;    //スクロール対象コンテンツの表示部分のサイズを設定します.
 			                        //このプロパティは伸縮スライドバーを使用する場合のスライドバーのサイズ計算に用いられます.
-			*/
+			
 			
 			
 			
@@ -178,7 +177,7 @@
 			
 			
 			
-			/*
+			
 			//======================================================================
 			//各種オプションの設定
 			
@@ -187,11 +186,11 @@
 			
 			//減速スクロールを使用するかどうかを設定します.
 			//使用する場合にはtrueを設定します.
-			_scrollbar.useSmoothScroll = true;
+		//	_scrollbar.useSmoothScroll = true;
 			
 			//減速スクロールを使用する場合の, 減速の緩やかさを設定します.
 			//1以上の数値を設定し, 数値が大きくなるほど緩やかに戻るようになります.
-			_scrollbar.smoothScrollEasing = 6;
+		//	_scrollbar.smoothScrollEasing = 6;
 			
 			
 			
@@ -199,13 +198,13 @@
 			//スライダーに関する事項
 			
 			//コンテンツ量に応じて伸縮するスライダーを使用するかどうかを設定します.
-			_scrollbar.useFlexibleSlider = false;
+		//	_scrollbar.useFlexibleSlider = false;
 			
 			//コンテンツ量に応じて伸縮するスライダーを使用する場合, スライダーの最小サイズをピクセル値で設定します.
-			_scrollbar.minSliderHeight = 10;
+		//	_scrollbar.minSliderHeight = 10;
 			
 			//スライダーの高さを常に0として扱うかどうかを設定します.
-			_scrollbar.useIgnoreSliderHeight = false;
+		//	_scrollbar.useIgnoreSliderHeight = false;
 			
 			
 			
@@ -213,10 +212,10 @@
 			//スライダーおよび対象プロパティの整数値吸着に関する事項
 			
 			//スクロール完了時にスライダーをピクセルに吸着させるかどうかを設定します. 
-			_scrollbar.usePixelFittingSlider = false;
+		//	_scrollbar.usePixelFittingSlider = false;
 			
 			//スクロール完了時に対象プロパティを整数値に吸着させるかどうかを設定します.
-			_scrollbar.usePixelFittingContent = false;
+		//	_scrollbar.usePixelFittingContent = false;
 			
 			
 			
@@ -228,17 +227,17 @@
 			//mouseChildrenプロパティは変更されません. 
 			//このプロパティは書き込み専用です. 
 			//初期設定時にtrueが設定されます. 
-			buttonEnabled = true; //アローボタン, スライダー, ベースボタンの有効/無効を一括して切り替えます.
-			upEnabled = true;     //上方向アローボタン
-			downEnabled = true;   //下方向アローボタン
-			sliderEnabled = true; //スライダー
-			baseEnabled = true;   //スクロールエリア
+		//	buttonEnabled = true; //アローボタン, スライダー, ベースボタンの有効/無効を一括して切り替えます.
+		//	upEnabled = true;     //上方向アローボタン
+		//	downEnabled = true;   //下方向アローボタン
+		//	sliderEnabled = true; //スライダー
+		//	baseEnabled = true;   //スクロールエリア
 			
 			
 			
 			//----------------------------------------------------------------------
 			//マウスホイールの使用/不使用を切り替えます.
-			useMouseWheel = true;
+		//	useMouseWheel = true;
 			
 			
 			
@@ -246,22 +245,22 @@
 			//アローボタンのスクロールに関する事項
 			
 			//アローボタンを1回クリックしたときのスクロール量を設定します.
-			//scrollUp(), scrollDownメソッドを呼び出した際のスクロール量もこの値に従います.
-			_scrollbar.arrowScrollAmount = 200;
+			//scrollUp(), scrollDown()メソッドを呼び出した際のスクロール量もこの値に従います.
+		//	_scrollbar.arrowScrollAmount = 200;
 			
 			//continuousArrowScrollAmountおよびarrowScrollAmountに使用するスクロール単位を切り替えます. 
 			//trueの場合はスクロール量をコンテンツ全体に対する割合で設定します(0より大きく1以下の数値). 
 			//falseの場合はスクロール量をピクセル数で設定します(0以上の数値). 
-			_scrollbar.useArrowScrollUsingRatio = false;
+		//	_scrollbar.useArrowScrollUsingRatio = false;
 			
 			//アローボタンを押し続けた場合に, 連続スクロールを発生させるかどうかを切り替えます.
-			_scrollbar.useContinuousArrowScroll = true;
+		//	_scrollbar.useContinuousArrowScroll = true;
 			
 			//アローボタンを押し続けた場合に発生する連続スクロールを使用する場合, 連続スクロールが始まるまでの時間(ミリ秒)を設定します．
-			_scrollbar.continuousArrowScrollInterval = 300;
+		//	_scrollbar.continuousArrowScrollInterval = 300;
 			
 			//アローボタンを押し続けた場合に発生する連続スクロールを使用する場合, 毎フレームのスクロール量を設定します. 
-			_scrollbar.continuousArrowScrollAmount = 10;
+		//	_scrollbar.continuousArrowScrollAmount = 10;
 			
 			
 			
@@ -269,17 +268,17 @@
 			//オーバーシュート演出に関する事項
 			
 			//オーバーシュート(iPhoneのように, 端まで行くとちょっと行き過ぎて戻る演出)を加えるかどうかを切り替えます.
-			_scrollbar.useOvershoot = false;
+			_scrollbar.useOvershoot = true;
 			
 			//オーバーシュートを使用する場合, オーバーシュートの最大行き過ぎ量をピクセル数で設定します.
-			_scrollbar.overshootPixels = 50;
+		//	_scrollbar.overshootPixels = 50;
 			
 			//オーバーシュートを使用する場合, オーバーシュートから本来のスクロール座標へ戻る際の緩やかさを設定します. 
 			//1以上の数値を設定し, 数値が大きくなるほど緩やかに戻るようになります.
-			_scrollbar.overshootEasing = 6;
+		//	_scrollbar.overshootEasing = 6;
 			
 			//オーバーシュートを使用する場合, オーバーシュート時にスクロールバーが縮む演出を加えるかどうかを切り替えます.
-			_scrollbar.useOvershootDeformationSlider = true;
+		//	_scrollbar.useOvershootDeformationSlider = true;
 			
 			
 			
@@ -289,65 +288,64 @@
 			//オートスクロールの強制力を切り替えます.
 			//trueの場合は, 何らかのユーザーアクションによるスクロールが発生した時点でオートスクロールを終了します. 
 			//falseの場合は, ユーザーアクションによるスクロールが優先されますが, ユーザーアクションが終了するとオートスクロールは再開します.
-			_scrollbar.useAutoScrollCancelable = true;
+		//	_scrollbar.useAutoScrollCancelable = true;
 			
 			//オートスクロールに使用するスクロール単位を切り替えます. 
 			//trueの場合はスクロール量をコンテンツ全体に対する割合で設定します(0より大きく1以下の数値). 
 			//falseの場合はスクロール量をピクセル数で設定します(0以上の数値). 
-			_scrollbar.useAutoScrollUsingRatio = false;
+		//	_scrollbar.useAutoScrollUsingRatio = false;
 			
 			//オートスクロールの毎フレームのスクロール量を設定します. 
-			_scrollbar.autoScrollAmount = 10;
+		//	_scrollbar.autoScrollAmount = 10;
 			
 			
 			
 			
 			
 			//======================================================================
-			//メソッド
+			//メソッド一覧
 			
 			//arrowScrollAmountプロパティに設定された量だけコンテンツをスクロールさせる関数です. スライダーは上方向へと移動します. 
-			scrollUp();
+		//	_scrollbar.scrollUp();
 			
 			//arrowScrollAmountプロパティに設定された量だけコンテンツをスクロールさせる関数です. スライダーは下方向へと移動します. 
-			scrollDown();
+		//	_scrollbar.scrollDown();
 			
 			//スクロール位置を指定しスクロールを実行する関数です. 
-			scrollByRelativeRatio(); //相対位置にスクロール．スクロール値の指定には割合を指定します. 第2引数で現在値からの相対位置と最終到達位置からの相対位置を切り替えられます．
-			scrollByAbsoluteRatio(); //絶対位置にスクロール．スクロール値の指定には割合を指定します. 
-			scrollByRelativePixel(); //相対位置にスクロール．スクロール値の指定にはピクセルを指定します. 第2引数で現在値からの相対位置と最終到達位置からの相対位置を切り替えられます．
-			scrollByAbsolutePixel(); //絶対位置にスクロール．スクロール値の指定にはピクセルを指定します. 
+		//	_scrollbar.scrollByRelativeRatio(); //相対位置にスクロール．スクロール値の指定には割合を指定します. 第2引数で現在値からの相対位置と最終到達位置からの相対位置を切り替えられます．
+		//	_scrollbar.scrollByAbsoluteRatio(); //絶対位置にスクロール．スクロール値の指定には割合を指定します. 
+		//	_scrollbar.scrollByRelativePixel(); //相対位置にスクロール．スクロール値の指定にはピクセルを指定します. 第2引数で現在値からの相対位置と最終到達位置からの相対位置を切り替えられます．
+		//	_scrollbar.scrollByAbsolutePixel(); //絶対位置にスクロール．スクロール値の指定にはピクセルを指定します. 
 			
 			//オートスクロールを開始します. 第2引数でスクロール方向を指定します．
-			startAutoScrollByPixel();
+		//	_scrollbar.startAutoScroll();
 			
 			//オートスクロールを停止します. 
-			stopAutoScroll();
+		//	_scrollbar.stopAutoScroll();
 			
 			
 			
 			
 			
 			//======================================================================
-			//各パーツの状態を取得します．
+			//読み取り専用プロパティ一覧
 			
-			_scrollbar.isUpPressed;     //上方向アローボタンが現在押下されているかどうかを取得します．
-			_scrollbar.isDownPressed;   //下方向アローボタンが現在押下されているかどうかを取得します・
-			_scrollbar.isBasePressed;   //スクロールエリアが現在押下されているかどうかを取得します．
-			_scrollbar.isSliderPressed; //スライダーが現在押下されているかどうかを取得します．
+		//	_scrollbar.isUpPressed;     //上方向アローボタンが現在押下されているかどうかを取得します．
+		//	_scrollbar.isDownPressed;   //下方向アローボタンが現在押下されているかどうかを取得します・
+		//	_scrollbar.isBasePressed;   //スクロールエリアが現在押下されているかどうかを取得します．
+		//	_scrollbar.isSliderPressed; //スライダーが現在押下されているかどうかを取得します．
 			
-			_scrollbar.isOverFlow;  //contentSizeがmaskSizeよりも大きい場合にtrueを返します.
-			_scrollbar.isUnderFlow; //contentSizeがmaskSize以下の場合にtrueを返します.
+		//	_scrollbar.isOverFlow;  //contentSizeがmaskSizeよりも大きい場合にtrueを返します.
+		//	_scrollbar.isUnderFlow; //contentSizeがmaskSize以下の場合にtrueを返します.
 			
-			_scrollbar.isScrolling;  //減速スクロールを使用する場合, 現在スクロールが進行中であるかどうかを取得します.
-			_scrollbar.targetScroll; //減速スクロールを使用する場合, スクロール完了時に対象プロパティが到達する目標値を表します.
+		//	_scrollbar.isScrolling;  //減速スクロールを使用する場合, 現在スクロールが進行中であるかどうかを取得します.
+		//	_scrollbar.targetScroll; //減速スクロールを使用する場合, スクロール完了時に対象プロパティが到達する目標値を表します.
 			
-			_scrollbar.sliderHeight; //useOvershootDeformationSlider=true時のオーバーシュート演出によって変形していないときのスライダーの高さを取得します.
+		//	_scrollbar.sliderHeight; //useOvershootDeformationSlider=true時のオーバーシュート演出によって変形していないときのスライダーの高さを取得します.
 			
-			_scrollbar.isOvershooting; //現在オーバーシュートをしている場合はtrueを返します.
+		//	_scrollbar.isOvershooting; //現在オーバーシュートをしている場合はtrueを返します.
 			
-			_scrollbar.isAutoScrolling; //現在オートスクロールを実行中である場合はtrueを返します.
-			*/
+		//	_scrollbar.isAutoScrolling; //現在オートスクロールを実行中である場合はtrueを返します.
 		}
 		
 		
