@@ -737,7 +737,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		 *---------------------------------------------------------------------*//**
 		 * 
 		 * <p>アローボタンを1回クリックしたときのスクロール量を設定します. </p>
-		 * <p>scrollUp(), scrollDownメソッドを呼び出した際のスクロール量もこの値に従います. </p>
+		 * <p>scrollUp(), scrollDown()メソッドを呼び出した際のスクロール量もこの値に従います. </p>
 		 * 
 		 * @default	200
 		 */
@@ -1346,7 +1346,7 @@ package net.alumican.as3.justputplay.scrollbars {
 		
 		
 		/*--------------------------------------------------------------------------
-		 * startAutoScrollByPixel
+		 * startAutoScroll
 		 *---------------------------------------------------------------------*//**
 		 * 
 		 * <p>オートスクロールを開始します. </p>
@@ -1436,11 +1436,13 @@ package net.alumican.as3.justputplay.scrollbars {
 			}
 			
 			var h:Number = contentRatio * _base.height;
-			_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
 			
-			_sliderHeight = (_usePixelFittingSlider) ? Math.round(_sliderHeight) : _sliderHeight;
+			//_sliderHeight = (h < _minSliderHeight) ? _minSliderHeight : h;
+			//_sliderHeight = (_usePixelFittingSlider) ? Math.round(_sliderHeight) : _sliderHeight;
 			
-			_slider.height =  _sliderHeight;
+			_sliderHeight = Math.round( (h < _minSliderHeight) ? _minSliderHeight : h );
+			
+			_slider.height = _sliderHeight;
 			
 			//位置合わせをおこなう
 			_updateSlider();
@@ -1613,7 +1615,7 @@ package net.alumican.as3.justputplay.scrollbars {
 					}
 					
 					addEventListener(Event.ENTER_FRAME, _continuousArrowScrollTimerUpdater);
-						
+					
 				} else {
 					//タイムラグの後, 毎フレームの連続スクロールを開始する
 					_continuousArrowScrollTimer = new Timer(_continuousArrowScrollInterval, 1);
@@ -2111,7 +2113,7 @@ package net.alumican.as3.justputplay.scrollbars {
 			var d:Number = _targetScroll - property;
 			var a:Number = (d > 0) ? d : -d;
 			
-			if (a < 0.01 || _terminateScrollFlag) {
+			if (a < 0.001 || _terminateScrollFlag) {
 				_isScrolling = false;
 				_isScrollingByUser = false;
 				_isScrollingByDrag = false;
@@ -2125,10 +2127,17 @@ package net.alumican.as3.justputplay.scrollbars {
 				if (_slider && !_useIgnoreSliderHeight) {
 					if (_usePixelFittingSlider) {
 						_slider.y = Math.round(_slider.y);
+					}
+					_slider.height = _sliderHeight;
+					
+					/*
+					if (_usePixelFittingSlider) {
+						_slider.y = Math.round(_slider.y);
 						_slider.height = Math.round(_sliderHeight);
 					} else {
 						_slider.height = _sliderHeight;
 					}
+					*/
 				}
 				
 				removeEventListener(Event.ENTER_FRAME, _updateScroll);
@@ -2141,7 +2150,7 @@ package net.alumican.as3.justputplay.scrollbars {
 				_updateSlider();
 				
 				//前回から計算結果が変化していない場合は計算精度が限界なので次フレームで打ち切り
-				_terminateScrollFlag = (property == _prevProperty) ? true : false;
+				_terminateScrollFlag = (property == _prevProperty && !_isOvershooting) ? true : false;
 			}
 		}
 		
