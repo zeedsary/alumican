@@ -40,18 +40,36 @@
 		// VARIABLES
 		//-------------------------------------
 		
+		/**
+		 * 画像読み込み用Loader
+		 */
 		public function get loader():LoaderThread { return _loader; }
 		private var _loader:LoaderThread;
 		
+		/**
+		 * URL配列
+		 */
 		public function get urls():Array { return _urls; }
 		private var _urls:Array;
 		
+		/**
+		 * Bitmap配列
+		 */
 		public function get bmps():Array { return _bmps; }
 		private var _bmps:Array;
 		
+		/**
+		 * 進捗状況
+		 */
 		public function get progress():IProgress { return _progress; }
 		private var _progress:Progress;
 		
+		/**
+		 * 1枚読み込まれる毎に呼び出されるコールバック関数
+		 */
+		public function get onProgress():Function { return _onProgress; }
+		public function set onProgress(value:Function):void { _onProgress = value; }
+		private var _onProgress:Function;
 		
 		
 		
@@ -99,7 +117,7 @@
 		 * 読み込む画像を貯める
 		 * @param	url
 		 */
-		public function push(url:String):void 
+		public function addURL(url:String):void 
 		{
 			_urls.push(url);
 		}
@@ -131,25 +149,6 @@
 		}
 		
 		/**
-		 * 1枚ごとの読み込み完了
-		 */
-		private function _loaderCompleteHandler():void
-		{
-			var bmp:Bitmap = _loader.loader.content as Bitmap;
-			
-			_bmps.push(bmp);
-			
-			if (_bmps.length == _urls.length)
-			{
-				_completeHandler();
-			}
-			else {
-				_progressHandler(_bmps.length);
-				run();
-			}
-		}
-		
-		/**
 		 * まだ開始を通知していなければ通知する
 		 * 
 		 * @private
@@ -162,13 +161,6 @@
 			}
 		}
 		
-		
-		
-		
-		//-------------------------------------
-		// EVENT HANDLER
-		//-------------------------------------
-		
 		/**
 		 * スレッド終了処理
 		 *
@@ -179,6 +171,40 @@
 		protected override function finalize():void
 		{
 			_loader = null;
+		}
+		
+		
+		
+		
+		
+		//-------------------------------------
+		// EVENT HANDLER
+		//-------------------------------------
+		
+		/**
+		 * Loaderから呼び出される1枚毎の読み込み完了ハンドラ
+		 */
+		private function _loaderCompleteHandler():void
+		{
+			var bmp:Bitmap = _loader.loader.content as Bitmap;
+			_bmps.push(bmp);
+			
+			var loaded:uint = _bmps.length;
+			var total:uint  = _urls.length;
+			
+			if (loaded == total)
+			{
+				_completeHandler();
+			}
+			else {
+				_progressHandler(loaded);
+				
+				//次の画像を読み込み
+				run();
+			}
+			
+			//コールバック関数の呼び出し
+			onProgress(loaded - 1, loaded, total);
 		}
 		
 		/**
@@ -229,7 +255,7 @@
 		}
 		
 		/**
-		 * 割り込み処理
+		 * 割り込みハンドラ
 		 */
 		private function _interruptedHandler():void
 		{
