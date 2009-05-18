@@ -14,6 +14,19 @@
 	
 	public class XMLsLoaderThread extends Thread
 	{
+		
+		//-------------------------------------
+		// CLASS CONSTANTS
+		//-------------------------------------
+		
+		
+		
+		
+		
+		//-------------------------------------
+		// VARIABLES
+		//-------------------------------------
+		
 		/**
 		 * 読み込まれたxmlを格納する配列
 		 */
@@ -24,13 +37,36 @@
 		 * 読みこむxmlのurlを格納する配列
 		 */
 		public function get urls():Array { return _urls; }
-		public function set urls(value:Array):void { _urls = value; }
 		private var _urls:Array;
 		
 		/**
-		 * 読み込み用エグゼキューター
+		 * 1枚毎に読み込むためのSerialExecutor
 		 */
 		private var _loaders:SerialExecutor;
+		
+		
+		
+		
+		
+		//-------------------------------------
+		// STAGE INSTANCES
+		//-------------------------------------
+		
+		
+		
+		
+		
+		//-------------------------------------
+		// GETTER/SETTER
+		//-------------------------------------
+		
+		
+		
+		
+		
+		//-------------------------------------
+		// CONSTRUCTOR
+		//-------------------------------------
 		
 		/**
 		 * コンストラクタ
@@ -39,6 +75,23 @@
 		{
 			_xmls = new Array();
 			_urls = (urls != null) ? urls : new Array();
+		}
+		
+		
+		
+		
+		
+		//-------------------------------------
+		// METHODS
+		//-------------------------------------
+		
+		/**
+		 * 読み込む画像を貯める
+		 * @param	url
+		 */
+		public function addURL(url:String):void 
+		{
+			_urls.push(url);
 		}
 		
 		/**
@@ -56,6 +109,14 @@
 			_loaders.join();
 			next(_loaderCompleteHandler);
 		}
+		
+		
+		
+		
+		
+		//-------------------------------------
+		// EVENT HANDLER
+		//-------------------------------------
 		
 		/**
 		 * 読みこみ完了ハンドラ
