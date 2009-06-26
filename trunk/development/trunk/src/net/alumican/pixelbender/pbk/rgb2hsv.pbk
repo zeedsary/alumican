@@ -1,14 +1,14 @@
 <languageVersion : 1.0;>
 
 kernel Rgb2Hsv
-<   namespace : "Alumican";
-    vendor : "Alumican.net";
-    version : 1;
-    description : "convert rgb image to hsv image (r:hue, g:saturation, b:value).";
+<   namespace:"Alumican";
+    vendor:"Alumican.net";
+    version:1;
+    description:"Convert rgb image to hsv image (r:hue, g:saturation, b:value).";
 >
 {
     input  image4 src;
-    output float4 dst;
+    output pixel4 dst;
     
     const float C1 = 0.5 / 3.0;
     const float C2 = 1.0 / 3.0;    
