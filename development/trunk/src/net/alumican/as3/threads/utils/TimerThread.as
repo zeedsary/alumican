@@ -112,9 +112,10 @@
 		override protected function run():void 
 		{
 			_timer = new Timer(_interval, 1);
-            
-			event(_timer, TimerEvent.TIMER_COMPLETE, _timerHandler);
+			_timer.addEventListener(TimerEvent.TIMER_COMPLETE, _timerHandler);
             _timer.start();
+			
+			wait();
 		}
 		
 		/**
@@ -122,9 +123,38 @@
 		 */
         override protected function finalize():void 
         {
-			trace(123)
-            _timer = null;
+			if (_timer)
+			{
+				_timer.removeEventListener(TimerEvent.TIMER_COMPLETE, _timerHandler);
+				_timer.stop();
+				_timer = null;
+				_handler = null;
+			}
+			
+			super.finalize();
+			
+			notifyAll();
         }
+		
+		/**
+		 * タイマー中断
+		 */
+		public function cancel():void
+		{
+			finalize();
+		}
+		
+		/**
+		 * タイマーリセット
+		 */
+		public function restart():void
+		{
+			if (_timer)
+			{
+				_timer.reset();
+				_timer.start();
+			}
+		}
 		
 		
 		
@@ -140,7 +170,7 @@
 		 */
 		private function _timerHandler(e:TimerEvent):void
 		{
-			if (_handler) _handler();
+			if (_handler != null) _handler();
 			
 			if (_loop == 0)
 			{
@@ -150,7 +180,14 @@
 			else
 			{
 				//ループ回数に到達していない場合
-				if (++_currentLoop < _loop) next(run);
+				if (++_currentLoop < _loop)
+				{
+					next(run);
+				}
+				else
+				{
+					notifyAll();
+				}
 			}
 		}
 	}

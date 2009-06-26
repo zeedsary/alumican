@@ -74,6 +74,7 @@
 		
 		
 		
+		
 		//-------------------------------------
 		// STAGE INSTANCES
 		//-------------------------------------
@@ -130,7 +131,6 @@
 			var url:String = _urls[_bmps.length];
 			
 			_loader = new LoaderThread(new URLRequest(url), new LoaderContext(true));
-			
 			_loader.start();
 			_loader.join();
 			
@@ -145,7 +145,8 @@
 			next(_loaderCompleteHandler);
 			
 			//例外ハンドラの設定
-			error(IOError, _ioErrorHandler);
+			error(IOError      , _errorHandler);
+			error(SecurityError, _errorHandler);
 		}
 		
 		/**
@@ -187,6 +188,20 @@
 		private function _loaderCompleteHandler():void
 		{
 			var bmp:Bitmap = _loader.loader.content as Bitmap;
+			
+			var success:Boolean;
+			
+			if (bmp == null)
+			{
+				//読み込めなかったとき
+				bmp = new Bitmap(new BitmapData(10, 10, true, 0x00000000));
+				success = false;
+			}
+			else
+			{
+				success = true;
+			}
+			
 			_bmps.push(bmp);
 			
 			var loaded:uint = _bmps.length;
@@ -204,7 +219,7 @@
 			}
 			
 			//コールバック関数の呼び出し
-			onProgress(loaded - 1, loaded, total);
+			_onProgress(loaded - 1, loaded, total, success);
 		}
 		
 		/**
@@ -243,15 +258,18 @@
 		 * @param thread 発生元のスレッド
 		 * @return void
 		 */
-		private function _ioErrorHandler(e:IOError, t:Thread):void
+		private function _errorHandler(e:Error, t:Thread):void
 		{
 			_notifyStartIfNeeded(0);
 			
 			//失敗を通知
 			_progress.fail();
 			
+			//最後まで続ける
+			next(_loaderCompleteHandler);
+			
 			//IOError をスロー
-			throw new IOError(e.message);
+			//throw new IOError(e.message);
 		}
 		
 		/**
