@@ -25,6 +25,15 @@
 		 */
 		private var _assets:Array;
 		
+		/**
+		 * ライブラリシンボルに関連づけられていないクラス名で，アセットを登録しようとしたときに実行されるコールバック関数
+		 */
+		public var onAssetLostError:Function;
+		
+		/**
+		 * Soundクラスのサブクラスでないクラスをアセットとして登録しようとしたときに実行されるコールバック関数
+		 */
+		public var onAssetTypeError:Function;
 		
 		
 		
@@ -60,6 +69,7 @@
 			catch (e:Error)
 			{
 				trace("SEController#register アセットの登録に失敗しました．指定したクラス名 \"" + linkageID + "\" はライブラリシンボルに関連付けられている必要があります．");
+				onAssetLostError(id, linkageID);
 				return;
 			}
 			
@@ -68,6 +78,7 @@
 			if (sound == null)
 			{
 				trace("SEController#register アセットの登録に失敗しました．指定したクラス名 \"" + linkageID + "\" の表すクラスはSoundクラスのサブクラスである必要があります．");
+				onAssetTypeError(id, linkageID);
 				return;
 			}
 			
