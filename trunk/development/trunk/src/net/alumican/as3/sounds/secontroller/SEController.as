@@ -52,10 +52,10 @@
 		/**
 		 * ライブラリのサウンドシンボルを新規SEとして登録する
 		 * @param	id
-		 * @param	linkageID
+		 * @param	className
 		 * @param	volume
 		 */
-		public function register(id:String, linkageID:String, volume:Number = 1):void
+		public function register(id:String, className:String, volume:Number = 1):void
 		{
 			//指定IDのアセットが既に存在すれば上書き
 			if (isExist(id)) dispose(id);
@@ -64,12 +64,12 @@
 			var klass:Class;
 			try
 			{
-				klass = getDefinitionByName(linkageID) as Class;
+				klass = getDefinitionByName(className) as Class;
 			}
 			catch (e:Error)
 			{
-				trace("SEController#register アセットの登録に失敗しました．指定したクラス名 \"" + linkageID + "\" はライブラリシンボルに関連付けられている必要があります．");
-				onAssetLostError(id, linkageID);
+				trace("SEController#register アセットの登録に失敗しました．指定したクラス名 \"" + className + "\" はライブラリシンボルに関連付けられている必要があります．");
+				onAssetLostError(id, className);
 				return;
 			}
 			
@@ -77,8 +77,8 @@
 			var sound:Sound = new klass() as Sound;
 			if (sound == null)
 			{
-				trace("SEController#register アセットの登録に失敗しました．指定したクラス名 \"" + linkageID + "\" の表すクラスはSoundクラスのサブクラスである必要があります．");
-				onAssetTypeError(id, linkageID);
+				trace("SEController#register アセットの登録に失敗しました．指定したクラス名 \"" + className + "\" の表すクラスはSoundクラスのサブクラスである必要があります．");
+				onAssetTypeError(id, className);
 				return;
 			}
 			
