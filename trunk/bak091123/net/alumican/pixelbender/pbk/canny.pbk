@@ -1,0 +1,97 @@
+<languageVersion : 1.0;>
+
+kernel Susan5x5
+<   namespace:"alumican";
+    vendor:"alumican.net";
+    version:1;
+    description:"Canny edge detector";
+>
+{
+    input  image4 src;
+    output pixel4 dst;
+    
+    // Number of scaned pixels
+    const float N = 12.0;
+    
+    // Parameters
+    parameter float thresholdHigh
+    <
+        minValue     : 0.0;
+        maxValue     : 1.0;
+        defaultValue : 0.8;
+    >;
+    
+    parameter float thresholdLow
+    <
+        minValue     : 0.0;
+        maxValue     : 1.0;
+        defaultValue : 0.2;
+    >;
+    
+    void
+    evaluatePixel()
+    {
+        // Center Pixel
+        float2 c_xy    = outCoord();
+        float4 c_color = sampleNearest(src, c_xy);
+        
+        // Around Pixel
+        float2 a_xy;
+        float4 a_color;
+        
+        //STEP1. Grayscale and Gausiann Filter (5x5, s=1.4)
+        float sum = 0.0;
+        
+        a_xy = float2(c_xy.x - 2.0, c_xy.y - 2.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 2.0;
+        a_xy = float2(c_xy.x - 1.0, c_xy.y - 2.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 4.0;
+        a_xy = float2(c_xy.x      , c_xy.y - 2.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 5.0;
+        a_xy = float2(c_xy.x + 1.0, c_xy.y - 2.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 4.0;
+        a_xy = float2(c_xy.x + 2.0, c_xy.y - 2.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 2.0;
+        
+        a_xy = float2(c_xy.x - 2.0, c_xy.y - 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 4.0;
+        a_xy = float2(c_xy.x - 1.0, c_xy.y - 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 9.0;
+        a_xy = float2(c_xy.x      , c_xy.y - 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 12.0;
+        a_xy = float2(c_xy.x + 1.0, c_xy.y - 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 9.0;
+        a_xy = float2(c_xy.x + 2.0, c_xy.y - 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 4.0;
+        
+        a_xy = float2(c_xy.x - 2.0, c_xy.y      ); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 5.0;
+        a_xy = float2(c_xy.x - 1.0, c_xy.y      ); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 12.0;
+        a_xy = float2(c_xy.x      , c_xy.y      ); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 15.0;
+        a_xy = float2(c_xy.x + 1.0, c_xy.y      ); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 12.0;
+        a_xy = float2(c_xy.x + 2.0, c_xy.y      ); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 5.0;
+        
+        a_xy = float2(c_xy.x - 2.0, c_xy.y + 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 4.0;
+        a_xy = float2(c_xy.x - 1.0, c_xy.y + 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 9.0;
+        a_xy = float2(c_xy.x      , c_xy.y + 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 12.0;
+        a_xy = float2(c_xy.x + 1.0, c_xy.y + 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 9.0;
+        a_xy = float2(c_xy.x + 2.0, c_xy.y + 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 4.0;
+        
+        a_xy = float2(c_xy.x - 2.0, c_xy.y + 2.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 2.0;
+        a_xy = float2(c_xy.x - 1.0, c_xy.y + 2.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 4.0;
+        a_xy = float2(c_xy.x      , c_xy.y + 2.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 5.0;
+        a_xy = float2(c_xy.x + 1.0, c_xy.y + 2.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 4.0;
+        a_xy = float2(c_xy.x + 2.0, c_xy.y + 2.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 2.0;
+        
+        sum /= 477.0; //3 * 159;
+        
+        //STEP2. Sobel Filter
+        float fx = 0.0;
+        float fy = 0.0;
+        
+        a_xy = float2(c_xy.x - 1.0, c_xy.y - 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 4.0;
+        a_xy = float2(c_xy.x      , c_xy.y - 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 5.0;
+        a_xy = float2(c_xy.x + 1.0, c_xy.y - 1.0); a_color = sampleNearest(src, a_xy); sum += (a_color.r + a_color.g + a_color.b) * 4.0;
+        
+        //STEP3. Thinning (Non-maximum Suppression)
+        
+        //STEP4. Hysteresis Threshold
+        
+        
+        
+        // Output
+        dst.r = sum;
+        dst.g = sum;
+        dst.b = sum;
+        dst.a = 1.0;
+    }
+}
